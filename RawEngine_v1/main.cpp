@@ -56,7 +56,7 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(800, 800, "LearnOpenGL", NULL, NULL);
     if (window == NULL) {
         printf("Failed to create GLFW window\n");
         glfwTerminate();
@@ -71,8 +71,8 @@ int main() {
         return -1;
     }
 
-    const GLuint vertexShader = generateShader("shaders/vertex.vs", GL_VERTEX_SHADER);
-    const GLuint fragmentShader = generateShader("shaders/fragment.fs", GL_FRAGMENT_SHADER);
+    const GLuint vertexShader = generateShader("shaders/CheckerBoard/vertex.vs", GL_VERTEX_SHADER);
+    const GLuint fragmentShader = generateShader("shaders/CheckerBoard/fragment.fs", GL_FRAGMENT_SHADER);
 
     const unsigned int shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
@@ -94,34 +94,59 @@ int main() {
     glBindVertexArray(VAO);
 
     const float vertices[] = {
-            0.0f, 0.5f, 0.0f,
+            0.5f, 0.5f, 0.0f,
             0.5f, -0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f
+            -0.5f, -0.5f, 0.0f,
+
+            -0.5f, 0.5f, 0.0f,
+            0.5f, 0.5f, 0.0f,
+            -0.5f, -0.5f, 0.0f,
     };
     GLuint VBO;
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices),
-                 vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT,
-                          GL_FALSE, 3 * sizeof(float), (void *) 0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+    const float uvs[] {
+        1, 1,
+        1, 0,
+        0, 0,
+
+        0, 1,
+        1, 1,
+        0, 0
+    };
+    GLuint UvBO;
+    glGenBuffers(1, &UvBO);
+    glBindBuffer(GL_ARRAY_BUFFER, UvBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *) 0);
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     glBindVertexArray(0);
 
     glm::vec4 clearColor = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
     glClearColor(clearColor.r,
                  clearColor.g, clearColor.b, clearColor.a);
 
-    double elapsedSecs;
+    double elapsedSecs = 0;
     while (!glfwWindowShouldClose(window)) {
         clock_t begin = clock();
         processInput(window);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        GLint offsetUniformLocation = glGetUniformLocation(shaderProgram, "offset");
+        glm::vec2 offset = glm::vec2(glm::sin(accumulatedTime) * .5f, glm::cos(accumulatedTime) * .5f);
+        glUniform2f(offsetUniformLocation, offset.x, offset.y);
+
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
         glfwSwapBuffers(window);
         glfwPollEvents();

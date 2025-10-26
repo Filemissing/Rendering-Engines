@@ -2,55 +2,70 @@
 //
 
 #include <iostream>
-
-void Exersize1() 
-{
-    int a;
-    printf("Input 1 number\n");
-    scanf_s("%d", &a);
-
-    bool isEven = a % 2 == 0;
-
-    if (isEven) printf("Number %d is even", a);
-    else printf("Number %d is odd", a);
-}
-void Excersize2() 
-{
-    int a;
-    int b;
-    printf("Input 2 numbers\n");
-    scanf_s("%d %d", &a, &b);
-    int highest = a > b ? a : b;
-    printf("Highest number %d", highest);
-}
-void Excersize3() 
-{
-    int a;
-    int b;
-    int c;
-    printf("Input 3 numbers\n");
-    scanf_s("%d %d %d", &a, &b, &c);
-    int average = (a + b + c) / 3;
-    printf("Average is %d", average);
-}
-void Excersize4() 
-{
-    int a;
-    int b;
-    int c;
-    int d;
-    printf("Input 4 numbers\n");
-    scanf_s("%d %d %d %d", &a, &b, &c, &d);
-    int total = a + b + c + d;
-    printf("Sum is %d", total);
-}
+#include "Student.h"
+using namespace std;
 
 int main()
 {
-    int arrayOfInts[5];
+	printf("Enter number of students: ");
+    int StudentCount;
+    scanf_s("%d", &StudentCount);
 
-    for (int i = 0; i < 5; i++) {
-        printf("%d\n", arrayOfInts[i]);
+	Student* students = new Student[StudentCount];
+
+    while (true) {
+		printf("Enter command (1: Add Student, 2: Update Name, 3: Add Module, 4: print student info, 0: Exit)\ncommand: ");
+        int command;
+        scanf_s("%d", &command);
+
+        if (command == 0) {
+			delete[] students;
+            break;
+        }
+        else if (command == 1) {
+            int studentNumber;
+			char name[100];
+			int modulesLen;
+
+			printf("Format: studentNumber, name, numberOfModules\nEnter: ");
+            scanf_s("%d, %99[^,], %d", &studentNumber, name, 100, &modulesLen);
+
+			students[studentNumber] = Student(name, studentNumber);
+        }
+        else if (command == 2) {
+            printf("Format: studentNumber, newName\nEnter: ");
+			int studentNumber;
+            char newName[100];
+			scanf_s("%d, %99[^\n]", &studentNumber, newName, 100);
+
+            students[studentNumber].SetName(newName);
+        }
+        else if (command == 3) {
+			printf("Format: studentNumber, moduleIndex, moduleName\nEnter: ");
+            int studentNumber;
+            int moduleIndex;
+			char moduleName[100];
+			scanf_s("%d, %d, %99[^\n]", &studentNumber, &moduleIndex, moduleName, 100);
+
+			students[studentNumber].AddModule(moduleName);
+        }
+        else if (command == 4) {
+			printf("Format: studentNumber\nEnter: ");
+			int studentNumber;
+			scanf_s("%d", &studentNumber);
+
+            Student* student = &students[studentNumber];
+			student->PrintInfo();
+        }
+        else if (command == 5) {
+            for (int i = 0; i < StudentCount; i++) {
+                Student* student = &students[i];
+
+				if (student->GetStudentNumber() == -1) continue; // ignore uninitialized students
+
+				student->PrintInfo();
+            }
+        }
     }
 
     return 0;
