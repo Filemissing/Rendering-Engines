@@ -20,6 +20,7 @@ namespace editor {
     GLFWwindow* Editor::mainWindow = nullptr;
 
     core::Scene* Editor::activeScene = nullptr;
+    core::GameObject* Editor::selectedObject = nullptr;
 
     // private
     void Editor::FramebufferSizeCallback(GLFWwindow *window, int width, int height) {

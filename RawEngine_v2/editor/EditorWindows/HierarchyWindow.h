@@ -23,7 +23,7 @@ namespace editor::editorWindows {
         // stores foldoutStates of objects
         std::unordered_map<core::GameObject*, UIElements::HierarchyNode> hierarchyState;
 
-        void DrawHierarchyNode(UIElements::HierarchyNode& node, core::GameObject*& selectedObject);
+        void DrawHierarchyNode(UIElements::HierarchyNode& node);
         void OnGUI() override;
     };
 }

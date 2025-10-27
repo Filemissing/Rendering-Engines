@@ -10,8 +10,8 @@
 
 namespace editor::editorWindows {
     class EditorWindow {
-        virtual void OnGUI();
         virtual void OnEnable();
+        virtual void OnGUI();
     public:
         std::string name = "new Window";
 

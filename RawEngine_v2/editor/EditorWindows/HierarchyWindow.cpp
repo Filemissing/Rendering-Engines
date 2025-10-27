@@ -11,12 +11,10 @@
 
 namespace editor::editorWindows {
     void HierarchyWindow::OnEnable() {
-        // ImGuiIO& io = ImGui::GetIO();
-        // ImGuiStyle& style = ImGui::GetStyle();
-        // auto& colors = style.Colors;
+
     }
 
-    void HierarchyWindow::DrawHierarchyNode(UIElements::HierarchyNode& node, core::GameObject*& selectedObject) {
+    void HierarchyWindow::DrawHierarchyNode(UIElements::HierarchyNode& node) {
         auto* obj = node.object;
         bool hasChildren = !obj->transform.children.empty();
 
@@ -34,9 +32,9 @@ namespace editor::editorWindows {
         ImGui::SameLine();
 
         // Text area
-        bool isSelected = (selectedObject == obj);
+        bool isSelected = (Editor::selectedObject == obj);
         if (ImGui::Selectable(obj->name.c_str(), isSelected, ImGuiSelectableFlags_SpanAvailWidth)) {
-            selectedObject = obj;
+            Editor::selectedObject = obj;
         }
 
         // Draw children recursively
@@ -46,7 +44,7 @@ namespace editor::editorWindows {
                 auto& childNode = hierarchyState[child->gameObject];
                 if (!childNode.object)
                     childNode.object = child->gameObject;
-                DrawHierarchyNode(childNode, selectedObject);
+                DrawHierarchyNode(childNode);
             }
             ImGui::Unindent(16.0f);
         }
@@ -54,14 +52,12 @@ namespace editor::editorWindows {
         ImGui::PopID();
     }
     void HierarchyWindow::OnGUI() {
-        static core::GameObject* selectedObject = nullptr;
-
         if (ImGui::Begin("Hierarchy")) {
             for (auto* obj : Editor::activeScene->objects) {
                 auto& node = hierarchyState[obj];
                 if (!node.object)
                     node.object = obj;
-                DrawHierarchyNode(node, selectedObject);
+                DrawHierarchyNode(node);
             }
         }
         ImGui::End();

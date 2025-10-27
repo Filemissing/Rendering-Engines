@@ -28,6 +28,7 @@ namespace editor {
         static GLFWwindow* mainWindow;
 
         static core::Scene* activeScene;
+        static core::GameObject* selectedObject;
 
         static bool Init();
 
