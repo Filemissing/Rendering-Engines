@@ -26,18 +26,25 @@ namespace editor {
 
         std::ofstream out(basePath + scene->name + ".json");
         out << sceneJson.dump(4);
+
+        printf("successfully saved scene %s.json\n", scene->name.c_str() );
     }
 
-    Scene SceneManager::LoadScene(const std::string& name) {
-        std::ifstream in(basePath + name + ".json");
+    Scene* SceneManager::LoadScene(const std::string& name) {
+        auto path = basePath + name + ".json";
+        if (!std::filesystem::exists(path)) {
+            printf("Scene name was not found");
+            return nullptr;
+        }
+        std::ifstream in(path);
         json sceneJson = json::parse(in);
 
-        Scene scene = Scene(sceneJson["name"]);
+        Scene* scene = new Scene(sceneJson["name"]);
 
         for (auto object : sceneJson["objects"]) {
             GameObject* gameObject = new GameObject(object["name"]);
             gameObject->Deserialize(object);
-            scene.objects.push_back(gameObject);
+            scene->objects.push_back(gameObject);
         }
 
         printf("Loaded scene %s \n", name.c_str());

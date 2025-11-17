@@ -11,7 +11,8 @@
 
 
 namespace core {
-    Material::Material(const std::string &vertexShaderPath, const std::string &fragmentShaderPath) {
+    Material::Material(const std::string &vertexShaderPath, const std::string &fragmentShaderPath)
+        : vertexShaderPath(vertexShaderPath), fragmentShaderPath(fragmentShaderPath) {
         const GLuint vertexShader = GenerateShader(vertexShaderPath, GL_VERTEX_SHADER);
         const GLuint fragmentShader = GenerateShader(fragmentShaderPath, GL_FRAGMENT_SHADER);
 
@@ -22,7 +23,7 @@ namespace core {
     Material::~Material() {
         glDeleteProgram(shaderProgram);
     }
-    
+
     void Material::SetTexture(const std::string& name, GLuint tex) {
         textures[name] = tex;
     }
@@ -114,5 +115,4 @@ namespace core {
 
         return modelShaderProgram;
     }
-
 }

@@ -11,7 +11,7 @@ namespace editor {
     public:
         static std::string basePath;
         static void SaveScene(const core::Scene* scene);
-        static core::Scene LoadScene(const std::string& name);
+        static core::Scene* LoadScene(const std::string& name);
     };
 } // editor
 

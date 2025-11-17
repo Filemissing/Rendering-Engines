@@ -5,20 +5,22 @@
 #include <assimp/postprocess.h>
 
 namespace core {
-    Model AssimpLoader::loadModel(const std::string& path) {
+    Model* AssimpLoader::loadModel(const std::string& path) {
         Assimp::Importer import;
         const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
 
         if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         {
             printf("Error: %s\n", import.GetErrorString());
-            return Model({});
+            return new Model({});
         }
 
         std::string directory = path.substr(0, path.find_last_of('/'));
         std::vector<Mesh> meshes;
         processNode(scene->mRootNode, scene, meshes);
-        return Model(meshes);
+        auto* model = new Model(meshes);
+        model->assetPath = path;
+        return model;
     }
 
     void AssimpLoader::processNode(aiNode *node, const aiScene *scene, std::vector<Mesh>& meshes) {

@@ -76,6 +76,8 @@ namespace core {
         for (auto componentData: json["components"]) {
             auto comp = ComponentFactory::Create(componentData["type"]);
             comp->Deserialize(componentData);
+            comp->gameObject = this;
+            components.push_back(comp);
         }
         transform.Deserialize(json["transform"]);
     }

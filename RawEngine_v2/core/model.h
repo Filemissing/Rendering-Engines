@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 #include <glm/ext/matrix_float4x4.hpp>
 #include "mesh.h"
@@ -7,10 +8,11 @@
 namespace core {
     class Model {
     private:
-        std::vector<core::Mesh> meshes;
+        std::vector<Mesh> meshes;
         glm::mat4 modelMatrix;
     public:
-        Model(std::vector<core::Mesh> meshes) : meshes(meshes), modelMatrix(1) {}
+        std::string assetPath;
+        Model(std::vector<Mesh> meshes) : meshes(meshes), modelMatrix(1) {}
 
         void render();
 

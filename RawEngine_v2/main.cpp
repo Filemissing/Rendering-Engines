@@ -42,6 +42,7 @@ int g_height = 600;
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    // TODO: this calls every frame when held, not very nice
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         editor::SceneManager::SaveScene(editor::Editor::activeScene);
     }
@@ -55,11 +56,12 @@ int main() {
     }
     RenderSettings::Init();
 
-    auto scene1 = editor::SceneManager::LoadScene("Scene 1");
-    editor::Editor::activeScene = &scene1;
+    //Scene
+    auto* scene1 = editor::SceneManager::LoadScene("Scene 1");
+    editor::Editor::activeScene = scene1;
 
-    //core::Texture CMGaToTexture("textures/CMGaTo_crop.png");
-    //quadObjectMaterial->SetTexture("text", CMGaToTexture.getId());
+    core::Texture CMGaToTexture("textures/CMGaTo_crop.png");
+    scene1->FindGameObjectByName("CMGaTo")->GetComponent<core::MeshRenderer>()->GetMaterial()->SetTexture("text", CMGaToTexture.getId());
 
     while (!glfwWindowShouldClose(editor::Editor::mainWindow)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -70,14 +72,14 @@ int main() {
         double deltaX = mouseXPos - editor::Editor::oldMousePos.x, deltaY = mouseYPos - editor::Editor::oldMousePos.y;
         editor::Editor::deltaMouse = glm::vec2(deltaX, deltaY);
 
+        //  draw the editor
         editor::Editor::Draw();
 
         processInput(editor::Editor::mainWindow);
 
         //suzanne->transform.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 100.0f * editor::Editor::deltaTime);
 
-        if (!editor::Editor::activeScene) printf("no Scene active");
-        else editor::Editor::activeScene->Update();
+        editor::Editor::activeScene->Update();
 
         editor::Editor::EndFrame();
 

@@ -20,6 +20,11 @@ namespace core {
             0.1f, 100.0f);
     }
 
+    Camera::~Camera() {
+        if (mainCamera == this) mainCamera = nullptr;
+    }
+
+
     glm::mat4 Camera::getView() {
         return glm::inverse(gameObject->transform.GetMatrix());
     }

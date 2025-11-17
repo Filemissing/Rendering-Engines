@@ -25,6 +25,8 @@ namespace core {
         bool AddGameObject(GameObject* obj);
         void RemoveGameObject(GameObject* obj);
         void RemoveAndDeleteGameObject(GameObject* obj);
+
+        GameObject* FindGameObjectByName(const std::string& name);
     };
 }
 

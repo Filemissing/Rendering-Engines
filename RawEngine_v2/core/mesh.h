@@ -6,7 +6,6 @@
 
 namespace core {
     class Mesh {
-    private:
         std::vector<Vertex> vertices;
         std::vector<GLuint> indices;
         GLuint VAO;

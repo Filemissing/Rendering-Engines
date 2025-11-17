@@ -32,13 +32,16 @@ namespace editor::editorWindows {
 
         ImGui::Spacing();
 
+
         // Load button
         if (ImGui::Button("Load"))
         {
             if (!sceneName.empty())
             {
                 auto scene = SceneManager::LoadScene(sceneName);
-                Editor::activeScene = &scene;
+
+                if (scene) Editor::activeScene = scene; //TODO: create setActiveScene method that calls delete on the previous scene
+                else ImGui::OpenPopup("Error");
             }
             else
             {
@@ -49,7 +52,7 @@ namespace editor::editorWindows {
         // Small popup for feedback
         if (ImGui::BeginPopupModal("Error", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
         {
-            ImGui::Text("Scene name is empty.");
+            ImGui::Text("Scene not found");
             if (ImGui::Button("OK"))
                 ImGui::CloseCurrentPopup();
             ImGui::EndPopup();

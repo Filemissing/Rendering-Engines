@@ -41,4 +41,12 @@ namespace core {
         delete obj;
     }
 
+    GameObject* Scene::FindGameObjectByName(const std::string& name)
+    {
+        for (auto* go : objects)
+            if (go && go->name == name)
+                return go;
+
+        return nullptr;
+    }
 }

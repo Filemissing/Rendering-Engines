@@ -20,6 +20,8 @@ namespace core {
         std::unordered_map<std::string, float> floatUniforms;
 
     public:
+        std::string vertexShaderPath, fragmentShaderPath;
+
         Material(GLuint shaderProgram) : shaderProgram(shaderProgram) {}
         Material(const std::string &vertexShaderPath, const std::string &fragmentShaderPath);
         ~Material();

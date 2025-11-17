@@ -23,6 +23,8 @@ namespace core {
         Camera() : Camera(1, 1) {}
         Camera(int width, int height);
 
+        ~Camera();
+
         nlohmann::json Serialize() override;
         void Deserialize(const nlohmann::json&) override;
     };

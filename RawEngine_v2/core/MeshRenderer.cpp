@@ -33,11 +33,17 @@ namespace core {
     nlohmann::json MeshRenderer::Serialize() {
         nlohmann::json json;
         json["type"] = "MeshRenderer";
-        // ToDo: setup GUID's for serializing asset references (e.g. model, material)
+        json["model"] = model->assetPath;
+        json["material"]["vertex"] = material->vertexShaderPath;
+        json["material"]["fragment"] = material->fragmentShaderPath;
         return json;
     }
 
     void MeshRenderer::Deserialize(const nlohmann::json& json) {
-
+        model = AssimpLoader::loadModel(json["model"]);
+        material = new Material(
+            json["material"]["vertex"],
+            json["material"]["fragment"]
+            );
     }
 }
