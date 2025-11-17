@@ -6,6 +6,8 @@
 
 #include <glm/ext/matrix_transform.hpp>
 
+#include "GameObject.h"
+
 
 namespace core {
     // public
@@ -44,9 +46,8 @@ namespace core {
             if (p == child) return false;
         }
         // detach child from old parent
-        if (child->parent) {
-            child->parent->RemoveChild(child);
-        }
+        child->DetachFromParent();
+
         child->parent = this;
         children.push_back(child);
         return true;
@@ -84,5 +85,44 @@ namespace core {
         right = glm::normalize(matrix * glm::vec4(1, 0, 0, 0));
         up = glm::normalize(matrix * glm::vec4(0, 1, 0, 0));
         forward = glm::normalize(matrix * glm::vec4(0, 0, 1, 0));
+    }
+
+    nlohmann::json Transform::Serialize() {
+        nlohmann::json json;
+        json["type"] = "Transform";
+        json["position"] = nlohmann::json::object();
+        json["rotation"] = nlohmann::json::object();
+        json["scale"] = nlohmann::json::object();
+
+        json["position"]["x"] = position.x;
+        json["position"]["y"] = position.y;
+        json["position"]["z"] = position.z;
+
+        json["rotation"]["x"] = rotation.x;
+        json["rotation"]["y"] = rotation.y;
+        json["rotation"]["z"] = rotation.z;
+
+        json["scale"]["x"] = scale.x;
+        json["scale"]["y"] = scale.y;
+        json["scale"]["z"] = scale.z;
+
+        json["children"] = nlohmann::json::array();
+        for (auto child : children) {
+            json["children"].push_back(child->gameObject->Serialize());
+        }
+
+        return json;
+    }
+    void Transform::Deserialize(const nlohmann::json &json) {
+        position = glm::vec3(json["position"]["x"], json["position"]["y"], json["position"]["z"]);
+        rotation = glm::vec3(json["rotation"]["x"], json["rotation"]["y"], json["rotation"]["z"]);
+        scale = glm::vec3(json["scale"]["x"], json["scale"]["y"], json["scale"]["z"]);
+        RecalculateMatrix();
+
+        for (auto child : json["children"]) {
+            GameObject* childGameObject = new GameObject();
+            childGameObject->Deserialize(child);
+            AddChild(&childGameObject->transform);
+        }
     }
 }

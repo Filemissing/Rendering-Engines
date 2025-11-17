@@ -3,14 +3,21 @@
 //
 
 #include "PlayerController.h"
-#include <iostream>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+
 #include "GameObject.h"
+#include "imgui.h"
+#include "../editor/Editor.h"
+
 
 namespace core {
-    void PlayerController::handleInputs(GLFWwindow *window, glm::vec2 deltaMouse, float deltaTime) {
-        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+    void PlayerController::Update() {
+        GLFWwindow* window = editor::Editor::mainWindow;
+        glm::vec2 deltaMouse = editor::Editor::deltaMouse;
+        float deltaTime = editor::Editor::deltaTime;
+
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS && !ImGui::GetIO().WantCaptureMouse) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
             if (isMoving) {
@@ -36,5 +43,17 @@ namespace core {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             isMoving = false;
         }
+    }
+
+    nlohmann::json PlayerController::Serialize() {
+        nlohmann::json json;
+        json["type"] = "PlayerController";
+        json["moveSpeed"] = moveSpeed;
+        json["rotateSpeed"] = rotateSpeed;
+        return json;
+    }
+    void PlayerController::Deserialize(const nlohmann::json& json) {
+        moveSpeed = json["moveSpeed"];
+        rotateSpeed = json["rotateSpeed"];
     }
 }

@@ -4,6 +4,7 @@
 
 #include "GameObject.h"
 #include "Component.h"
+#include "ComponentFactory.h"
 
 namespace core {
     GameObject::GameObject() {
@@ -12,15 +13,13 @@ namespace core {
 
         components = std::vector<Component*>();
     }
-    GameObject::GameObject(const std::string& name) : name(name) {
-        transform = Transform();
-        transform.gameObject = this;
-
-        components = std::vector<Component*>();
-    }
     GameObject::~GameObject() {
         for (auto component : components) {
             delete component;
+        }
+
+        for (auto child : transform.children) {
+            delete child->gameObject;
         }
     }
 
@@ -48,7 +47,6 @@ namespace core {
             child->gameObject->Start();
         }
     }
-
     void GameObject::Update() {
         transform.Update();
         for (auto component: components) {
@@ -58,5 +56,27 @@ namespace core {
         for (auto child : transform.children) {
             child->gameObject->Update();
         }
+    }
+
+    nlohmann::json GameObject::Serialize() {
+        nlohmann::json objJson = nlohmann::json::object();
+        objJson["name"] = name;
+
+        for (Component* component : components) {
+            nlohmann::json compJson = component->Serialize();
+            objJson["components"].push_back(compJson);
+        }
+
+        objJson["transform"] = transform.Serialize();
+
+        return objJson;
+    }
+    void GameObject::Deserialize(nlohmann::json json) {
+        name = json["name"];
+        for (auto componentData: json["components"]) {
+            auto comp = ComponentFactory::Create(componentData["type"]);
+            comp->Deserialize(componentData);
+        }
+        transform.Deserialize(json["transform"]);
     }
 }

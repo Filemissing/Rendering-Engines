@@ -7,6 +7,8 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Camera.h"
+
 
 namespace core {
     Material::Material(const std::string &vertexShaderPath, const std::string &fragmentShaderPath) {
@@ -20,20 +22,16 @@ namespace core {
     Material::~Material() {
         glDeleteProgram(shaderProgram);
     }
-
-
+    
     void Material::SetTexture(const std::string& name, GLuint tex) {
         textures[name] = tex;
     }
-
     void Material::SetVec4(const std::string& name, const glm::vec4& value) {
         vec4Uniforms[name] = value;
     }
-
     void Material::SetMat4(const std::string& name, const glm::mat4& value) {
         mat4Uniforms[name] = value;
     }
-
     void Material::SetFloat(const std::string& name, float value) {
         floatUniforms[name] = value;
     }
@@ -44,14 +42,17 @@ namespace core {
         // upload uniforms
         for (auto& [name, value] : vec4Uniforms) {
             GLint loc = glGetUniformLocation(shaderProgram, name.c_str());
+            if (loc == -1) continue; // uniform not found
             glUniform4fv(loc, 1, glm::value_ptr(value));
         }
         for (auto& [name, value] : mat4Uniforms) {
             GLint loc = glGetUniformLocation(shaderProgram, name.c_str());
+            if (loc == -1) continue; // uniform not found
             glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
         }
         for (auto& [name, value] : floatUniforms) {
             GLint loc = glGetUniformLocation(shaderProgram, name.c_str());
+            if (loc == -1) continue; // uniform not found
             glUniform1f(loc, value);
         }
 

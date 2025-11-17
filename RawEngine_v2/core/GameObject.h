@@ -21,7 +21,9 @@ namespace core {
         std::vector<Component*> components;
 
         GameObject();
-        GameObject(const std::string& name);
+        explicit GameObject(const std::string& name) : GameObject() { this->name = name; };
+        explicit GameObject(Transform* parent) : GameObject() { parent->AddChild(&transform); };
+        GameObject(const std::string& name, Transform* parent) : GameObject() { this->name = name; parent->AddChild(&transform); };
         ~GameObject();
 
         Component* AddComponent(Component*);
@@ -52,8 +54,10 @@ namespace core {
         }
 
         void Start();
-
         void Update();
+
+        nlohmann::json Serialize();
+        void Deserialize(nlohmann::json json);
     };
 }
 

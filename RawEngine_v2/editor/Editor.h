@@ -30,6 +30,11 @@ namespace editor {
         static core::Scene* activeScene;
         static core::GameObject* selectedObject;
 
+        static glm::vec2 oldMousePos;
+        static glm::vec2 deltaMouse;
+        static float currentTime;
+        static float deltaTime;
+
         static bool Init();
 
         static void Draw();

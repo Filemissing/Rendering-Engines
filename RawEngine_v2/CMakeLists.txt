@@ -50,6 +50,12 @@ set(IMGUI_SOURCES
         editor/EditorWindows/HierarchyWindow.h
         editor/UIElements/HierarchyNode.cpp
         editor/UIElements/HierarchyNode.h
+        editor/Utils/SceneManager.cpp
+        editor/Utils/SceneManager.h
+        core/ComponentFactory.cpp
+        core/ComponentFactory.h
+        editor/EditorWindows/SceneLoader.cpp
+        editor/EditorWindows/SceneLoader.h
 )
 
 add_executable(RawEngine main.cpp
@@ -105,3 +111,11 @@ target_include_directories(RawEngine PRIVATE ${Stb_INCLUDE_DIR})
 
 # added by me, I think this simply includes the fonts directory into the final build - required for relative pathing
 file(COPY fonts DESTINATION ${CMAKE_BINARY_DIR})
+
+# add nlohmann
+find_package(nlohmann_json CONFIG REQUIRED)
+target_link_libraries(RawEngine PRIVATE nlohmann_json::nlohmann_json)
+
+# add rttr
+find_package(rttr CONFIG REQUIRED)
+target_link_libraries(RawEngine PRIVATE RTTR::Core)

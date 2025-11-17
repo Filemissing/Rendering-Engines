@@ -27,7 +27,7 @@ namespace core {
         glm::vec3 up;
         glm::vec3 forward;
 
-        Transform* parent = nullptr;
+        Transform* parent = nullptr; // backreference-do not serialize
         std::vector<Transform*> children;
 
         Transform();
@@ -42,7 +42,11 @@ namespace core {
         bool AddChild(Transform* child);
         bool RemoveChild(Transform* child);
         void DetachFromParent();
+
+        nlohmann::json Serialize() override;
+        void Deserialize(const nlohmann::json &json) override;
     };
+    REGISTER_COMPONENT(Transform)
 }
 
 #endif //RAWENGINE_TRANSFORM_H

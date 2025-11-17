@@ -10,6 +10,7 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "EditorWindows/HierarchyWindow.h"
+#include "EditorWindows/SceneLoader.h"
 
 namespace editor {
     // static fields
@@ -21,6 +22,11 @@ namespace editor {
 
     core::Scene* Editor::activeScene = nullptr;
     core::GameObject* Editor::selectedObject = nullptr;
+
+    glm::vec2 Editor::oldMousePos = glm::vec2();
+    glm::vec2 Editor::deltaMouse = glm::vec2();
+    float Editor::currentTime = 0.0;
+    float Editor::deltaTime = 0.0;
 
     // private
     void Editor::FramebufferSizeCallback(GLFWwindow *window, int width, int height) {
@@ -85,6 +91,7 @@ namespace editor {
 
         // add default windows here
         windows.push_back(new editorWindows::HierarchyWindow("Hierarchy"));
+        windows.push_back(new editorWindows::SceneLoader("Scene Loader"));
 
         return true;
     }

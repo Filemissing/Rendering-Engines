@@ -4,8 +4,6 @@
 
 #ifndef RAWENGINE_PLAYERCONTROLLER_H
 #define RAWENGINE_PLAYERCONTROLLER_H
-#include <GLFW/glfw3.h>
-#include <glm/vec2.hpp>
 #include "Component.h"
 
 namespace core {
@@ -16,8 +14,12 @@ namespace core {
         float moveSpeed = 5.0f;
         float rotateSpeed = 100.0f;
 
-        void handleInputs(GLFWwindow* window, glm::vec2 mouseDelta, float deltaTime);
+        void Update() override;
+
+        nlohmann::json Serialize() override;
+        void Deserialize(const nlohmann::json&) override;
     };
+    REGISTER_COMPONENT(PlayerController)
 }
 
 #endif //RAWENGINE_PLAYERCONTROLLER_H

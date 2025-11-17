@@ -17,11 +17,14 @@ namespace core {
         std::vector<GameObject*> objects;
 
         void Start();
-
         void Update();
 
         Scene(const std::string& name) : name(name) {};
         ~Scene();
+
+        bool AddGameObject(GameObject* obj);
+        void RemoveGameObject(GameObject* obj);
+        void RemoveAndDeleteGameObject(GameObject* obj);
     };
 }
 

@@ -17,14 +17,18 @@ namespace core {
         void Render();
 
     public:
+        MeshRenderer() : model(nullptr), material(nullptr) {}
         MeshRenderer(Model* model, Material* material);
 
         Model* GetModel() const;
-
         Material* GetMaterial() const;
 
-        virtual void Update();
+        void Update() override;
+
+        nlohmann::json Serialize() override;
+        void Deserialize(const nlohmann::json&) override;
     };
+    REGISTER_COMPONENT(MeshRenderer)
 }
 
 #endif //RAWENGINE_MESHRENDERER_H

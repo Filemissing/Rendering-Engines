@@ -16,6 +16,7 @@
 #include "core/Scene.h"
 #include "editor/Editor.h"
 #include "editor/EditorWindows/TestWindow.h"
+#include "editor/Utils/SceneManager.h"
 
 #define MAC_CLION
 //#define VSTUDIO
@@ -41,6 +42,9 @@ int g_height = 600;
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        editor::SceneManager::SaveScene(editor::Editor::activeScene);
+    }
 }
 
 int main() {
@@ -51,84 +55,37 @@ int main() {
     }
     RenderSettings::Init();
 
-    //Scene
-    auto scene1 = new core::Scene("Scene 1");
-    editor::Editor::activeScene = scene1;
+    auto scene1 = editor::SceneManager::LoadScene("Scene 1");
+    editor::Editor::activeScene = &scene1;
 
-    // Camera
-    auto* camera = new core::GameObject("Camera");
-    camera->AddComponent(new core::Camera(g_width, g_height));
-    camera->AddComponent(new core::PlayerController());
-    camera->transform.Translate(glm::vec3(0, 0, 10));
-
-    // Models
-    auto* quadObject = new core::GameObject("CMGaTo");
-    quadObject->AddComponent(new core::MeshRenderer(
-        new core::Model( { core::Mesh::generateQuad() } ),
-        new core::Material("shaders/modelVertex.vs", "shaders/texture.fs")
-        ));
-    quadObject->transform.Translate(glm::vec3(0,0,-2.5));
-    quadObject->transform.Scale(glm::vec3(5, 5, 1));
-
-    auto* suzanne = new core::GameObject("Suzanne");
-    suzanne->AddComponent(new core::MeshRenderer(
-        new core::Model(core::AssimpLoader::loadModel("models/nonormalmonkey.obj")),
-        new core::Material("shaders/modelVertex.vs", "shaders/fragment.fs")
-        ));
-    core::Texture CMGaToTexture("textures/CMGaTo_crop.png");
-
-
-    // Add objects to scene
-    scene1->objects.push_back(camera);
-    scene1->objects.push_back(quadObject);
-    quadObject->transform.AddChild(&suzanne->transform);
-
-    // global variables
-    double currentTime = glfwGetTime();
-    double finishFrameTime = 0.0;
-    float deltaTime = 0.0f;
-    float rotationStrength = 100.0f;
-
-    double oldMouseX = 0.0f, oldMouseY = 0.0f;
+    //core::Texture CMGaToTexture("textures/CMGaTo_crop.png");
+    //quadObjectMaterial->SetTexture("text", CMGaToTexture.getId());
 
     while (!glfwWindowShouldClose(editor::Editor::mainWindow)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        editor::Editor::Draw();
-
+        // calculate delta mouse
         double mouseXPos, mouseYPos;
         glfwGetCursorPos(editor::Editor::mainWindow, &mouseXPos, &mouseYPos);
-        double deltaX = mouseXPos - oldMouseX, deltaY = mouseYPos - oldMouseY;
-        glm::vec2 deltaMouse = glm::vec2(deltaX, deltaY);
+        double deltaX = mouseXPos - editor::Editor::oldMousePos.x, deltaY = mouseYPos - editor::Editor::oldMousePos.y;
+        editor::Editor::deltaMouse = glm::vec2(deltaX, deltaY);
 
-        camera->GetComponent<core::PlayerController>()->handleInputs(editor::Editor::mainWindow, deltaMouse, deltaTime);
+        editor::Editor::Draw();
+
         processInput(editor::Editor::mainWindow);
 
-        suzanne->transform.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), rotationStrength * deltaTime);
+        //suzanne->transform.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 100.0f * editor::Editor::deltaTime);
 
-        quadObject->GetComponent<core::MeshRenderer>()->GetMaterial()->SetTexture("text", CMGaToTexture.getId());
-        quadObject->GetComponent<core::MeshRenderer>()->GetMaterial()->SetMat4(
-            "mvpMatrix",
-            camera->GetComponent<core::Camera>()->projection *
-                camera->GetComponent<core::Camera>()->getView() *
-                quadObject->transform.GetMatrix());
-
-        suzanne->GetComponent<core::MeshRenderer>()->GetMaterial()->SetMat4(
-            "mvpMatrix",
-            camera->GetComponent<core::Camera>()->projection *
-                camera->GetComponent<core::Camera>()->getView() *
-                suzanne->transform.GetMatrix());
-
-        scene1->Update();
-
+        if (!editor::Editor::activeScene) printf("no Scene active");
+        else editor::Editor::activeScene->Update();
 
         editor::Editor::EndFrame();
 
         // update global variables
-        oldMouseX = mouseXPos; oldMouseY = mouseYPos; // keep track of mouse pos for delta mouse
-        finishFrameTime = glfwGetTime();
-        deltaTime = static_cast<float>(finishFrameTime - currentTime);
-        currentTime = finishFrameTime;
+        editor::Editor::oldMousePos = glm::vec2(mouseXPos, mouseYPos);
+        float finishFrameTime = glfwGetTime();
+        editor::Editor::deltaTime = (finishFrameTime - editor::Editor::currentTime);
+        editor::Editor::currentTime = finishFrameTime;
     }
 
     editor::Editor::Shutdown();
