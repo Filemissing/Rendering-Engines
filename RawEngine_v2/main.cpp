@@ -51,7 +51,7 @@ int main() {
     Editor::activeScene = scene1;
 
     Texture CMGaToTexture("textures/CMGaTo_crop.png");
-    scene1->FindGameObjectByName("CMGaTo")->GetComponent<core::MeshRenderer>()->GetMaterial()->SetTexture("text", CMGaToTexture.getId());
+    scene1->FindGameObjectByName("CMGaTo")->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture("text", CMGaToTexture.getId());
 
     while (!glfwWindowShouldClose(editor::Editor::mainWindow)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

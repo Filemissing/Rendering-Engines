@@ -4,6 +4,42 @@ namespace core {
     Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) : vertices(vertices), indices(indices) {
         setupBuffers();
     }
+    Mesh::~Mesh() {
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteBuffers(1, &VBO);
+        glDeleteBuffers(1, &EBO);
+    }
+
+    Mesh::Mesh(Mesh &&other) noexcept {
+        VAO = other.VAO;
+        VBO = other.VBO;
+        EBO = other.EBO;
+        vertices = std::move(other.vertices);
+        indices = std::move(other.indices);
+
+        other.VAO = 0;
+        other.VBO = 0;
+        other.EBO = 0;
+    }
+    Mesh& Mesh::operator=(Mesh &&other) noexcept {
+        if (this != &other) {
+            glDeleteVertexArrays(1, &VAO);
+            glDeleteBuffers(1, &VBO);
+            glDeleteBuffers(1, &EBO);
+
+            VAO = other.VAO;
+            VBO = other.VBO;
+            EBO = other.EBO;
+            vertices = std::move(other.vertices);
+            indices = std::move(other.indices);
+
+            other.VAO = 0;
+            other.VBO = 0;
+            other.EBO = 0;
+        }
+        return *this;
+    }
+
     void Mesh::setupBuffers() {
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);

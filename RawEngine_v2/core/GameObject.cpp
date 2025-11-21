@@ -10,6 +10,7 @@ namespace core {
     GameObject::GameObject() {
         transform = Transform();
         transform.gameObject = this;
+        scene = nullptr;
 
         components = std::vector<Component*>();
     }

@@ -25,7 +25,7 @@ namespace core {
     bool Scene::AddGameObject(GameObject *obj) {
         if (!obj) return false;
         if (obj->scene != nullptr) {
-            printf("object is already part of a different scene");
+            printf("object is already part of a different scene\n");
             return false;
         }
 

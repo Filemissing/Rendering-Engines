@@ -13,6 +13,11 @@ namespace core {
         GLuint EBO;
     public:
         Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices);
+        ~Mesh();
+
+        Mesh(Mesh&& other) noexcept;
+        Mesh& operator=(Mesh&& other) noexcept;
+
         void render();
         static Mesh generateQuad();
     private:

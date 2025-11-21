@@ -18,7 +18,7 @@ namespace core {
         std::string directory = path.substr(0, path.find_last_of('/'));
         std::vector<Mesh> meshes;
         processNode(scene->mRootNode, scene, meshes);
-        auto* model = new Model(meshes);
+        auto* model = new Model(std::move(meshes));
         model->assetPath = path;
         return model;
     }
