@@ -11,7 +11,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
 
-#include "../core/Scene.h"
+#include "../core/Assets/Scene.h"
 
 namespace editor {
     class Editor {

@@ -1,21 +1,26 @@
 ﻿//
 // Created by micha on 17/10/2025.
 
-#include "MeshRenderer.h"
-#include "assimpLoader.h"
+#include "./MeshRenderer.h"
+#include "../assimpLoader.h"
 #include "Camera.h"
-#include "GameObject.h"
+#include "../GameObject.h"
 
 namespace core {
     MeshRenderer::MeshRenderer(Model* model, Material* material)
     : model(model), material(material) {}
 
+    MeshRenderer::~MeshRenderer() {
+        delete model;
+        delete material;
+    }
+
     void MeshRenderer::Render() {
-        if (!material || !model || !Camera::mainCamera) return;
+        if (!material || !model || !Camera::GetMainCamera()) return;
 
         material->SetMat4("mvpMatrix",
-            Camera::mainCamera->projection *
-                Camera::mainCamera->getView() *
+            Camera::GetMainCamera()->projection *
+                Camera::GetMainCamera()->getView() *
                 gameObject->transform.GetMatrix());
 
         material->Bind();

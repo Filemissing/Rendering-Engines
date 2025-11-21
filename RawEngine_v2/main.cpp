@@ -6,17 +6,15 @@
 
 #include "core/assimpLoader.h"
 #include "core/GameObject.h"
-#include "core/Component.h"
-#include "core/mesh.h"
-#include "core/texture.h"
-#include "core/Camera.h"
-#include "core/MeshRenderer.h"
-#include "core/PlayerController.h"
-#include "core/RenderSettings.h"
-#include "core/Scene.h"
+#include "core/Assets/texture.h"
+#include "core/Components/MeshRenderer.h"
+#include "core/Assets/RenderSettings.h"
+#include "core/Assets/Scene.h"
 #include "editor/Editor.h"
-#include "editor/EditorWindows/TestWindow.h"
 #include "editor/Utils/SceneManager.h"
+
+using namespace core;
+using namespace editor;
 
 #define MAC_CLION
 //#define VSTUDIO
@@ -35,32 +33,24 @@
 #include <imgui_impl_opengl3.h>
 #endif
 
-// TODO: remove and replace with GetMainWindowSize() method in Editor
-int g_width = 800;
-int g_height = 600;
-
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    // TODO: this calls every frame when held, not very nice
-    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        editor::SceneManager::SaveScene(editor::Editor::activeScene);
-    }
 }
 
 int main() {
     // Setup
-    if (!editor::Editor::Init()) {
+    if (!Editor::Init()) {
         printf("Editor Failed to Initialize\n");
         return -1;
     }
     RenderSettings::Init();
 
     //Scene
-    auto* scene1 = editor::SceneManager::LoadScene("Scene 1");
-    editor::Editor::activeScene = scene1;
+    auto* scene1 = SceneManager::LoadScene("Scene 1");
+    Editor::activeScene = scene1;
 
-    core::Texture CMGaToTexture("textures/CMGaTo_crop.png");
+    Texture CMGaToTexture("textures/CMGaTo_crop.png");
     scene1->FindGameObjectByName("CMGaTo")->GetComponent<core::MeshRenderer>()->GetMaterial()->SetTexture("text", CMGaToTexture.getId());
 
     while (!glfwWindowShouldClose(editor::Editor::mainWindow)) {
@@ -68,28 +58,29 @@ int main() {
 
         // calculate delta mouse
         double mouseXPos, mouseYPos;
-        glfwGetCursorPos(editor::Editor::mainWindow, &mouseXPos, &mouseYPos);
-        double deltaX = mouseXPos - editor::Editor::oldMousePos.x, deltaY = mouseYPos - editor::Editor::oldMousePos.y;
-        editor::Editor::deltaMouse = glm::vec2(deltaX, deltaY);
+        glfwGetCursorPos(Editor::mainWindow, &mouseXPos, &mouseYPos);
+        double deltaX = mouseXPos - Editor::oldMousePos.x, deltaY = mouseYPos - Editor::oldMousePos.y;
+        Editor::deltaMouse = glm::vec2(deltaX, deltaY);
 
         //  draw the editor
-        editor::Editor::Draw();
+        Editor::Draw();
 
-        processInput(editor::Editor::mainWindow);
+        processInput(Editor::mainWindow);
 
-        //suzanne->transform.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 100.0f * editor::Editor::deltaTime);
+        //suzanne->transform.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 100.0f * Editor::deltaTime);
 
-        editor::Editor::activeScene->Update();
+        if (Editor::activeScene != nullptr)
+            Editor::activeScene->Update();
 
-        editor::Editor::EndFrame();
+        Editor::EndFrame();
 
         // update global variables
-        editor::Editor::oldMousePos = glm::vec2(mouseXPos, mouseYPos);
+        Editor::oldMousePos = glm::vec2(mouseXPos, mouseYPos);
         float finishFrameTime = glfwGetTime();
-        editor::Editor::deltaTime = (finishFrameTime - editor::Editor::currentTime);
-        editor::Editor::currentTime = finishFrameTime;
+        Editor::deltaTime = (finishFrameTime - Editor::currentTime);
+        Editor::currentTime = finishFrameTime;
     }
 
-    editor::Editor::Shutdown();
+    Editor::Shutdown();
     return 0;
 }

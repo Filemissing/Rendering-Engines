@@ -17,34 +17,38 @@ namespace editor::editorWindows {
     }
 
     void SceneLoader::OnGUI() {
-        ImGui::Text("Load Scene");
-        ImGui::Separator();
-
         // Text input field
         char buffer[256];
         memset(buffer, 0, sizeof(buffer));
         memcpy(buffer, sceneName.c_str(), sceneName.size());
 
-        if (ImGui::InputText("Scene Name", buffer, sizeof(buffer)))
+        ImGui::Text("Scene Name");
+        ImGui::SameLine();
+        if (ImGui::InputText("##", buffer, sizeof(buffer)))
         {
             sceneName = buffer;
         }
 
         ImGui::Spacing();
 
-
         // Load button
-        if (ImGui::Button("Load"))
-        {
-            if (!sceneName.empty())
-            {
+        if (ImGui::Button("Load")) {
+            if (!sceneName.empty()) {
                 auto scene = SceneManager::LoadScene(sceneName);
 
-                if (scene) Editor::activeScene = scene; //TODO: create setActiveScene method that calls delete on the previous scene
+                if (scene) SceneManager::SetActiveScene(scene);
                 else ImGui::OpenPopup("Error");
             }
-            else
-            {
+            else {
+                ImGui::OpenPopup("Error");
+            }
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Save")) {
+            if (!sceneName.empty()) {
+                SceneManager::SaveScene(Editor::activeScene, sceneName);
+            }
+            else {
                 ImGui::OpenPopup("Error");
             }
         }

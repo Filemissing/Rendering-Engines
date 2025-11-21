@@ -15,31 +15,31 @@ set(IMGUI_SOURCES
         imgui/imgui_widgets.cpp
         imgui/backends/imgui_impl_glfw.cpp
         imgui/backends/imgui_impl_opengl3.cpp
-        core/texture.cpp
-        core/texture.h
+        core/Assets/texture.cpp
+        core/Assets/texture.h
         main.cpp
         main.cpp
         main.cpp
         main.cpp
         main.cpp
-        "core/Camera.cpp"
-        "core/Camera.h"
+        "core/Components/Camera.cpp"
+        "core/Components/Camera.h"
         "core/GameObject.cpp"
         "core/GameObject.h"
-        "core/Component.cpp"
-        "core/Component.h"
-        "core/Transform.cpp"
-        "core/Transform.h"
-        "core/MeshRenderer.cpp"
-        "core/MeshRenderer.h"
-        core/PlayerController.cpp
-        core/PlayerController.h
-        core/Material.cpp
-        core/Material.h
-        core/Scene.cpp
-        core/Scene.h
-        core/RenderSettings.cpp
-        core/RenderSettings.h
+        "core/Components/Component.cpp"
+        "core/Components/Component.h"
+        "core/Components/Transform.cpp"
+        "core/Components/Transform.h"
+        "core/Components/MeshRenderer.cpp"
+        "core/Components/MeshRenderer.h"
+        core/Components/PlayerController.cpp
+        core/Components/PlayerController.h
+        core/Assets/Material.cpp
+        core/Assets/Material.h
+        core/Assets/Scene.cpp
+        core/Assets/Scene.h
+        core/Assets/RenderSettings.cpp
+        core/Assets/RenderSettings.h
         editor/EditorWindows/EditorWindow.cpp
         editor/EditorWindows/EditorWindow.h
         editor/Editor.cpp
@@ -56,17 +56,19 @@ set(IMGUI_SOURCES
         core/ComponentFactory.h
         editor/EditorWindows/SceneLoader.cpp
         editor/EditorWindows/SceneLoader.h
+        core/Components/Light.cpp
+        core/Components/Light.h
 )
 
 add_executable(RawEngine main.cpp
         ${IMGUI_SOURCES}
         core/assimpLoader.cpp
         core/assimpLoader.h
-        core/mesh.cpp
-        core/mesh.h
+        core/Assets/mesh.cpp
+        core/Assets/mesh.h
         core/vertex.h
-        core/model.cpp
-        core/model.h
+        core/Assets/model.cpp
+        core/Assets/model.h
         main.cpp
 )
 

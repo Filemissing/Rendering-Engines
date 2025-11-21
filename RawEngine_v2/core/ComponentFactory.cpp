@@ -5,7 +5,7 @@
 #include "ComponentFactory.h"
 
 namespace core {
-    Component* ComponentFactory::Create(const std::string& name) {
-        return GetComponentRegistry()[name]();
+    Component* ComponentFactory::Create(const std::string& name, GameObject* gameObject) {
+        return GetComponentRegistry()[name](gameObject);
     }
 }

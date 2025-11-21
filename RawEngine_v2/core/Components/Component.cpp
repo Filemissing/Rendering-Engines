@@ -3,9 +3,14 @@
 //
 
 #include "Component.h"
-#include "GameObject.h"
+#include "../GameObject.h"
 
 namespace core {
+    Component::Component(GameObject* gameObject) {
+        gameObject->AddComponent(this);
+    }
+
+
     void Component::Start() {}
     void Component::Update() {}
 
@@ -16,13 +21,9 @@ namespace core {
     }
     void Component::Deserialize(const nlohmann::json& json) {}
 
-    Component::~Component() {
-        gameObject = nullptr;
-    }
-
     // component registry function
-    std::unordered_map<std::string, std::function<Component*()>>& GetComponentRegistry() {
-        static std::unordered_map<std::string, std::function<Component*()>> reg;
+    std::unordered_map<std::string, std::function<Component*(GameObject*)>>& GetComponentRegistry() {
+        static std::unordered_map<std::string, std::function<Component*(GameObject*)>> reg;
         return reg;
     }
 }

@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <glad/glad.h>
-#include "vertex.h"
+#include "../vertex.h"
 
 namespace core {
     class Mesh {

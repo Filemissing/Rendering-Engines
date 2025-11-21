@@ -7,7 +7,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Camera.h"
+#include "../Components/Camera.h"
 
 
 namespace core {

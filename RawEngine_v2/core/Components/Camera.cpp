@@ -3,14 +3,13 @@
 //
 
 #include "Camera.h"
-#include "GameObject.h"
+#include "../GameObject.h"
+#include "../../editor/Editor.h"
 
 namespace core {
-    Camera* Camera::mainCamera = nullptr;
-
-    Camera::Camera(int width, int height) {
-        if (mainCamera == nullptr)
-            mainCamera = this;
+    Camera::Camera(int width, int height, GameObject* gameObject) {
+        if (gameObject->scene->mainCamera == nullptr)
+            gameObject->scene->mainCamera = this;
 
         this->width = width;
         this->height = height;
@@ -21,12 +20,16 @@ namespace core {
     }
 
     Camera::~Camera() {
-        if (mainCamera == this) mainCamera = nullptr;
+        if (GetMainCamera() == this)
+            gameObject->scene->mainCamera = nullptr;
     }
-
 
     glm::mat4 Camera::getView() {
         return glm::inverse(gameObject->transform.GetMatrix());
+    }
+
+    Camera* Camera::GetMainCamera() {
+        return editor::Editor::activeScene->mainCamera;
     }
 
     nlohmann::json Camera::Serialize() {

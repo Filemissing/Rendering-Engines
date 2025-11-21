@@ -28,9 +28,11 @@ namespace core {
         glm::vec3 forward;
 
         Transform* parent = nullptr; // backreference-do not serialize
+        Transform* root = nullptr;
         std::vector<Transform*> children;
 
         Transform();
+        Transform(GameObject*);
         void Translate(glm::vec3 translation);
         void Rotate(glm::vec3 axis, float degrees);
         void Scale(glm::vec3 scale);

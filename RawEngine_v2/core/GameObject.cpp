@@ -3,7 +3,7 @@
 //
 
 #include "GameObject.h"
-#include "Component.h"
+#include "Components/Component.h"
 #include "ComponentFactory.h"
 
 namespace core {
@@ -12,6 +12,9 @@ namespace core {
         transform.gameObject = this;
 
         components = std::vector<Component*>();
+    }
+    GameObject::GameObject(Scene* scene) : GameObject() {
+        if (scene) this->scene = scene;
     }
     GameObject::~GameObject() {
         for (auto component : components) {
@@ -23,7 +26,7 @@ namespace core {
         }
     }
 
-    Component* GameObject::AddComponent(core::Component* component) {
+    Component* GameObject::AddComponent(Component* component) {
         components.push_back(component);
         component->gameObject = this;
 
@@ -74,10 +77,8 @@ namespace core {
     void GameObject::Deserialize(nlohmann::json json) {
         name = json["name"];
         for (auto componentData: json["components"]) {
-            auto comp = ComponentFactory::Create(componentData["type"]);
+            auto comp = ComponentFactory::Create(componentData["type"], this);
             comp->Deserialize(componentData);
-            comp->gameObject = this;
-            components.push_back(comp);
         }
         transform.Deserialize(json["transform"]);
     }

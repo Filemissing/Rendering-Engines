@@ -8,14 +8,18 @@
 #include <string>
 #include <vector>
 #include <typeinfo>
-#include "Component.h"
-#include "Transform.h"
+
+#include "Components/Component.h"
+#include "Components/Transform.h"
 
 namespace core {
+    class Scene;
+
     class GameObject {
     public:
         std::string name = "new GameObject";
 
+        Scene* scene;
         Transform transform;
 
         std::vector<Component*> components;
@@ -24,6 +28,7 @@ namespace core {
         explicit GameObject(const std::string& name) : GameObject() { this->name = name; };
         explicit GameObject(Transform* parent) : GameObject() { parent->AddChild(&transform); };
         GameObject(const std::string& name, Transform* parent) : GameObject() { this->name = name; parent->AddChild(&transform); };
+        GameObject(Scene* scene);
         ~GameObject();
 
         Component* AddComponent(Component*);

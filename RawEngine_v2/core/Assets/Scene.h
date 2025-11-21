@@ -6,14 +6,16 @@
 #define RAWENGINE_SCENE_H
 #include <string>
 #include <vector>
-
-#include "GameObject.h"
+#include "../Components/Camera.h"
+#include "../GameObject.h"
 
 namespace core {
+
     class Scene {
     public:
         std::string name;
 
+        Camera* mainCamera = nullptr;
         std::vector<GameObject*> objects;
 
         void Start();

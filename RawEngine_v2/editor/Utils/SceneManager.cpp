@@ -16,20 +16,24 @@ using namespace core;
 namespace editor {
     std::string SceneManager::basePath = "Assets/Scenes/";
 
-    void SceneManager::SaveScene(const Scene* scene) {
+    void SceneManager::SaveScene(const Scene* scene, const std::string& sceneName) {
         json sceneJson = json::object();
-        sceneJson["name"] = scene->name;
+
+        std::string name;
+        if (sceneName != "") name = sceneName;
+        else name = scene->name;
+
+        sceneJson["name"] = name;
 
         for (GameObject* obj : scene->objects) {
             sceneJson["objects"].push_back(obj->Serialize());
         }
 
-        std::ofstream out(basePath + scene->name + ".json");
+        std::ofstream out(basePath + name + ".json");
         out << sceneJson.dump(4);
 
-        printf("successfully saved scene %s.json\n", scene->name.c_str() );
+        printf("successfully saved scene %s.json\n", name.c_str() );
     }
-
     Scene* SceneManager::LoadScene(const std::string& name) {
         auto path = basePath + name + ".json";
         if (!std::filesystem::exists(path)) {
@@ -42,7 +46,7 @@ namespace editor {
         Scene* scene = new Scene(sceneJson["name"]);
 
         for (auto object : sceneJson["objects"]) {
-            GameObject* gameObject = new GameObject(object["name"]);
+            auto* gameObject = new GameObject(scene);
             gameObject->Deserialize(object);
             scene->objects.push_back(gameObject);
         }
@@ -51,4 +55,14 @@ namespace editor {
 
         return scene;
     }
+
+    void SceneManager::DestoryActiveScene() {
+        delete Editor::activeScene;
+    }
+    void SceneManager::SetActiveScene(Scene* scene) {
+        DestoryActiveScene();
+
+        Editor::activeScene = scene;
+    }
+
 } // editor

@@ -8,6 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Component.h"
+#include "../GameObject.h"
 
 namespace core {
     class Camera : public Component {
@@ -15,15 +16,15 @@ namespace core {
         int width, height;
 
     public:
-        static Camera* mainCamera;
-
         glm::mat4 getView();
         glm::mat4 projection;
 
         Camera() : Camera(1, 1) {}
-        Camera(int width, int height);
+        explicit Camera(GameObject* gameObject) : Camera(1, 1, gameObject) {gameObject->AddComponent(this);};
+        Camera(int width, int height, GameObject* gameObject = nullptr);
+        ~Camera() override;
 
-        ~Camera();
+        static Camera* GetMainCamera();
 
         nlohmann::json Serialize() override;
         void Deserialize(const nlohmann::json&) override;

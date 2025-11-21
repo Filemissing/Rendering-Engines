@@ -4,14 +4,17 @@
 
 #ifndef RAWENGINE_SCENEMANAGER_H
 #define RAWENGINE_SCENEMANAGER_H
-#include "../../core/Scene.h"
+#include "../../core/Assets/Scene.h"
 
 namespace editor {
     class SceneManager {
     public:
         static std::string basePath;
-        static void SaveScene(const core::Scene* scene);
+        static void SaveScene(const core::Scene* scene, const std::string& sceneName = "");
         static core::Scene* LoadScene(const std::string& name);
+
+        static void DestoryActiveScene();
+        static void SetActiveScene(core::Scene* scene);
     };
 } // editor
 

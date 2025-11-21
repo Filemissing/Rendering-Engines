@@ -24,14 +24,21 @@ namespace core {
 
     bool Scene::AddGameObject(GameObject *obj) {
         if (!obj) return false;
+        if (obj->scene != nullptr) {
+            printf("object is already part of a different scene");
+            return false;
+        }
+
         auto it = std::find(objects.begin(), objects.end(), obj);
         if (it == objects.end()) {
+            obj->scene = this;
+            obj->transform.root = &obj->transform;
             objects.push_back(obj);
             return true;
         }
         return false;
     }
-    void Scene::RemoveGameObject(core::GameObject* obj) {
+    void Scene::RemoveGameObject(GameObject* obj) {
         objects.erase(std::remove(objects.begin(), objects.end(), obj), objects.end());
     }
     void Scene::RemoveAndDeleteGameObject(GameObject* obj) {

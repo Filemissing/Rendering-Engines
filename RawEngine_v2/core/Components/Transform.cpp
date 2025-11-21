@@ -2,11 +2,11 @@
 // Created by micha on 17/10/2025.
 //
 
-#include "Transform.h"
+#include "./Transform.h"
 
 #include <glm/ext/matrix_transform.hpp>
 
-#include "GameObject.h"
+#include "../GameObject.h"
 
 
 namespace core {
@@ -18,6 +18,10 @@ namespace core {
 
         RecalculateMatrix();
     }
+    Transform::Transform(GameObject* gameObject) : Transform() {
+        gameObject->AddComponent(this);
+    }
+
 
     void Transform::Translate(glm::vec3 translation) {
         position += translation;
@@ -49,6 +53,8 @@ namespace core {
         child->DetachFromParent();
 
         child->parent = this;
+        child->root = this->root;
+        child->gameObject->scene = gameObject->scene;
         children.push_back(child);
         return true;
     }
@@ -62,6 +68,7 @@ namespace core {
     }
     void Transform::DetachFromParent() {
         if (parent) parent->RemoveChild(this);
+        root = this;
     }
 
     // private
@@ -120,7 +127,7 @@ namespace core {
         RecalculateMatrix();
 
         for (auto child : json["children"]) {
-            GameObject* childGameObject = new GameObject();
+            GameObject* childGameObject = new GameObject(gameObject->scene);
             childGameObject->Deserialize(child);
             AddChild(&childGameObject->transform);
         }

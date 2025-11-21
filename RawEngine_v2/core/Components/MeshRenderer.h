@@ -6,8 +6,9 @@
 #define RAWENGINE_MESHRENDERER_H
 
 #include "Component.h"
-#include "Material.h"
-#include "model.h"
+#include "../Assets/Material.h"
+#include "../Assets/model.h"
+#include "../GameObject.h"
 
 namespace core {
     class MeshRenderer : public Component {
@@ -18,7 +19,9 @@ namespace core {
 
     public:
         MeshRenderer() : model(nullptr), material(nullptr) {}
+        explicit MeshRenderer(GameObject* gameObject) : MeshRenderer() {gameObject->AddComponent(this);};
         MeshRenderer(Model* model, Material* material);
+        ~MeshRenderer() override;
 
         Model* GetModel() const;
         Material* GetMaterial() const;

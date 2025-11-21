@@ -6,9 +6,9 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
-#include "GameObject.h"
+#include "../GameObject.h"
 #include "imgui.h"
-#include "../editor/Editor.h"
+#include "../../editor/Editor.h"
 
 
 namespace core {

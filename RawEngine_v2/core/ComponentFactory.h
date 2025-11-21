@@ -4,12 +4,12 @@
 
 #ifndef RAWENGINE_COMPONENTFACTORY_H
 #define RAWENGINE_COMPONENTFACTORY_H
-#include "Component.h"
+#include "Components/Component.h"
 
 namespace core {
     class ComponentFactory {
     public:
-        static Component* Create(const std::string &);
+        static Component* Create(const std::string &, GameObject*);
     };
 }
 

@@ -5,6 +5,7 @@
 #ifndef RAWENGINE_PLAYERCONTROLLER_H
 #define RAWENGINE_PLAYERCONTROLLER_H
 #include "Component.h"
+#include "../GameObject.h"
 
 namespace core {
     class PlayerController : public Component {
@@ -13,6 +14,9 @@ namespace core {
     public:
         float moveSpeed = 5.0f;
         float rotateSpeed = 100.0f;
+
+        PlayerController() = default;
+        PlayerController(GameObject* gameObject) : PlayerController() {gameObject->AddComponent(this);};
 
         void Update() override;
 

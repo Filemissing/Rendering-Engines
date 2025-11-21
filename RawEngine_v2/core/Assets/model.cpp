@@ -1,4 +1,4 @@
-#include "model.h"
+#include "./model.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace core {
