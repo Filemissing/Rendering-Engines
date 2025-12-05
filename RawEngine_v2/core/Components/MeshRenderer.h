@@ -14,9 +14,6 @@ namespace core {
     class MeshRenderer : public Component {
         Model* model;
         Material* material;
-
-        void Render();
-
     public:
         MeshRenderer() : model(nullptr), material(nullptr) {}
         explicit MeshRenderer(GameObject* gameObject) : MeshRenderer() {gameObject->AddComponent(this);};
@@ -26,7 +23,7 @@ namespace core {
         Model* GetModel() const;
         Material* GetMaterial() const;
 
-        void Update() override;
+        void Render();
 
         nlohmann::json Serialize() override;
         void Deserialize(const nlohmann::json&) override;

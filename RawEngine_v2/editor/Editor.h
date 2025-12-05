@@ -8,10 +8,12 @@
 #include "EditorWindows/EditorWindow.h"
 
 #include <vector>
+#include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
 
 #include "../core/Assets/Scene.h"
+#include "EditorWindows/ViewPort.h"
 
 namespace editor {
     class Editor {
@@ -21,9 +23,16 @@ namespace editor {
         static void FramebufferSizeCallback(GLFWwindow *window, int width, int height);
         static bool InitGLFW(GLFWwindow*& outWindow);
         static void InitImGui();
+        static void DrawDockSpace();
         static void InitImGuiStyles();
 
     public:
+        static float m_windowBorderSize;
+        static float m_windowRoundingValue;
+        static ImVec2 m_windowPadding;
+        static ImGuiID m_dockspaceId;
+
+        static editorWindows::ViewPort* viewPort;
         static std::vector<editorWindows::EditorWindow*> windows;
         static GLFWwindow* mainWindow;
 
@@ -38,9 +47,13 @@ namespace editor {
         static bool Init();
 
         static void Draw();
+        static void DrawMainMenu();
         static void EndFrame();
 
         static glm::vec2 GetMainWindowSize();
+        static glm::vec2 GetViewPortSize();
+
+        static GLuint GetFrameBuffer();
 
         static void Shutdown();
     };

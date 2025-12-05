@@ -60,6 +60,7 @@ namespace core {
 
         void Start();
         void Update();
+        void Render();
 
         nlohmann::json Serialize();
         void Deserialize(nlohmann::json json);

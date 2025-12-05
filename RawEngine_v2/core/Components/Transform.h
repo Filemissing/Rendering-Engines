@@ -37,6 +37,10 @@ namespace core {
         void Rotate(glm::vec3 axis, float degrees);
         void Scale(glm::vec3 scale);
 
+        void SetPosition(glm::vec3 newPosition);
+        void SetRotation(glm::vec3 newRotation);
+        void SetScale(glm::vec3 newScale);
+
         glm::mat4 GetMatrix() const;
 
         const std::vector<Transform*>& GetChildren() const { return children; }

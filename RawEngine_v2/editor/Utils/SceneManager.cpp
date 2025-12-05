@@ -25,14 +25,19 @@ namespace editor {
 
         sceneJson["name"] = name;
 
+        sceneJson["ambientColor"]["r"] = scene->ambientColor.r;
+        sceneJson["ambientColor"]["g"] = scene->ambientColor.g;
+        sceneJson["ambientColor"]["b"] = scene->ambientColor.b;
+        sceneJson["ambientColor"]["a"] = scene->ambientColor.a;
+
+        sceneJson["ambientIntensity"] = scene->ambientIntensity;
+
         for (GameObject* obj : scene->objects) {
             sceneJson["objects"].push_back(obj->Serialize());
         }
 
         std::ofstream out(basePath + name + ".json");
         out << sceneJson.dump(4);
-
-        printf("successfully saved scene %s.json\n", name.c_str() );
     }
     Scene* SceneManager::LoadScene(const std::string& name) {
         auto path = basePath + name + ".json";
@@ -43,15 +48,16 @@ namespace editor {
         std::ifstream in(path);
         json sceneJson = json::parse(in);
 
-        Scene* scene = new Scene(sceneJson["name"]);
+        auto* scene = new Scene(sceneJson["name"]);
 
-        for (auto object : sceneJson["objects"]) {
+        json color = sceneJson["ambientColor"];
+        scene->ambientColor = glm::vec4(color["r"], color["g"], color["b"], color["a"]);
+
+        for (const auto& object : sceneJson["objects"]) {
             auto* gameObject = new GameObject(scene);
             gameObject->Deserialize(object);
             scene->objects.push_back(gameObject);
         }
-
-        printf("Loaded scene %s \n", name.c_str());
 
         return scene;
     }

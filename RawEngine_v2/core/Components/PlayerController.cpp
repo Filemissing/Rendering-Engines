@@ -17,7 +17,7 @@ namespace core {
         glm::vec2 deltaMouse = editor::Editor::deltaMouse;
         float deltaTime = editor::Editor::deltaTime;
 
-        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS && !ImGui::GetIO().WantCaptureMouse) {
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS && editor::Editor::viewPort->isHovered) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
             if (isMoving) {

@@ -14,15 +14,19 @@ namespace core {
     class Camera : public Component {
     private:
         int width, height;
+        glm::mat4 projection;
 
     public:
-        glm::mat4 getView();
-        glm::mat4 projection;
+        glm::mat4 GetView() const;
+        glm::mat4 GetProjection() const;
+        void RecalculateProjection(float width, float height);
 
         Camera() : Camera(1, 1) {}
         explicit Camera(GameObject* gameObject) : Camera(1, 1, gameObject) {gameObject->AddComponent(this);};
         Camera(int width, int height, GameObject* gameObject = nullptr);
         ~Camera() override;
+
+        void Update() override;
 
         static Camera* GetMainCamera();
 

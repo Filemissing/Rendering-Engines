@@ -1,4 +1,11 @@
 {
+    "ambientColor": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+    },
+    "ambientIntensity": 0.1,
     "name": "Scene 1",
     "objects": [
         {
@@ -18,9 +25,77 @@
             "transform": {
                 "children": [],
                 "position": {
+                    "x": -9.064077377319336,
+                    "y": 2.04518985748291,
+                    "z": 8.455693244934082
+                },
+                "rotation": {
+                    "x": -9.374404907226563,
+                    "y": -53.376155853271484,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "material": {
+                        "fragment": "Assets/shaders/lit.frag",
+                        "metallic": 0.0,
+                        "smoothness": 16.0,
+                        "vertex": "Assets/shaders/vertex.vert"
+                    },
+                    "model": "Assets/models/quad.obj",
+                    "type": "MeshRenderer"
+                }
+            ],
+            "name": "CMGaTo",
+            "transform": {
+                "children": [],
+                "position": {
                     "x": 0.0,
                     "y": 0.0,
-                    "z": 10.0
+                    "z": -2.5
+                },
+                "rotation": {
+                    "x": 90.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 6.0,
+                    "y": 2.0,
+                    "z": 6.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "material": {
+                        "fragment": "Assets/shaders/lit.frag",
+                        "metallic": 0.38600000739097595,
+                        "smoothness": 200.0,
+                        "vertex": "Assets/shaders/vertex.vert"
+                    },
+                    "model": "Assets/models/nonormalmonkey.obj",
+                    "type": "MeshRenderer"
+                }
+            ],
+            "name": "Suzanne",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
                 },
                 "rotation": {
                     "x": 0.0,
@@ -38,64 +113,69 @@
         {
             "components": [
                 {
-                    "material": {
-                        "fragment": "shaders/texture.fs",
-                        "vertex": "shaders/modelVertex.vs"
+                    "attenuation": 0.30000001192092896,
+                    "color": {
+                        "a": 1.0,
+                        "b": 0.800000011920929,
+                        "g": 0.30000001192092896,
+                        "r": 0.8999999761581421
                     },
-                    "model": "models/quad.obj",
-                    "type": "MeshRenderer"
+                    "lightType": 1,
+                    "type": "Light"
                 }
             ],
-            "name": "CMGaTo",
+            "name": "PointLight",
             "transform": {
-                "children": [
-                    {
-                        "components": [
-                            {
-                                "material": {
-                                    "fragment": "shaders/fragment.fs",
-                                    "vertex": "shaders/modelVertex.vs"
-                                },
-                                "model": "models/nonormalmonkey.obj",
-                                "type": "MeshRenderer"
-                            }
-                        ],
-                        "name": "Suzanne",
-                        "transform": {
-                            "children": [],
-                            "position": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "rotation": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0,
-                                "z": 1.0
-                            },
-                            "type": "Transform"
-                        }
-                    }
-                ],
+                "children": [],
                 "position": {
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": -2.5
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
                 },
                 "rotation": {
-                    "x": 90.0,
+                    "x": 0.0,
                     "y": 0.0,
                     "z": 0.0
                 },
                 "scale": {
-                    "x": 6.0,
-                    "y": 2.0,
-                    "z": 6.0
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "attenuation": 1.0,
+                    "color": {
+                        "a": 1.0,
+                        "b": 0.800000011920929,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "lightType": 0,
+                    "type": "Light"
+                }
+            ],
+            "name": "DirectionalLight",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "rotation": {
+                    "x": 35.0,
+                    "y": 110.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
                 },
                 "type": "Transform"
             }

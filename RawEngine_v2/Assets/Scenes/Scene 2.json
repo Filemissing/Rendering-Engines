@@ -1,5 +1,5 @@
 {
-    "name": "Scene 1",
+    "name": "Scene 2",
     "objects": [
         {
             "components": [
@@ -39,10 +39,12 @@
             "components": [
                 {
                     "material": {
-                        "fragment": "shaders/texture.fs",
-                        "vertex": "shaders/modelVertex.vs"
+                        "fragment": "Assets/shaders/lit.frag",
+                        "vertex": "Assets/shaders/vertex.vert",
+                        "metallic": 0,
+                        "smoothness": 16
                     },
-                    "model": "models/quad.obj",
+                    "model": "Assets/models/quad.obj",
                     "type": "MeshRenderer"
                 }
             ],
@@ -63,6 +65,110 @@
                     "x": 6.0,
                     "y": 2.0,
                     "z": 6.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "material": {
+                        "fragment": "Assets/shaders/lit.frag",
+                        "vertex": "Assets/shaders/vertex.vert",
+                        "metallic": 1,
+                        "smoothness": 32
+                    },
+                    "model": "Assets/models/sphere.obj",
+                    "type": "MeshRenderer"
+                }
+            ],
+            "name": "Sphere",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "r": 0.8,
+                        "g": 0.5,
+                        "b": 0.7,
+                        "a": 1.0
+                    },
+                    "lightType": 1,
+                    "attenuation": 1.0,
+                    "type": "Light"
+                }
+            ],
+            "name": "PointLight",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 0.8,
+                        "a": 1.0
+                    },
+                    "lightType": 0,
+                    "attenuation": 1.0,
+                    "type": "Light"
+                }
+            ],
+            "name": "DirectionalLight",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "rotation": {
+                    "x": 35.0,
+                    "y": 110.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
                 },
                 "type": "Transform"
             }

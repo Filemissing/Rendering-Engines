@@ -6,6 +6,8 @@
 
 namespace core {
     Component* ComponentFactory::Create(const std::string& name, GameObject* gameObject) {
-        return GetComponentRegistry()[name](gameObject);
+        auto obj = GetComponentRegistry()[name](gameObject);
+        obj->Start();
+        return obj;
     }
 }

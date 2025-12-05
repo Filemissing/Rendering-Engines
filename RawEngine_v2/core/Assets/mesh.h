@@ -2,10 +2,12 @@
 
 #include <vector>
 #include <glad/glad.h>
+
+#include "../Asset.h"
 #include "../vertex.h"
 
 namespace core {
-    class Mesh {
+    class Mesh : public Asset {
         std::vector<Vertex> vertices;
         std::vector<GLuint> indices;
         GLuint VAO;

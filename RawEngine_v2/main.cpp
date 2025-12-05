@@ -33,11 +33,6 @@ using namespace editor;
 #include <imgui_impl_opengl3.h>
 #endif
 
-void processInput(GLFWwindow *window) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
-
 int main() {
     // Setup
     if (!Editor::Init()) {
@@ -50,24 +45,36 @@ int main() {
     auto* scene1 = SceneManager::LoadScene("Scene 1");
     Editor::activeScene = scene1;
 
-    Texture CMGaToTexture("textures/CMGaTo_crop.png");
-    scene1->FindGameObjectByName("CMGaTo")->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture("text", CMGaToTexture.getId());
+    Texture CMGaToTexture("Assets/textures/CMGaTo_crop.png");
 
-    while (!glfwWindowShouldClose(editor::Editor::mainWindow)) {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Texture MarbleTexture("Assets/textures/Marble.png");
 
+    Texture MetalTexture("Assets/textures/Metal.png");
+
+    while (!glfwWindowShouldClose(Editor::mainWindow)) {
         // calculate delta mouse
-        double mouseXPos, mouseYPos;
-        glfwGetCursorPos(Editor::mainWindow, &mouseXPos, &mouseYPos);
+        double mouseXPos, mouseYPos; glfwGetCursorPos(Editor::mainWindow, &mouseXPos, &mouseYPos);
         double deltaX = mouseXPos - Editor::oldMousePos.x, deltaY = mouseYPos - Editor::oldMousePos.y;
         Editor::deltaMouse = glm::vec2(deltaX, deltaY);
 
         //  draw the editor
         Editor::Draw();
 
-        processInput(Editor::mainWindow);
-
-        //suzanne->transform.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 100.0f * Editor::deltaTime);
+        // set material values
+        if (auto CMGaTo = Editor::activeScene->FindGameObjectByName("CMGaTo")) {
+            CMGaTo->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture("_MainTex", CMGaToTexture.getId());
+        }
+        if (auto Suzanne = Editor::activeScene->FindGameObjectByName("Suzanne")) {
+            Suzanne->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture("_MainTex", MarbleTexture.getId());
+            ImGui::Begin("temp");
+            auto material = Suzanne->GetComponent<MeshRenderer>()->GetMaterial();
+            ImGui::SliderFloat("smoothness", &material->smoothness, 1.0f, 300.0f);
+            ImGui::SliderFloat("metallic", &material->metallic, 0.0f, 1.0f);
+            ImGui::End();
+        }
+        if (auto Sphere = Editor::activeScene->FindGameObjectByName("Sphere")) {
+            Sphere->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture("_MainTex", MetalTexture.getId());
+        }
 
         if (Editor::activeScene != nullptr)
             Editor::activeScene->Update();

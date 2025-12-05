@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "Components/Component.h"
 #include "ComponentFactory.h"
+#include "Components/MeshRenderer.h"
 
 namespace core {
     GameObject::GameObject() {
@@ -59,6 +60,17 @@ namespace core {
 
         for (auto child : transform.children) {
             child->gameObject->Update();
+        }
+    }
+    void GameObject::Render() {
+        for (auto comp : components) {
+            if (!comp) continue;
+            auto* mr = dynamic_cast<MeshRenderer*>(comp);
+            if (mr) mr->Render();
+        }
+
+        for (auto child : transform.children) {
+            child->gameObject->Render();
         }
     }
 

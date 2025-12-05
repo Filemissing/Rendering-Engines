@@ -59,6 +59,16 @@ set(IMGUI_SOURCES
         editor/EditorWindows/SceneLoader.h
         core/Components/Light.cpp
         core/Components/Light.h
+        core/AssetLibrary.cpp
+        core/AssetLibrary.h
+        core/Asset.cpp
+        core/Asset.h
+        editor/EditorWindows/ViewPort.cpp
+        editor/EditorWindows/ViewPort.h
+        editor/EditorWindows/TransformWindow.cpp
+        editor/EditorWindows/TransformWindow.h
+        core/Renderer.cpp
+        core/Renderer.h
 )
 
 add_executable(RawEngine main.cpp
@@ -76,25 +86,25 @@ add_executable(RawEngine main.cpp
 add_custom_command(
         TARGET RawEngine PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/shaders/
-        ${CMAKE_CURRENT_BINARY_DIR}/shaders/)
+        ${CMAKE_SOURCE_DIR}/Assets/shaders/
+        ${CMAKE_CURRENT_BINARY_DIR}/Assets/shaders/)
 
 add_custom_command(
         TARGET RawEngine PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/models/
-        ${CMAKE_CURRENT_BINARY_DIR}/models/)
+        ${CMAKE_SOURCE_DIR}/Assets/models/
+        ${CMAKE_CURRENT_BINARY_DIR}/Assets/models/)
 
 add_custom_command(
         TARGET RawEngine PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/textures/
-        ${CMAKE_CURRENT_BINARY_DIR}/textures/)
+        ${CMAKE_SOURCE_DIR}/Assets/textures/
+        ${CMAKE_CURRENT_BINARY_DIR}/Assets/textures/)
 
 add_custom_target(copy_shaders ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/shaders
-        ${CMAKE_CURRENT_BINARY_DIR}/shaders
+        ${CMAKE_SOURCE_DIR}/Assets/shaders
+        ${CMAKE_CURRENT_BINARY_DIR}/Assets/shaders
         DEPENDS ${SHADER_FILES}
         COMMENT "Copying shaders..."
 )

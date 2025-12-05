@@ -7,17 +7,21 @@
 #include <string>
 #include "imgui.h"
 
-
 namespace editor::editorWindows {
     class EditorWindow {
-        virtual void OnEnable();
-        virtual void OnGUI();
     public:
         std::string name = "new Window";
+        bool isEnabled = true;
+
+        bool hasFocus = false;
+        bool isHovered = false;
 
         void Draw();
 
-        explicit EditorWindow(const std::string& name);
+        virtual void OnEnable() {};
+        virtual void OnGUI() {};
+
+        explicit EditorWindow(const std::string& name) : name(name) {};
         virtual ~EditorWindow() = default;
     };
 } // editor

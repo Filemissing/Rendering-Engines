@@ -10,9 +10,13 @@
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 
+#include "texture.h"
+#include "../Asset.h"
+
 
 namespace core {
-    class Material {
+    class Material : public Asset {
+        static Texture* defaultTexture;
         GLuint shaderProgram;
         std::unordered_map<std::string, GLuint> textures;
         std::unordered_map<std::string, glm::vec4> vec4Uniforms;
@@ -21,8 +25,10 @@ namespace core {
 
     public:
         std::string vertexShaderPath, fragmentShaderPath;
+        float smoothness = 16.0f;
+        float metallic = 0.5f;
 
-        Material(GLuint shaderProgram) : shaderProgram(shaderProgram) {}
+        explicit Material(GLuint shaderProgram) : shaderProgram(shaderProgram) {}
         Material(const std::string &vertexShaderPath, const std::string &fragmentShaderPath);
         ~Material();
 

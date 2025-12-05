@@ -6,8 +6,10 @@
 #define RAWENGINE_RENDERSETTINGS_H
 #include <glad/glad.h>
 
+#include "../Asset.h"
 
-class RenderSettings {
+
+class RenderSettings : public core::Asset{
 public:
     static void Init() {
         glEnable(GL_DEPTH_TEST);

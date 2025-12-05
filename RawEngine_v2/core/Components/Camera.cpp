@@ -13,10 +13,6 @@ namespace core {
 
         this->width = width;
         this->height = height;
-
-        projection = glm::perspective(glm::radians(45.0f),
-            static_cast<float>(width) / static_cast<float>(height),
-            0.1f, 100.0f);
     }
 
     Camera::~Camera() {
@@ -24,8 +20,23 @@ namespace core {
             gameObject->scene->mainCamera = nullptr;
     }
 
-    glm::mat4 Camera::getView() {
+    glm::mat4 Camera::GetView() const {
         return glm::inverse(gameObject->transform.GetMatrix());
+    }
+
+    glm::mat4 Camera::GetProjection() const {
+        return projection;
+    }
+
+    void Camera::RecalculateProjection(float width, float height) {
+        projection = glm::perspective(glm::radians(45.0f),
+            width / height,
+            0.1f, 100.0f);
+    }
+
+
+    void Camera::Update() {
+
     }
 
     Camera* Camera::GetMainCamera() {
@@ -42,9 +53,5 @@ namespace core {
     void Camera::Deserialize(const nlohmann::json& json) {
         width = json["width"];
         height = json["height"];
-        // recalculate projection after height and width are changed
-        projection = glm::perspective(glm::radians(45.0f),
-            static_cast<float>(width) / static_cast<float>(height),
-            0.1f, 100.0f);
     }
 }

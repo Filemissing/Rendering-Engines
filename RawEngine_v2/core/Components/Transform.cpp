@@ -39,6 +39,22 @@ namespace core {
         RecalculateMatrix();
     }
 
+    void Transform::SetPosition(glm::vec3 newPosition) {
+        position = newPosition;
+
+        RecalculateMatrix();
+    }
+    void Transform::SetRotation(glm::vec3 newRotation) {
+        rotation = newRotation;
+
+        RecalculateMatrix();
+    }
+    void Transform::SetScale(glm::vec3 newScale) {
+        scale = newScale;
+
+        RecalculateMatrix();
+    }
+
     glm::mat4 Transform::GetMatrix() const {
         return matrix;
     }
@@ -83,6 +99,10 @@ namespace core {
         newMatrix = glm::rotate(newMatrix, glm::radians(rotation.z), glm::vec3(0, 0, 1));
 
         newMatrix = glm::scale(newMatrix, scale);
+
+        if (parent != nullptr) {
+            newMatrix = newMatrix * parent->GetMatrix();
+        }
 
         matrix = newMatrix;
 

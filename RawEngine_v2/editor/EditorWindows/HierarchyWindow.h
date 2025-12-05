@@ -18,12 +18,13 @@ namespace editor::editorWindows {
         // inherit constructors
         using EditorWindow::EditorWindow;
 
-        void OnEnable() override;
-
         // stores foldoutStates of objects
         std::unordered_map<core::GameObject*, UIElements::HierarchyNode> hierarchyState;
 
         void DrawHierarchyNode(UIElements::HierarchyNode& node);
+
+    public:
+        void OnEnable() override;
         void OnGUI() override;
     };
 }

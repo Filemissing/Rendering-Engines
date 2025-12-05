@@ -6,7 +6,7 @@
 #include "mesh.h"
 
 namespace core {
-    class Model {
+    class Model : public Asset {
     private:
         std::vector<Mesh> meshes;
         glm::mat4 modelMatrix;

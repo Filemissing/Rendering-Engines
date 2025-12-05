@@ -3,6 +3,7 @@
 //
 
 #include "Scene.h"
+#include "../Components/MeshRenderer.h"
 
 namespace core {
     void Scene::Start() {
@@ -13,6 +14,12 @@ namespace core {
     void Scene::Update() {
         for (auto object : objects) {
             object->Update();
+        }
+    }
+
+    void Scene::Render() {
+        for (auto* obj : objects) {
+            obj->Render();
         }
     }
 

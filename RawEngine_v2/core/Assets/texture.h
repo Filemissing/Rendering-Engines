@@ -3,9 +3,11 @@
 #include <glad/glad.h>
 #include <string>
 
+#include "../Asset.h"
+
 namespace core {
 
-    class Texture {
+    class Texture : public Asset {
     private:
         GLuint id;
 

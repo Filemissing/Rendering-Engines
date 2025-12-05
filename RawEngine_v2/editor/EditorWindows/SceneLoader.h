@@ -13,8 +13,8 @@ namespace editor::editorWindows {
 
         std::string sceneName;
 
+    public:
         void OnEnable() override;
-
         void OnGUI() override;
     };
 } // editor

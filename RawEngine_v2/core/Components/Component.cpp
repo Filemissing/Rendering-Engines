@@ -10,7 +10,6 @@ namespace core {
         gameObject->AddComponent(this);
     }
 
-
     void Component::Start() {}
     void Component::Update() {}
 

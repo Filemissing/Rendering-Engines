@@ -7,10 +7,14 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "../../editor/Editor.h"
 #include "../Components/Camera.h"
+#include "../Components/Light.h"
 
 
 namespace core {
+    Texture* Material::defaultTexture = nullptr;
+
     Material::Material(const std::string &vertexShaderPath, const std::string &fragmentShaderPath)
         : vertexShaderPath(vertexShaderPath), fragmentShaderPath(fragmentShaderPath) {
         const GLuint vertexShader = GenerateShader(vertexShaderPath, GL_VERTEX_SHADER);
@@ -37,8 +41,57 @@ namespace core {
         floatUniforms[name] = value;
     }
 
+    void UploadLights(GLuint shader, const std::vector<Light*>& lights)
+    {
+        glUseProgram(shader);
+
+        for (int i = 0; i < lights.size(); i++)
+        {
+            const Light* light = lights[i];
+
+            // Build uniform name dynamically
+            std::string base = "lights[" + std::to_string(i) + "].";
+
+            glUniform1i(glGetUniformLocation(shader, (base + "type").c_str()), light->lightType);
+
+            glUniform4fv(glGetUniformLocation(shader, (base + "color").c_str()),
+                         1, glm::value_ptr(light->color));
+
+            glUniform3fv(glGetUniformLocation(shader, (base + "position").c_str()),
+                         1, glm::value_ptr(light->gameObject->transform.position));
+
+            glUniform3fv(glGetUniformLocation(shader, (base + "rotation").c_str()),
+                         1, glm::value_ptr(light->gameObject->transform.forward));
+
+            glUniform1f(glGetUniformLocation(shader, (base + "attenuation").c_str()), light->attenuation);
+        }
+
+        GLint loc = glGetUniformLocation(shader, "lightsAmount");
+        if (loc == -1) return;
+        glUniform1i(loc, lights.size());
+    }
     void Material::Bind() {
         glUseProgram(shaderProgram);
+
+        if (textures.find("_MainTex") == textures.end()) {
+            if (defaultTexture == nullptr) defaultTexture = new Texture("Assets/textures/white.png");
+            this->SetTexture("_MainTex", defaultTexture->getId());
+        }
+
+        this->SetFloat("smoothness", this->smoothness);
+        this->SetFloat("metallic", this->metallic);
+
+        UploadLights(shaderProgram, editor::Editor::activeScene->lights);
+
+        this->SetVec4("ambientColor", editor::Editor::activeScene->ambientColor);
+        this->SetFloat("ambientIntensity", editor::Editor::activeScene->ambientIntensity);
+
+        { // bind viewDirection
+            GLint loc = glGetUniformLocation(shaderProgram, "cameraPos");
+            if (loc != -1) {
+                glUniform3fv(loc, 1, glm::value_ptr(Camera::GetMainCamera()->gameObject->transform.position));
+            }
+        }
 
         // upload uniforms
         for (auto& [name, value] : vec4Uniforms) {
@@ -81,7 +134,6 @@ namespace core {
     }
 
     GLuint Material::GenerateShader(const std::string &shaderPath, GLuint shaderType) {
-        printf("Loading shader: %s\n", shaderPath.c_str());
         const std::string shaderText = ReadFileToString(shaderPath);
         const GLuint shader = glCreateShader(shaderType);
         const char *s_str = shaderText.c_str();

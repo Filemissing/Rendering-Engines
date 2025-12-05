@@ -7,22 +7,12 @@
 #include "imgui.h"
 
 namespace editor::editorWindows {
-    EditorWindow::EditorWindow(const std::string& name) : name(name) {
-        OnEnable();
-    }
-
-    void EditorWindow::OnEnable() {
-        // inherited
-    }
-
     void EditorWindow::Draw() {
-        ImGui::Begin(name.c_str());
-        OnGUI();
+        if (!isEnabled) return;
+
+        if (ImGui::Begin(name.c_str(), &isEnabled)) {
+            OnGUI();
+        }
         ImGui::End();
     }
-
-    void EditorWindow::OnGUI() {
-        // inherited
-    }
-
 }
