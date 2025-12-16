@@ -2,10 +2,13 @@
 out vec4 FragColor;
 in vec3 fNor;
 in vec2 uv;
+
 uniform sampler2D _MainTex;
+uniform sampler2D _DepthTex;
 
 void main()
 {
     vec4 color = texture(_MainTex, uv);
-    FragColor = -vec4(color.r, color.g, color.b, 1);
+    FragColor = 1 - color;
+    FragColor.a = 1;
 }

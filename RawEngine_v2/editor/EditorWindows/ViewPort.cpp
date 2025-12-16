@@ -83,10 +83,6 @@ namespace editor::editorWindows {
         GLuint fb = framebuffer();
         if (m_vpWidth > 0 && m_vpHeight > 0 && fb != 0) {
 
-            glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-            glDisable(GL_DEPTH_TEST);
-            glDisable(GL_CULL_FACE);
-
             // render the scene into the FBO
             if (Editor::activeScene) {
                 m_renderer->RenderScene(Editor::activeScene, fb, m_colorTex, m_vpWidth, m_vpHeight);
@@ -100,7 +96,7 @@ namespace editor::editorWindows {
 
         // Draw the color attachment (flip v)
         if (m_colorTex) {
-            ImGui::Image((ImTextureID)(intptr_t)m_colorTex, avail, ImVec2(0, 0), ImVec2(1, 1));
+            ImGui::Image((ImTextureID)(intptr_t)m_colorTex, avail, ImVec2(0, 1), ImVec2(1, 0));
         }
 
         ImGui::PopStyleVar();

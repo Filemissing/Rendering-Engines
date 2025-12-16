@@ -86,6 +86,12 @@ add_executable(RawEngine main.cpp
 add_custom_command(
         TARGET RawEngine PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/Assets/Scenes/
+        ${CMAKE_CURRENT_BINARY_DIR}/Assets/Scenes/)
+
+add_custom_command(
+        TARGET RawEngine PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/Assets/shaders/
         ${CMAKE_CURRENT_BINARY_DIR}/Assets/shaders/)
 

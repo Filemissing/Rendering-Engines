@@ -66,11 +66,11 @@ int main() {
         }
         if (auto Suzanne = Editor::activeScene->FindGameObjectByName("Suzanne")) {
             Suzanne->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture("_MainTex", MarbleTexture.getId());
-            ImGui::Begin("temp");
-            auto material = Suzanne->GetComponent<MeshRenderer>()->GetMaterial();
-            ImGui::SliderFloat("smoothness", &material->smoothness, 1.0f, 300.0f);
-            ImGui::SliderFloat("metallic", &material->metallic, 0.0f, 1.0f);
-            ImGui::End();
+            // ImGui::Begin("temp");
+            // auto material = Suzanne->GetComponent<MeshRenderer>()->GetMaterial();
+            // ImGui::SliderFloat("smoothness", &material->smoothness, 1.0f, 300.0f);
+            // ImGui::SliderFloat("metallic", &material->metallic, 0.0f, 1.0f);
+            // ImGui::End();
         }
         if (auto Sphere = Editor::activeScene->FindGameObjectByName("Sphere")) {
             Sphere->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture("_MainTex", MetalTexture.getId());

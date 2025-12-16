@@ -140,9 +140,9 @@ namespace editor {
         DrawDockSpace();
         DrawMainMenu();
 
-        for (auto window : windows) {
-            window->Draw();
-        }
+         for (auto window : windows) {
+             window->Draw();
+         }
 
         ImGui::End(); // end dockspace window
     }
@@ -167,6 +167,13 @@ namespace editor {
         if (ImGui::BeginMenu("Windows")) {
             for (auto window : windows) {
                 ImGui::Checkbox(window->name.c_str(), &window->isEnabled);
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("View")) {
+            if (ImGui::BeginMenu("Post Processing")) {
+                ImGui::Text("foo");
+                ImGui::EndMenu();
             }
             ImGui::EndMenu();
         }

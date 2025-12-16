@@ -10,6 +10,15 @@
 #include "Assets/Scene.h"
 
 namespace core {
+    struct PostProcessEffect {
+        PostProcessEffect(const std::string& name, Material* material);
+        ~PostProcessEffect();
+
+        std::string name;
+        bool enabled = true;
+        Material* material;
+    };
+
     class Renderer {
     public:
         Model* quadModel;
@@ -22,8 +31,7 @@ namespace core {
         GLuint ppTex[2];
         GLuint ppDepth[2];
 
-        std::vector<Material*> postProcessingEffects = std::vector<Material*>();
-        void ExecutePass(Material* material, GLuint input, GLuint output);
+        std::vector<PostProcessEffect*> postProcessingEffects = std::vector<PostProcessEffect*>();
         void RenderScene(Scene*& scene, const GLuint& finalFbo, const GLuint& finalTexture, int width, int height);
         void EnsureFboSized(int width, int height);
         void DestroyFbo();
