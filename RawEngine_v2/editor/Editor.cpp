@@ -172,7 +172,11 @@ namespace editor {
         }
         if (ImGui::BeginMenu("View")) {
             if (ImGui::BeginMenu("Post Processing")) {
-                ImGui::Text("foo");
+                if (viewPort) {
+                    for (auto pass : viewPort->GetRenderer()->postProcessingEffects) {
+                        ImGui::Checkbox(pass->name.c_str(), &pass->enabled);
+                    }
+                }
                 ImGui::EndMenu();
             }
             ImGui::EndMenu();

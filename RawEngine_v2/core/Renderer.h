@@ -10,22 +10,28 @@
 #include "Assets/Scene.h"
 
 namespace core {
+    struct PostProcessPass {
+        PostProcessPass(Material* material) : material(material) {}
+        Material* material;
+    };
     struct PostProcessEffect {
-        PostProcessEffect(const std::string& name, Material* material);
-        ~PostProcessEffect();
+        PostProcessEffect(const std::string& name, std::vector<PostProcessPass*> passes);
 
         std::string name;
         bool enabled = true;
-        Material* material;
+        std::vector<PostProcessPass*> passes;
     };
 
     class Renderer {
     public:
         Model* quadModel;
-        Material* defaultMaterial;
 
         Renderer();
         ~Renderer();
+
+        GLuint sceneFbo;
+        GLuint sceneColor;
+        GLuint sceneDepth;
 
         GLuint ppFbo[2];
         GLuint ppTex[2];

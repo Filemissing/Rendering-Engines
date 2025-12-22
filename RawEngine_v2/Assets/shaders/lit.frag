@@ -66,6 +66,8 @@ void main()
     }
 
     vec4 color = ambient + diffuse + specular;
+//    color *= 2;
+
 
 //    color = color / (color + vec4(1.0));
 //    color = pow(color, vec4(1.0/2.2));

@@ -23,6 +23,8 @@ namespace editor::editorWindows {
         int width() const { return m_vpWidth; }
         int height() const { return m_vpHeight; }
 
+        const core::Renderer* GetRenderer() const { return m_renderer; }
+
     private:
         void EnsureFboSized(int w, int h);
         void DestroyFbo();
