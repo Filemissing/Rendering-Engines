@@ -69,6 +69,8 @@ set(IMGUI_SOURCES
         editor/EditorWindows/TransformWindow.h
         core/Renderer.cpp
         core/Renderer.h
+        core/PostProcessing.cpp
+        core/PostProcessing.h
 )
 
 add_executable(RawEngine main.cpp

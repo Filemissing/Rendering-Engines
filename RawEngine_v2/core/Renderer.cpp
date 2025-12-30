@@ -9,50 +9,49 @@
 #include "../editor/Editor.h"
 
 namespace core {
-    PostProcessEffect::PostProcessEffect(const std::string& name, std::vector<PostProcessPass*> passes) : name(name), passes(passes) {}
-
     Renderer::Renderer() {
 
         // add effects to list
+        auto* blur_horizontal = new PostProcessPass(new Material(
+                        "Assets/shaders/PostProcessing/viewSpace.vert",
+                        "Assets/shaders/PostProcessing/blur_horizontal.frag"));
+        auto* blur_vertical = new PostProcessPass(new Material(
+                        "Assets/shaders/PostProcessing/viewSpace.vert",
+                        "Assets/shaders/PostProcessing/blur_vertical.frag"));
         postProcessingEffects.push_back(
             new PostProcessEffect("Bloom",
                 {
                     new PostProcessPass(new Material(
                         "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/bloom_threshold.frag")),
+                        "Assets/shaders/PostProcessing/bloom_threshold.frag"),
+                        {PostProcessingParameter("_Threshold", typeid(float), 1.0f)}),
+                    blur_horizontal,
+                    blur_vertical,
+                    blur_horizontal,
+                    blur_vertical,
+                    blur_horizontal,
+                    blur_vertical,
+                    blur_horizontal,
+                    blur_vertical,
+                    blur_horizontal,
+                    blur_vertical,
                     new PostProcessPass(new Material(
                         "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/blur_horizontal.frag")),
-                    new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/blur_vertical.frag")),
-                    new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/blur_horizontal.frag")),
-                    new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/blur_vertical.frag")),
-                    new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/blur_horizontal.frag")),
-                    new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/blur_vertical.frag")),
-                    new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/blur_horizontal.frag")),
-                    new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/blur_vertical.frag")),
-                    new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/blur_horizontal.frag")),
-                    new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/blur_vertical.frag")),
-                    new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/bloom_combine.frag"))
+                        "Assets/shaders/PostProcessing/bloom_combine.frag"),
+                        {PostProcessingParameter("_Intensity", typeid(float), 0.2f)})
+                }
+            )
+        );
+
+        postProcessingEffects.push_back(
+            new PostProcessEffect("Hue Shift",
+                {
+                    new PostProcessPass(
+                        new Material(
+                            "Assets/shaders/PostProcessing/viewSpace.vert",
+                            "Assets/shaders/PostProcessing/Hue shift.frag"),
+                            {PostProcessingParameter("_Degrees", typeid(float), 0.0f)}
+                    )
                 }
             )
         );
@@ -149,6 +148,18 @@ namespace core {
                 pass->material->SetTexture("_SceneDepth", sceneDepth);
 
                 pass->material->SetVec4("_TexelSize", glm::vec4(1.0f/float(width), 1.0f/float(height), 0, 0));
+
+                for (PostProcessingParameter& param : pass->parameters) {
+                    if (param.typeName == "float") {
+                        pass->material->SetFloat(param.name, param.floatValue);
+                    }
+                    else if (param.typeName == "vec4") {
+                        pass->material->SetVec4(param.name, param.vec4Value);
+                    }
+                    else if (param.typeName == "mat4") {
+                        pass->material->SetMat4(param.name, param.mat4Value);
+                    }
+                }
 
                 pass->material->Bind();
                 quadModel->render();

@@ -3,7 +3,7 @@ out vec4 FragColor;
 in vec2 uv;
 
 uniform sampler2D _MainTex;
-float _Threshold = 1.0;
+uniform float _Threshold = 1.0;
 
 void main()
 {

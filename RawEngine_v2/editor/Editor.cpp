@@ -175,6 +175,7 @@ namespace editor {
                 if (viewPort) {
                     for (auto pass : viewPort->GetRenderer()->postProcessingEffects) {
                         ImGui::Checkbox(pass->name.c_str(), &pass->enabled);
+                        pass->OnGUI();
                     }
                 }
                 ImGui::EndMenu();

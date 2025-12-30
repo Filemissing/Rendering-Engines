@@ -8,20 +8,9 @@
 #include "Assets/Material.h"
 #include "Assets/model.h"
 #include "Assets/Scene.h"
+#include "PostProcessing.h"
 
 namespace core {
-    struct PostProcessPass {
-        PostProcessPass(Material* material) : material(material) {}
-        Material* material;
-    };
-    struct PostProcessEffect {
-        PostProcessEffect(const std::string& name, std::vector<PostProcessPass*> passes);
-
-        std::string name;
-        bool enabled = true;
-        std::vector<PostProcessPass*> passes;
-    };
-
     class Renderer {
     public:
         Model* quadModel;

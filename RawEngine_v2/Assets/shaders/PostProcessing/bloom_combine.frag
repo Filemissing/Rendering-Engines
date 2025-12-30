@@ -4,7 +4,7 @@ in vec2 uv;
 
 uniform sampler2D _MainTex;    // blurred bloom
 uniform sampler2D _SceneColor;  // original scene
-uniform float _Intensity = 0.2;
+uniform float _Intensity;
 
 void main()
 {
