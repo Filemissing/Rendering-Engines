@@ -8,7 +8,6 @@ uniform float _Intensity;
 
 void main()
 {
-    const float gamma = 2.2;
     vec3 sceneColor = texture(_SceneColor, uv).rgb;
     vec3 brightColor = texture(_MainTex, uv).rgb;
 

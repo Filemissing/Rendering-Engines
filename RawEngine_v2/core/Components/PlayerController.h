@@ -13,7 +13,7 @@ namespace core {
         bool isMoving = false;
     public:
         float moveSpeed = 5.0f;
-        float rotateSpeed = 100.0f;
+        float rotateSpeed = 10000.0f;
 
         PlayerController() = default;
         PlayerController(GameObject* gameObject) : PlayerController() {gameObject->AddComponent(this);};

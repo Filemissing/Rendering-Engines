@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "Components/Component.h"
 #include "ComponentFactory.h"
+#include "../editor/Editor.h"
 #include "Components/MeshRenderer.h"
 
 namespace core {
@@ -25,6 +26,10 @@ namespace core {
 
         for (auto child : transform.children) {
             delete child->gameObject;
+        }
+
+        if (editor::Editor::selectedObject == this) {
+            editor::Editor::selectedObject = nullptr;
         }
     }
 

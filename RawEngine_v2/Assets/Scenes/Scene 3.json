@@ -5,8 +5,8 @@
         "g": 1.0,
         "r": 1.0
     },
-    "ambientIntensity": 0.1,
-    "name": "Scene 2",
+    "ambientIntensity": 0.10000000149011612,
+    "name": "Scene 3",
     "objects": [
         {
             "components": [
@@ -47,9 +47,9 @@
                 {
                     "material": {
                         "fragment": "Assets/shaders/lit.frag",
-                        "vertex": "Assets/shaders/vertex.vert",
-                        "metallic": 0,
-                        "smoothness": 16
+                        "metallic": 0.0,
+                        "smoothness": 16.0,
+                        "vertex": "Assets/shaders/vertex.vert"
                     },
                     "model": "Assets/models/quad.obj",
                     "type": "MeshRenderer"
@@ -81,15 +81,15 @@
                 {
                     "material": {
                         "fragment": "Assets/shaders/lit.frag",
-                        "vertex": "Assets/shaders/vertex.vert",
-                        "metallic": 1,
-                        "smoothness": 32
+                        "metallic": 0.38600000739097595,
+                        "smoothness": 200.0,
+                        "vertex": "Assets/shaders/vertex.vert"
                     },
-                    "model": "Assets/models/sphere.obj",
+                    "model": "Assets/models/nonormalmonkey.obj",
                     "type": "MeshRenderer"
                 }
             ],
-            "name": "Sphere",
+            "name": "Suzanne",
             "transform": {
                 "children": [],
                 "position": {
@@ -113,14 +113,14 @@
         {
             "components": [
                 {
+                    "attenuation": 0.30000001192092896,
                     "color": {
-                        "r": 0.8,
-                        "g": 0.5,
-                        "b": 0.7,
-                        "a": 1.0
+                        "a": 1.0,
+                        "b": 0.800000011920929,
+                        "g": 0.30000001192092896,
+                        "r": 0.8999999761581421
                     },
                     "lightType": 1,
-                    "attenuation": 1.0,
                     "type": "Light"
                 }
             ],
@@ -148,14 +148,14 @@
         {
             "components": [
                 {
+                    "attenuation": 1.0,
                     "color": {
-                        "r": 1.0,
+                        "a": 1.0,
+                        "b": 0.800000011920929,
                         "g": 1.0,
-                        "b": 0.8,
-                        "a": 1.0
+                        "r": 1.0
                     },
                     "lightType": 0,
-                    "attenuation": 1.0,
                     "type": "Light"
                 }
             ],
@@ -170,6 +170,28 @@
                 "rotation": {
                     "x": 35.0,
                     "y": 110.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "name": "new GameObject",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
                     "z": 0.0
                 },
                 "scale": {

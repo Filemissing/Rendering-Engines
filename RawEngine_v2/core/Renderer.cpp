@@ -24,7 +24,7 @@ namespace core {
                     new PostProcessPass(new Material(
                         "Assets/shaders/PostProcessing/viewSpace.vert",
                         "Assets/shaders/PostProcessing/bloom_threshold.frag"),
-                        {PostProcessingParameter("_Threshold", typeid(float), 1.0f)}),
+                        {PostProcessingParameter("_Threshold", typeid(float), 0.5f)}),
                     blur_horizontal,
                     blur_vertical,
                     blur_horizontal,
@@ -38,7 +38,7 @@ namespace core {
                     new PostProcessPass(new Material(
                         "Assets/shaders/PostProcessing/viewSpace.vert",
                         "Assets/shaders/PostProcessing/bloom_combine.frag"),
-                        {PostProcessingParameter("_Intensity", typeid(float), 0.2f)})
+                        {PostProcessingParameter("_Intensity", typeid(float), 1.0f)})
                 }
             )
         );

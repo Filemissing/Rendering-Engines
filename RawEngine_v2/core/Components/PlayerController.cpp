@@ -21,8 +21,8 @@ namespace core {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
             if (isMoving) {
-                gameObject->transform.Rotate(glm::vec3(1, 0, 0), -deltaMouse.y * rotateSpeed * deltaTime);
-                gameObject->transform.Rotate(glm::vec3(0, 1, 0), -deltaMouse.x * rotateSpeed * deltaTime);
+                gameObject->transform.Rotate(glm::vec3(1, 0, 0), -deltaMouse.y * rotateSpeed * deltaTime / editor::Editor::GetViewPortSize().y);
+                gameObject->transform.Rotate(glm::vec3(0, 1, 0), -deltaMouse.x * rotateSpeed * deltaTime / editor::Editor::GetViewPortSize().x);
 
                 glm::vec3 movement(0.0f, 0.0f, 0.0f);
                 float speed = 5.0f;
