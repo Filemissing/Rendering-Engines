@@ -13,6 +13,13 @@ namespace core {
         gameObject->scene->lights.push_back(this);
     }
 
+    Light::~Light() {
+        auto it = std::find(gameObject->scene->lights.begin(), gameObject->scene->lights.end(), this);
+        if (it != gameObject->scene->lights.end()) {
+            gameObject->scene->lights.erase(it);
+        }
+    }
+
     void Light::OnInspectorGUI() {
         static const char* lightTypeLabels[] = {
             "Directional",

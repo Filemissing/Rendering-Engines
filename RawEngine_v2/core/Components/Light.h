@@ -12,6 +12,7 @@ namespace core {
     class Light : public Component {
     public:
         using Component::Component; // inherit Constructors
+        ~Light() override;
 
         enum LightType {
             Directional,

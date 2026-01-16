@@ -75,7 +75,8 @@ namespace editor::editorWindows {
         int h = (int)avail.y;
         EnsureFboSized(w, h);
 
-        core::Camera::GetMainCamera()->RecalculateProjection(m_vpWidth, m_vpHeight);
+        if (core::Camera::GetMainCamera())
+            core::Camera::GetMainCamera()->RecalculateProjection(m_vpWidth, m_vpHeight);
 
         hasFocus = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
         isHovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows);
