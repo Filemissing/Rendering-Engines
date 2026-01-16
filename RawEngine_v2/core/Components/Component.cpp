@@ -13,6 +13,10 @@ namespace core {
     void Component::Start() {}
     void Component::Update() {}
 
+    void Component::OnInspectorGUI() {
+        // TODO: enabled toggle
+    }
+
     nlohmann::json Component::Serialize() {
         nlohmann::json json;
         json["type"] = "Component";

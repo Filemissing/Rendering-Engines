@@ -6,6 +6,7 @@
 
 #include <glm/ext/matrix_transform.hpp>
 
+#include "imgui.h"
 #include "../GameObject.h"
 
 
@@ -112,6 +113,20 @@ namespace core {
         right = glm::normalize(matrix * glm::vec4(1, 0, 0, 0));
         up = glm::normalize(matrix * glm::vec4(0, 1, 0, 0));
         forward = glm::normalize(matrix * glm::vec4(0, 0, 1, 0));
+    }
+
+    void Transform::OnInspectorGUI() {
+        glm::vec3 _position = this->position;
+        glm::vec3 _rotation = this->rotation;
+        glm::vec3 _scale = this->scale;
+
+        ImGui::DragFloat3("Position", &_position.x, 0.1f);
+        ImGui::DragFloat3("Rotation", &_rotation.x, 1.0f);
+        ImGui::DragFloat3("Scale", &_scale.x, 0.01f);
+
+        if (_position != this->position) this->SetPosition(_position);
+        if (_rotation != this->rotation) this->SetRotation(_rotation);
+        if (_scale != this->scale) this->SetScale(_scale);
     }
 
     nlohmann::json Transform::Serialize() {

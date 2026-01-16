@@ -49,6 +49,10 @@ namespace core {
         bool RemoveChild(Transform* child);
         void DetachFromParent();
 
+        const char* GetTypeName() override { return "Transform"; }
+
+        void OnInspectorGUI() override;
+
         nlohmann::json Serialize() override;
         void Deserialize(const nlohmann::json &json) override;
     };

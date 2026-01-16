@@ -4,12 +4,34 @@
 
 #include "Light.h"
 
+#include "imgui.h"
 #include "../GameObject.h"
 #include "../Assets/Scene.h"
 
 namespace core {
     void Light::Start() {
         gameObject->scene->lights.push_back(this);
+    }
+
+    void Light::OnInspectorGUI() {
+        static const char* lightTypeLabels[] = {
+            "Directional",
+            "Point"
+        };
+
+        int value = static_cast<int>(lightType);
+
+        if (ImGui::Combo(
+            "lightType",
+            &value,
+            lightTypeLabels,
+            IM_ARRAYSIZE(lightTypeLabels)))
+        {
+            lightType = static_cast<LightType>(value);
+        }
+
+        ImGui::SliderFloat3("Color", glm::value_ptr(color), 0.0f, 1.0f);
+        ImGui::InputFloat("Attenuation", &attenuation);
     }
 
     nlohmann::json Light::Serialize() {

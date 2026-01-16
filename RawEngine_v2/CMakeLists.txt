@@ -71,6 +71,8 @@ set(IMGUI_SOURCES
         core/Renderer.h
         core/PostProcessing.cpp
         core/PostProcessing.h
+        editor/EditorWindows/Inspector.cpp
+        editor/EditorWindows/Inspector.h
 )
 
 add_executable(RawEngine main.cpp

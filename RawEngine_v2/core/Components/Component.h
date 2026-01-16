@@ -21,6 +21,11 @@ namespace core {
         virtual void Start();
         virtual void Update();
 
+        virtual const char* GetTypeName() { return "Component"; }
+
+        bool collapseInspector = false;
+        virtual void OnInspectorGUI();
+
         virtual nlohmann::json Serialize();
         virtual void Deserialize(const nlohmann::json& json);
     };

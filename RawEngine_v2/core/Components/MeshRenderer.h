@@ -25,6 +25,10 @@ namespace core {
 
         void Render();
 
+        const char* GetTypeName() override { return "MeshRenderer"; }
+
+        void OnInspectorGUI() override;
+
         nlohmann::json Serialize() override;
         void Deserialize(const nlohmann::json&) override;
     };

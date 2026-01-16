@@ -25,7 +25,7 @@ namespace core {
                 gameObject->transform.Rotate(glm::vec3(0, 1, 0), -deltaMouse.x * rotateSpeed * deltaTime / editor::Editor::GetViewPortSize().x);
 
                 glm::vec3 movement(0.0f, 0.0f, 0.0f);
-                float speed = 5.0f;
+                float speed = moveSpeed;
                 if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) movement += -gameObject->transform.forward * deltaTime;
                 if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) movement += gameObject->transform.forward * deltaTime;
                 if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) movement += -gameObject->transform.right * deltaTime;
@@ -35,7 +35,7 @@ namespace core {
 
                 if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) speed *= 2.0f;
 
-                gameObject->transform.Translate(movement * speed);
+                gameObject->transform.Translate(movement * speed * deltaTime);
             }
             else isMoving = true;
         }
@@ -43,6 +43,11 @@ namespace core {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             isMoving = false;
         }
+    }
+
+    void PlayerController::OnInspectorGUI() {
+        ImGui::InputFloat("Movement Speed", &moveSpeed);
+        ImGui::InputFloat("Rotation Speed", &rotateSpeed);
     }
 
     nlohmann::json PlayerController::Serialize() {

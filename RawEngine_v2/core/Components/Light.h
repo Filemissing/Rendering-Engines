@@ -24,6 +24,10 @@ namespace core {
 
         void Start() override;
 
+        const char* GetTypeName() override { return "Light"; }
+
+        void OnInspectorGUI() override;
+
         nlohmann::json Serialize() override;
         void Deserialize(const nlohmann::json& json) override;
     };

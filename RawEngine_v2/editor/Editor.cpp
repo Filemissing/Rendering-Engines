@@ -10,6 +10,7 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "EditorWindows/HierarchyWindow.h"
+#include "EditorWindows/Inspector.h"
 #include "EditorWindows/SceneLoader.h"
 #include "EditorWindows/TransformWindow.h"
 
@@ -127,7 +128,7 @@ namespace editor {
         windows.push_back(CreateEditorWindow<editorWindows::HierarchyWindow>("Hierarchy"));
         windows.push_back(CreateEditorWindow<editorWindows::SceneLoader>("Scene Loader"));
         windows.push_back(CreateEditorWindow<editorWindows::ViewPort>("ViewPort"));
-        windows.push_back(CreateEditorWindow<editorWindows::TransformWindow>("Transform"));
+        windows.push_back(CreateEditorWindow<editorWindows::Inspector>("Inspector"));
 
         return true;
     }

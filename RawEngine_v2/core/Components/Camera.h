@@ -16,6 +16,10 @@ namespace core {
         int width, height;
         glm::mat4 projection;
 
+        float fov = 45.0f;
+        float nearPlane = 0.1f;
+        float farPlane = 100.0f;
+
     public:
         glm::mat4 GetView() const;
         glm::mat4 GetProjection() const;
@@ -26,9 +30,11 @@ namespace core {
         Camera(int width, int height, GameObject* gameObject = nullptr);
         ~Camera() override;
 
-        void Update() override;
-
         static Camera* GetMainCamera();
+
+        const char* GetTypeName() override { return "Camera"; }
+
+        void OnInspectorGUI() override;
 
         nlohmann::json Serialize() override;
         void Deserialize(const nlohmann::json&) override;

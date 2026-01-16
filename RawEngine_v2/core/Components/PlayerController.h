@@ -20,6 +20,10 @@ namespace core {
 
         void Update() override;
 
+        const char* GetTypeName() override { return "PlayerController"; }
+
+        void OnInspectorGUI() override;
+
         nlohmann::json Serialize() override;
         void Deserialize(const nlohmann::json&) override;
     };

@@ -29,18 +29,20 @@ namespace core {
     }
 
     void Camera::RecalculateProjection(float width, float height) {
-        projection = glm::perspective(glm::radians(45.0f),
+        projection = glm::perspective(glm::radians(fov),
             width / height,
-            0.1f, 100.0f);
-    }
-
-
-    void Camera::Update() {
-
+            nearPlane, farPlane);
     }
 
     Camera* Camera::GetMainCamera() {
         return editor::Editor::activeScene->mainCamera;
+    }
+
+    void Camera::OnInspectorGUI() {
+        ImGui::SliderFloat("FOV", &fov, 0.0f, 180.0f);
+
+        ImGui::InputFloat("Near Plane", &nearPlane);
+        ImGui::InputFloat("Far Plane", &farPlane);
     }
 
     nlohmann::json Camera::Serialize() {

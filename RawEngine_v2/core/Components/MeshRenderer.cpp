@@ -4,6 +4,7 @@
 #include "./MeshRenderer.h"
 #include "../assimpLoader.h"
 #include "Camera.h"
+#include "imgui.h"
 #include "../GameObject.h"
 
 namespace core {
@@ -39,6 +40,20 @@ namespace core {
 
     Model* MeshRenderer::GetModel() const {return model;}
     Material* MeshRenderer::GetMaterial() const {return material;}
+
+    void MeshRenderer::OnInspectorGUI() {
+        ImGui::Text((std::string("Model Path: ") + model->assetPath).c_str());
+        ImGui::Text("Material Info: ");
+        ImGui::Indent(20);
+        ImGui::Text((std::string("Vertex Shader: ") + material->vertexShaderPath).c_str());
+        ImGui::Text((std::string("Fragment Shader: ") + material->fragmentShaderPath).c_str());
+
+        ImGui::Spacing();
+
+        ImGui::SliderFloat("Smoothness", &material->smoothness, 0.1f, 500.0f);
+        ImGui::SliderFloat("Metallic", &material->metallic, 0.0f, 1.0f);
+        ImGui::Unindent(20);
+    }
 
     nlohmann::json MeshRenderer::Serialize() {
         nlohmann::json json;
