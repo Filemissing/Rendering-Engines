@@ -12,59 +12,79 @@ namespace core {
     Renderer::Renderer() {
 
         // add effects to list
-        auto* blur_horizontal = new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/blur_horizontal.frag"));
-        auto* blur_vertical = new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/blur_vertical.frag"));
+        // raymarching
         postProcessingEffects.push_back(
-            new PostProcessEffect("Bloom",
+            new PostProcessEffect("Ray-marching",
                 {
-                    new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/bloom_threshold.frag"),
-                        {PostProcessingParameter("_Threshold", typeid(float), 0.5f)}),
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    blur_horizontal,
-                    blur_vertical,
-                    new PostProcessPass(new Material(
-                        "Assets/shaders/PostProcessing/viewSpace.vert",
-                        "Assets/shaders/PostProcessing/bloom_combine.frag"),
-                        {PostProcessingParameter("_Intensity", typeid(float), 1.0f)})
+                    new PostProcessPass(
+                        new Material(
+                            "Assets/shaders/PostProcessing/viewSpace.vert",
+                            "Assets/shaders/PostProcessing/ray_marching.frag"),
+                        {
+                            PostProcessingParameter("_MaxSteps", typeid(int), 0, 96),
+                            PostProcessingParameter("_MaxDist", typeid(float), 200),
+                            PostProcessingParameter("_SurfDist", typeid(float), 0.001)
+                        }
+                    )
                 }
             )
         );
 
+
+        // blur
+        // auto* blur_horizontal = new PostProcessPass(new Material(
+        //                 "Assets/shaders/PostProcessing/viewSpace.vert",
+        //                 "Assets/shaders/PostProcessing/blur_horizontal.frag"));
+        // auto* blur_vertical = new PostProcessPass(new Material(
+        //                 "Assets/shaders/PostProcessing/viewSpace.vert",
+        //                 "Assets/shaders/PostProcessing/blur_vertical.frag"));
+        // postProcessingEffects.push_back(
+        //     new PostProcessEffect("Bloom",
+        //         {
+        //             new PostProcessPass(new Material(
+        //                 "Assets/shaders/PostProcessing/viewSpace.vert",
+        //                 "Assets/shaders/PostProcessing/bloom_threshold.frag"),
+        //                 {PostProcessingParameter("_Threshold", typeid(float), 0.5f)}),
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             blur_horizontal,
+        //             blur_vertical,
+        //             new PostProcessPass(new Material(
+        //                 "Assets/shaders/PostProcessing/viewSpace.vert",
+        //                 "Assets/shaders/PostProcessing/bloom_combine.frag"),
+        //                 {PostProcessingParameter("_Intensity", typeid(float), 1.0f)})
+        //         }
+        //     )
+        // );
+        //
         postProcessingEffects.push_back(
             new PostProcessEffect("Hue Shift",
                 {
@@ -77,7 +97,7 @@ namespace core {
                 }
             )
         );
-
+        //
         // postProcessingEffects.push_back(
         //     new PostProcessEffect("Invert",
         //         {
@@ -85,19 +105,6 @@ namespace core {
         //                 new Material(
         //                     "Assets/shaders/PostProcessing/viewSpace.vert",
         //                     "Assets/shaders/PostProcessing/invert.frag"
-        //                 )
-        //             )
-        //         }
-        //     )
-        // );
-        //
-        // postProcessingEffects.push_back(
-        //     new PostProcessEffect("Test",
-        //         {
-        //             new PostProcessPass(
-        //                 new Material(
-        //                     "Assets/shaders/PostProcessing/viewSpace.vert",
-        //                     "Assets/shaders/PostProcessing/test.frag"
         //                 )
         //             )
         //         }
@@ -171,9 +178,19 @@ namespace core {
 
                 pass->material->SetVec4("_TexelSize", glm::vec4(1.0f/float(width), 1.0f/float(height), 0, 0));
 
+                // set additional camera parameters
+                Camera* cam = Camera::GetMainCamera();
+                pass->material->SetMat4("_InvView", glm::inverse(cam->GetView()));
+                pass->material->SetMat4("_InvProj", glm::inverse(cam->GetProjection()));
+                pass->material->SetFloat("_Near",cam->nearPlane);
+                pass->material->SetFloat("_Far",cam->farPlane);
+
                 for (PostProcessingParameter& param : pass->parameters) {
                     if (param.typeName == "float") {
                         pass->material->SetFloat(param.name, param.floatValue);
+                    }
+                    else if (param.typeName == "int") {
+                        pass->material->SetInt(param.name, param.intValue);
                     }
                     else if (param.typeName == "vec4") {
                         pass->material->SetVec4(param.name, param.vec4Value);
@@ -221,7 +238,7 @@ namespace core {
         // Create Scene buffers
         glGenFramebuffers(1, &sceneFbo);
         glGenTextures(1, &sceneColor);
-        glGenRenderbuffers(1, &sceneDepth);
+        glGenTextures(1, &sceneDepth);
 
         // Create color texture storage
         glBindTexture(GL_TEXTURE_2D, sceneColor);
@@ -236,10 +253,17 @@ namespace core {
         glBindFramebuffer(GL_FRAMEBUFFER, sceneFbo);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sceneColor, 0);
 
-        // Create + attach a dedicated depth+stencil renderbuffer for this FBO
-        glBindRenderbuffer(GL_RENDERBUFFER, sceneDepth);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, sceneDepth);
+        // Create + attach a dedicated depth+stencil texture for this FBO
+        glBindTexture(GL_TEXTURE_2D, sceneDepth);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8,
+                     width, height, 0,
+                     GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                               GL_TEXTURE_2D, sceneDepth, 0);
 
         // Tell GL which color attachments we'll draw into (required on some drivers)
         GLenum drawbuf = GL_COLOR_ATTACHMENT0;
@@ -251,12 +275,10 @@ namespace core {
             std::cerr << "[Renderer] sceneFBO " << " incomplete! status=0x" << std::hex << status << std::dec << std::endl;
         }
 
-
-
-        // Create ping-pong FBOs + color textures + depth renderbuffers
+        // Create ping-pong FBOs + color textures + depth textures
         glGenFramebuffers(2, ppFbo);
         glGenTextures(2, ppTex);
-        glGenRenderbuffers(2, ppDepth);
+        glGenTextures(2, ppDepth);
 
         for (int i = 0; i < 2; ++i) {
             // Create color texture storage
@@ -272,10 +294,17 @@ namespace core {
             glBindFramebuffer(GL_FRAMEBUFFER, ppFbo[i]);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ppTex[i], 0);
 
-            // Create + attach a dedicated depth+stencil renderbuffer for this FBO
-            glBindRenderbuffer(GL_RENDERBUFFER, ppDepth[i]);
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, ppDepth[i]);
+            // Create + attach a dedicated depth+stencil texture for this FBO
+            glBindTexture(GL_TEXTURE_2D, ppDepth[i]);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8,
+                         width, height, 0,
+                         GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                                   GL_TEXTURE_2D, ppDepth[i], 0);
 
             // Tell GL which color attachments we'll draw into (required on some drivers)
             GLenum drawbuf = GL_COLOR_ATTACHMENT0;
@@ -302,10 +331,10 @@ namespace core {
         // Delete previous resources if they exist
         if (sceneFbo) glDeleteFramebuffers(1, &sceneFbo);
         if (sceneColor) glDeleteTextures(1, &sceneColor);
-        if (sceneDepth) glDeleteRenderbuffers(1, &sceneDepth);
+        if (sceneDepth) glDeleteTextures(1, &sceneDepth);
 
         if (ppFbo[0]) glDeleteFramebuffers(2, ppFbo);
         if (ppTex[0]) glDeleteTextures(2, ppTex);
-        if (ppDepth[0]) glDeleteRenderbuffers(2, ppDepth);
+        if (ppDepth[0]) glDeleteTextures(2, ppDepth);
     }
 } // core

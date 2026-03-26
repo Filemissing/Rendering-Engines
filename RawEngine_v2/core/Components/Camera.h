@@ -17,10 +17,11 @@ namespace core {
         glm::mat4 projection;
 
         float fov = 45.0f;
+
+    public:
         float nearPlane = 0.1f;
         float farPlane = 100.0f;
 
-    public:
         glm::mat4 GetView() const;
         glm::mat4 GetProjection() const;
         void RecalculateProjection(float width, float height);

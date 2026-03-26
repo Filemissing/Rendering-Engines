@@ -13,6 +13,7 @@ namespace core {
         const std::string &name,
         const type_info& typeId,
         float floatValue,
+        int intValue,
         glm::vec4 vec4Value,
         glm::mat4 mat4Value)
             : name(name)
@@ -20,6 +21,9 @@ namespace core {
         if (typeId == typeid(float)) {
             this->floatValue = floatValue;
             typeName = "float";
+        } else if (typeId == typeid(int)) {
+            this->intValue = intValue;
+            typeName = "int";
         } else if (typeId == typeid(glm::vec4)) {
             this->vec4Value = vec4Value;
             typeName = "vec4";
@@ -35,6 +39,9 @@ namespace core {
             for (PostProcessingParameter& parameter : pass->parameters) {
                 if (parameter.typeName == "float") {
                     ImGui::DragFloat(parameter.name.c_str(), &parameter.floatValue);
+                }
+                else if (parameter.typeName == "int") {
+                    ImGui::DragInt(parameter.name.c_str(), &parameter.intValue);
                 }
                 else if (parameter.typeName == "vec4") {
                     ImGui::DragFloat4(parameter.name.c_str(), glm::value_ptr(parameter.vec4Value));

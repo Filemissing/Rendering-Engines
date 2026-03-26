@@ -12,6 +12,7 @@
 #include "../GameObject.h"
 
 namespace core {
+    class Primitive;
     class Light;
 
     class Scene : public Asset {
@@ -23,6 +24,7 @@ namespace core {
         Camera* mainCamera = nullptr;
         std::vector<Light*> lights;
         std::vector<GameObject*> objects;
+        std::vector<Primitive*> primitives;
 
         void Start();
         void Update();

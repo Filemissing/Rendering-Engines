@@ -10,6 +10,7 @@
 #include "../../editor/Editor.h"
 #include "../Components/Camera.h"
 #include "../Components/Light.h"
+#include "../Components/Primitive.h"
 
 
 namespace core {
@@ -40,6 +41,9 @@ namespace core {
     void Material::SetFloat(const std::string& name, float value) {
         floatUniforms[name] = value;
     }
+    void Material::SetInt(const std::string& name, int value) {
+        intUniforms[name] = value;
+    }
 
     void UploadLights(GLuint shader, const std::vector<Light*>& lights)
     {
@@ -52,7 +56,8 @@ namespace core {
             // Build uniform name dynamically
             std::string base = "lights[" + std::to_string(i) + "].";
 
-            glUniform1i(glGetUniformLocation(shader, (base + "type").c_str()), light->lightType);
+            glUniform1i(glGetUniformLocation(shader, (base + "type").c_str()),
+                        light->lightType);
 
             glUniform4fv(glGetUniformLocation(shader, (base + "color").c_str()),
                          1, glm::value_ptr(light->color));
@@ -70,6 +75,37 @@ namespace core {
         if (loc == -1) return;
         glUniform1i(loc, lights.size());
     }
+    void UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) {
+        glUseProgram(shader);
+
+        for (int i = 0; i < primitives.size(); i++) {
+            const Primitive* primitive = primitives[i];
+
+            std::string base = "primitives[" + std::to_string(i) + "].";
+
+            glUniform1i(glGetUniformLocation(shader, (base + "type").c_str()),
+                primitive->type);
+
+            glUniform3fv(glGetUniformLocation(shader, (base + "position").c_str()),
+                1, glm::value_ptr(primitive->gameObject->transform.position));
+
+            glUniform3fv(glGetUniformLocation(shader, (base + "rotation").c_str()),
+                1, glm::value_ptr(primitive->gameObject->transform.rotation));
+
+            glUniform3fv(glGetUniformLocation(shader, (base + "scale").c_str()),
+                1, glm::value_ptr(primitive->gameObject->transform.scale));
+
+            glUniform3fv(glGetUniformLocation(shader, (base + "halfExtents").c_str()),
+                1, glm::value_ptr(primitive->halfExtents));
+
+            glUniform3fv(glGetUniformLocation(shader, (base + "color").c_str()),
+                1, glm::value_ptr(primitive->color));
+        }
+
+        GLint loc = glGetUniformLocation(shader, "primitiveCount");
+        if (loc == -1) return;
+        glUniform1i(loc, primitives.size());
+    }
     void Material::Bind() {
         glUseProgram(shaderProgram);
 
@@ -82,6 +118,7 @@ namespace core {
         this->SetFloat("metallic", this->metallic);
 
         UploadLights(shaderProgram, editor::Editor::activeScene->lights);
+        UploadPrimitives(shaderProgram, editor::Editor::activeScene->primitives);
 
         this->SetVec4("ambientColor", editor::Editor::activeScene->ambientColor);
         this->SetFloat("ambientIntensity", editor::Editor::activeScene->ambientIntensity);
@@ -108,6 +145,11 @@ namespace core {
             GLint loc = glGetUniformLocation(shaderProgram, name.c_str());
             if (loc == -1) continue; // uniform not found
             glUniform1f(loc, value);
+        }
+        for (auto& [name, value] : intUniforms) {
+            GLint loc = glGetUniformLocation(shaderProgram, name.c_str());
+            if (loc == -1) continue;
+            glUniform1i(loc, value);
         }
 
         // bind textures

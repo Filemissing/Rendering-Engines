@@ -22,6 +22,7 @@ namespace core {
         std::unordered_map<std::string, glm::vec4> vec4Uniforms;
         std::unordered_map<std::string, glm::mat4> mat4Uniforms;
         std::unordered_map<std::string, float> floatUniforms;
+        std::unordered_map<std::string, int> intUniforms;
 
     public:
         std::string vertexShaderPath, fragmentShaderPath;
@@ -33,12 +34,10 @@ namespace core {
         ~Material();
 
         void SetTexture(const std::string& name, GLuint tex);
-
         void SetVec4(const std::string& name, const glm::vec4& value);
-
         void SetMat4(const std::string& name, const glm::mat4& value);
-
         void SetFloat(const std::string& name, float value);
+        void SetInt(const std::string& name, int value);
 
         void Bind();
 

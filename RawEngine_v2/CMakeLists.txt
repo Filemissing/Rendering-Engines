@@ -73,6 +73,8 @@ set(IMGUI_SOURCES
         core/PostProcessing.h
         editor/EditorWindows/Inspector.cpp
         editor/EditorWindows/Inspector.h
+        core/Components/Primitive.cpp
+        core/Components/Primitive.h
 )
 
 add_executable(RawEngine main.cpp

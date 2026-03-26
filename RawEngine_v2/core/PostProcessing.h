@@ -12,6 +12,7 @@ namespace core {
             const std::string& name,
             const type_info& typeId,
             float floatValue = 0,
+            int intValue = 0,
             glm::vec4 vec4Value = glm::vec4(0.0f),
             glm::mat4 mat4Value = glm::mat4(1.0f));
 
@@ -19,6 +20,7 @@ namespace core {
         std::string typeName;
 
         float floatValue;
+        int intValue;
         glm::vec4 vec4Value;
         glm::mat4 mat4Value;
     };

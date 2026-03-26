@@ -5,7 +5,7 @@
         "g": 1.0,
         "r": 1.0
     },
-    "ambientIntensity": 0.1,
+    "ambientIntensity": 0.10000000149011612,
     "name": "Scene 1",
     "objects": [
         {
@@ -170,6 +170,44 @@
                 "rotation": {
                     "x": 35.0,
                     "y": 110.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 0.0,
+                        "r": 0.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Primitive",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
                     "z": 0.0
                 },
                 "scale": {
