@@ -32,7 +32,7 @@ namespace editor::editorWindows {
         GLuint m_fbo = 0;
         GLuint m_colorTex = 0;
         GLuint m_depthRb = 0;
-        int m_vpWidth = 0, m_vpHeight = 0;
+        int m_vpWidth = 100, m_vpHeight = 100;
 
         core::Renderer* m_renderer = nullptr;
     };
