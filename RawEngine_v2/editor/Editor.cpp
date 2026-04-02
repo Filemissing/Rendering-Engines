@@ -147,6 +147,18 @@ namespace editor {
 
         ImGui::End(); // end dockspace window
     }
+
+    static std::vector<float> fpsHistory;
+    static float GetAverageFPS(float deltaTime)
+    {
+        fpsHistory.push_back(1.0f / deltaTime);
+        if (fpsHistory.size() > 60)
+            fpsHistory.erase(fpsHistory.begin());
+        float sum = 0.0f;
+        for (float fps : fpsHistory)
+            sum += fps;
+        return sum / fpsHistory.size();
+    }
     void Editor::DrawMainMenu() {
         if (!ImGui::BeginMainMenuBar()) return;
 
@@ -183,8 +195,11 @@ namespace editor {
             }
             ImGui::EndMenu();
         }
+
+        ImGui::Text("FPS: %.0f", GetAverageFPS(deltaTime));
         ImGui::EndMainMenuBar();
     }
+
     void Editor::EndFrame() {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

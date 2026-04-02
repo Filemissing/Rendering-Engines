@@ -5,11 +5,13 @@
 #include <sstream>
 
 #include "core/assimpLoader.h"
+#include "core/ComponentFactory.h"
 #include "core/GameObject.h"
 #include "core/Assets/texture.h"
 #include "core/Components/MeshRenderer.h"
 #include "core/Assets/RenderSettings.h"
 #include "core/Assets/Scene.h"
+#include "core/Components/Primitive.h"
 #include "editor/Editor.h"
 #include "editor/Utils/SceneManager.h"
 
@@ -42,14 +44,25 @@ int main() {
     RenderSettings::Init();
 
     //Scene
-    auto* scene1 = SceneManager::LoadScene("Scene 1");
+    auto* scene1 = SceneManager::LoadScene("RaymarchedSpheres");
     Editor::activeScene = scene1;
 
-    Texture CMGaToTexture("Assets/textures/CMGaTo_crop.png");
+    int i = 0;
+    for (int x = -20; x < 20; x += 10) {
+        for (int y = -20; y < 20; y += 10) {
+            for (int z = -20; z < 20; z += 10) {
+                auto* newObject = new GameObject(std::format("Sphere {}", i));
+                scene1->AddGameObject(newObject);
+                ComponentFactory::Create("Primitive", newObject);
+                newObject->transform.SetPosition(glm::vec3(x, y, z));
+                i++;
+            }
+        }
+    }
 
-    Texture MarbleTexture("Assets/textures/Marble.png");
-
-    Texture MetalTexture("Assets/textures/Metal.png");
+    // Texture CMGaToTexture("Assets/textures/CMGaTo_crop.png");
+    // Texture MarbleTexture("Assets/textures/Marble.png");
+    // Texture MetalTexture("Assets/textures/Metal.png");
 
     while (!glfwWindowShouldClose(Editor::mainWindow)) {
         // calculate delta mouse
@@ -57,19 +70,19 @@ int main() {
         double deltaX = mouseXPos - Editor::oldMousePos.x, deltaY = mouseYPos - Editor::oldMousePos.y;
         Editor::deltaMouse = glm::vec2(deltaX, deltaY);
 
-        //  draw the editor
+        // draw the editor
         Editor::Draw();
 
         // set material values
-        if (auto CMGaTo = Editor::activeScene->FindGameObjectByName("CMGaTo")) {
-            CMGaTo->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture("_MainTex", CMGaToTexture.getId());
-        }
-        if (auto Suzanne = Editor::activeScene->FindGameObjectByName("Suzanne")) {
-            Suzanne->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture("_MainTex", MarbleTexture.getId());
-        }
-        if (auto Sphere = Editor::activeScene->FindGameObjectByName("Sphere")) {
-            Sphere->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture("_MainTex", MetalTexture.getId());
-        }
+        // if (auto CMGaTo = Editor::activeScene->FindGameObjectByName("CMGaTo")) {
+        //     CMGaTo->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture("_MainTex", CMGaToTexture.getId());
+        // }
+        // if (auto Suzanne = Editor::activeScene->FindGameObjectByName("Suzanne")) {
+        //     Suzanne->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture("_MainTex", MarbleTexture.getId());
+        // }
+        // if (auto Sphere = Editor::activeScene->FindGameObjectByName("Sphere")) {
+        //     Sphere->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture("_MainTex", MetalTexture.getId());
+        // }
 
         if (Editor::activeScene != nullptr)
             Editor::activeScene->Update();

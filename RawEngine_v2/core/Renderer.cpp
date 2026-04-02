@@ -31,7 +31,6 @@ namespace core {
         );
 
 
-        // blur
         // auto* blur_horizontal = new PostProcessPass(new Material(
         //                 "Assets/shaders/PostProcessing/viewSpace.vert",
         //                 "Assets/shaders/PostProcessing/blur_horizontal.frag"));
@@ -84,7 +83,7 @@ namespace core {
         //         }
         //     )
         // );
-        //
+
         postProcessingEffects.push_back(
             new PostProcessEffect("Hue Shift",
                 {
