@@ -18,9 +18,15 @@ uniform float _Near;
 uniform float _Far;
 
 // -- Objects --
-#define MAX_PRIMITIVES 32
-#define TYPE_SPHERE 0
-#define TYPE_BOX    1
+#define MAX_PRIMITIVES 128
+#define TYPE_SPHERE    0
+#define TYPE_BOX       1
+#define TYPE_PYRAMID   2
+#define TYPE_CAPSULE   3
+#define TYPE_CYLINDER  4
+#define TYPE_TORUS     5
+#define TYPE_CONE      6
+#define TYPE_PLANE     7
 
 struct Primitive {
     int   type;
@@ -34,18 +40,23 @@ struct Primitive {
 uniform Primitive primitives[MAX_PRIMITIVES];
 uniform int primitiveCount;
 
-// ----------------------------------------------------------------
-// Depth reconstruction
-// ----------------------------------------------------------------
-float linearizeDepth(float d) {
-    float z = d * 2.0 - 1.0; // NDC
-    return (2.0 * _Near * _Far) / (_Far + _Near - z * (_Far - _Near));
-}
+// Reconstruct distance from depth
+float sceneRayDist() {
+    float depth = texture(_SceneDepth, uv).r;
+    if (depth >= 0.9999) return _Far;
 
-float sceneLinearDepth() {
-    float d = texture(_SceneDepth, uv).r;
-    if (d >= 0.9999) return _Far; // sky / nothing
-    return linearizeDepth(d);
+    // Reconstruct NDC position
+    vec3 ndc = vec3(uv * 2.0 - 1.0, depth * 2.0 - 1.0);
+
+    // Unproject to view space
+    vec4 viewPos = _InvProj * vec4(ndc, 1.0);
+    viewPos /= viewPos.w;
+
+    // Transform to world space
+    vec4 worldPos = _InvView * viewPos;
+
+    // True distance from camera to that world position along the ray
+    return length(worldPos.xyz - cameraPos);
 }
 
 // Reconstruct world-space ray for this fragment
@@ -72,8 +83,62 @@ float sdBox(vec3 p, vec3 center, vec3 halfExtents) {
     return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);
 }
 
+float sdPyramid(vec3 p, float height, float baseHalfSize) {
+    // Fold into the first quadrant — pyramid is 4-fold symmetric
+    p.xz = abs(p.xz);
+
+    // Slope of the face
+    float slope = baseHalfSize / height;
+
+    // Distance to the slanted face
+    float face = p.y * slope + p.x + p.z - baseHalfSize;
+    if (p.x < p.z) face = p.y * slope + p.z + p.x - baseHalfSize;
+
+    // Clamp to pyramid region
+    float d = max(face * inversesqrt(slope * slope + 2.0),
+    -p.y);              // bottom cap
+    d = max(d, p.y - height);        // top cap
+
+    return d;
+}
+// Capsule — halfExtents.x = radius, halfExtents.y = half length (along Y axis)
+float sdCapsule(vec3 p, float radius, float halfLen) {
+    p.y -= clamp(p.y, -halfLen, halfLen);
+    return length(p) - radius;
+}
+
+// Cylinder — halfExtents.x = radius, halfExtents.y = half height
+float sdCylinder(vec3 p, float radius, float halfHeight) {
+    vec2 d = abs(vec2(length(p.xz), p.y)) - vec2(radius, halfHeight);
+    return min(max(d.x, d.y), 0.0) + length(max(d, 0.0));
+}
+
+// Torus — halfExtents.x = major radius (ring), halfExtents.y = minor radius (tube)
+float sdTorus(vec3 p, float major, float minor) {
+    vec2 q = vec2(length(p.xz) - major, p.y);
+    return length(q) - minor;
+}
+
+// Cone — halfExtents.x = base radius, halfExtents.y = height (apex at +Y, base at -Y)
+float sdCone(vec3 p, float radius, float height) {
+    p.y -= height * 0.5;
+    vec2 q = vec2(length(p.xz), -p.y);
+    vec2 tip = vec2(radius, height);
+    vec2 a = q - tip * clamp(dot(q, tip) / dot(tip, tip), 0.0, 1.0);
+    vec2 b = q - tip * vec2(clamp(q.x / tip.x, 0.0, 1.0), 1.0);
+    float s = sign(tip.y * q.x - tip.x * q.y);
+    float d = min(dot(a, a), dot(b, b));
+    return sqrt(d) * sign(max(s, -sign(p.y + height * 0.5)));
+}
+
+// Infinite plane — halfExtents.xyz = normal, halfExtents.w would be offset
+// Since we only have vec3, pass normal in halfExtents and offset in scale.x
+float sdPlane(vec3 p, vec3 normal, float offset) {
+    return dot(p, normalize(normal)) - offset;
+}
+
 // ----------------------------------------------------------------
-// Scene definition — edit this to place your primitives
+// Scene definition
 // ----------------------------------------------------------------
 struct Hit {
     float dist;
@@ -125,6 +190,45 @@ Hit mapScene(vec3 p) {
             d *= min(primitives[i].scale.x,
             min(primitives[i].scale.y, primitives[i].scale.z));
         }
+        else if (primitives[i].type == TYPE_PYRAMID){
+            d = sdPyramid(localP, primitives[i].halfExtents.y, primitives[i].halfExtents.x);
+            d *= min(primitives[i].scale.x,
+            min(primitives[i].scale.y, primitives[i].scale.z));
+        }
+        else if (primitives[i].type == TYPE_CAPSULE) {
+            d = sdCapsule(localP,
+            primitives[i].halfExtents.x,
+            primitives[i].halfExtents.y);
+            d *= min(primitives[i].scale.x,
+            min(primitives[i].scale.y, primitives[i].scale.z));
+        }
+        else if (primitives[i].type == TYPE_CYLINDER) {
+            d = sdCylinder(localP,
+            primitives[i].halfExtents.x,
+            primitives[i].halfExtents.y);
+            d *= min(primitives[i].scale.x,
+            min(primitives[i].scale.y, primitives[i].scale.z));
+        }
+        else if (primitives[i].type == TYPE_TORUS) {
+            d = sdTorus(localP,
+            primitives[i].halfExtents.x,
+            primitives[i].halfExtents.y);
+            d *= min(primitives[i].scale.x,
+            min(primitives[i].scale.y, primitives[i].scale.z));
+        }
+        else if (primitives[i].type == TYPE_CONE) {
+            d = sdCone(localP,
+            primitives[i].halfExtents.x,
+            primitives[i].halfExtents.y);
+            d *= min(primitives[i].scale.x,
+            min(primitives[i].scale.y, primitives[i].scale.z));
+        }
+        else if (primitives[i].type == TYPE_PLANE) {
+            // Plane ignores scale correction — it's infinite
+            d = sdPlane(localP,
+            primitives[i].halfExtents,
+            primitives[i].scale.x);
+        }
 
         if (d < h.dist) {
             h.dist = d;
@@ -147,8 +251,6 @@ vec3 calcNormal(vec3 p) {
     ));
 }
 
-
-
 // ----------------------------------------------------------------
 // Simple diffuse + ambient shading
 // ----------------------------------------------------------------
@@ -170,7 +272,7 @@ void main() {
     vec3 ro = cameraPos;
     vec3 rd = rayDirection();
 
-    float sceneDepthLinear = sceneLinearDepth();
+    float sceneDepthLinear = sceneRayDist();
 
     float t    = 0.0;
     int   hitId = -1;
@@ -194,9 +296,6 @@ void main() {
             break;
         }
     }
-
-//    FragColor = vec4(primitiveCount, 0, 0, 1);
-//    return;
 
     if (hitId != -1) {
         vec3 pos    = ro + rd * t;

@@ -17,7 +17,13 @@ namespace core {
 
         enum PrimitiveType {
             Sphere,
-            Box
+            Box,
+            Pyramid,
+            Capsule,
+            Cylinder,
+            Torus,
+            Cone,
+            Plane
         };
 
         PrimitiveType type = Sphere;

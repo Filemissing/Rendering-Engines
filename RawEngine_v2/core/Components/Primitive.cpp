@@ -23,7 +23,13 @@ namespace core {
     void Primitive::OnInspectorGUI() {
         static const char* lightTypeLabels[] = {
             "Sphere",
-            "Box"
+            "Box",
+            "Pyramid",
+            "Capsule",
+            "Cylinder",
+            "Torus",
+            "Cone",
+            "Plane"
         };
 
         int value = static_cast<int>(type);
