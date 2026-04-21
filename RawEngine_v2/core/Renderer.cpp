@@ -7,9 +7,11 @@
 #include <iostream>
 
 #include "../editor/Editor.h"
+#include "../editor/EditorWindows/BenchmarkTool.h"
 
 namespace core {
     Renderer::Renderer() {
+        glGenQueries(1, &m_timeQuery);
 
         // add effects to list
         // raymarching
@@ -126,6 +128,22 @@ namespace core {
     }
 
     void Renderer::RenderScene(Scene*& scene, const GLuint& finalFbo, const GLuint& finalTexture, int width, int height) {
+        if (m_queryInFlight) {
+            GLint available = 0;
+            glGetQueryObjectiv(m_timeQuery, GL_QUERY_RESULT_AVAILABLE, &available);
+            if (available) {
+                GLuint64 elapsedNs = 0;
+                glGetQueryObjectui64v(m_timeQuery, GL_QUERY_RESULT, &elapsedNs);
+                editor::editorWindows::BenchmarkTool::PushSample("Raymarch Frame",
+                    static_cast<double>(elapsedNs) * 1e-6);
+                m_queryInFlight = false;
+            }
+        }
+
+        if (!m_queryInFlight) {
+            glBeginQuery(GL_TIME_ELAPSED, m_timeQuery);
+        }
+
         // 1. Render scene into pingFbo[0]
         glBindFramebuffer(GL_FRAMEBUFFER, sceneFbo);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sceneColor, 0);
@@ -220,6 +238,11 @@ namespace core {
         );
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        if (!m_queryInFlight) {
+            glEndQuery(GL_TIME_ELAPSED);
+            m_queryInFlight = true;
+        }
     }
 
     void Renderer::EnsureFboSized(int width, int height) {

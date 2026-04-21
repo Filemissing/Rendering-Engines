@@ -12,6 +12,8 @@
 
 namespace core {
     class Renderer {
+        GLuint m_timeQuery = 0;
+        bool m_queryInFlight = false;
     public:
         Model* quadModel;
 
