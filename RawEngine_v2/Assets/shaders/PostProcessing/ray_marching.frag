@@ -6,15 +6,12 @@ out vec4 FragColor;
 
 // -- Standard pipeline uniforms --
 uniform sampler2D _MainTex;
-uniform sampler2D _SceneColor;
 uniform sampler2D _SceneDepth;
-uniform vec4 _TexelSize;
 
 // -- Camera uniforms --
 uniform mat4 _InvView;
 uniform mat4 _InvProj;
 uniform vec3 cameraPos;
-uniform float _Near;
 uniform float _Far;
 
 // -- Objects --
@@ -33,7 +30,7 @@ struct Primitive {
     vec3  position;
     vec3  rotation;
     vec3  scale;
-    vec3  halfExtents; // box only — sphere uses halfExtents.x as radius
+    vec3  halfExtents; // box only 
     vec3  color;
 };
 
@@ -74,16 +71,16 @@ vec3 rayDirection() {
 // ----------------------------------------------------------------
 // SDF primitives
 // ----------------------------------------------------------------
-float sdSphere(vec3 p, vec3 center, float radius) {
+float SphereSDF(vec3 p, vec3 center, float radius) {
     return length(p - center) - radius;
 }
 
-float sdBox(vec3 p, vec3 center, vec3 halfExtents) {
+float BoxSDF(vec3 p, vec3 center, vec3 halfExtents) {
     vec3 q = abs(p - center) - halfExtents;
     return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);
 }
 
-float sdPyramid(vec3 p, float height, float baseHalfSize) {
+float PyramidSDF(vec3 p, float height, float baseHalfSize) {
     // Fold into the first quadrant — pyramid is 4-fold symmetric
     p.xz = abs(p.xz);
 
@@ -102,25 +99,25 @@ float sdPyramid(vec3 p, float height, float baseHalfSize) {
     return d;
 }
 // Capsule — halfExtents.x = radius, halfExtents.y = half length (along Y axis)
-float sdCapsule(vec3 p, float radius, float halfLen) {
+float CapsuleSDF(vec3 p, float radius, float halfLen) {
     p.y -= clamp(p.y, -halfLen, halfLen);
     return length(p) - radius;
 }
 
 // Cylinder — halfExtents.x = radius, halfExtents.y = half height
-float sdCylinder(vec3 p, float radius, float halfHeight) {
+float CylinderSDF(vec3 p, float radius, float halfHeight) {
     vec2 d = abs(vec2(length(p.xz), p.y)) - vec2(radius, halfHeight);
     return min(max(d.x, d.y), 0.0) + length(max(d, 0.0));
 }
 
 // Torus — halfExtents.x = major radius (ring), halfExtents.y = minor radius (tube)
-float sdTorus(vec3 p, float major, float minor) {
+float TorusSDF(vec3 p, float major, float minor) {
     vec2 q = vec2(length(p.xz) - major, p.y);
     return length(q) - minor;
 }
 
 // Cone — halfExtents.x = base radius, halfExtents.y = height (apex at +Y, base at -Y)
-float sdCone(vec3 p, float radius, float height) {
+float ConeSDF(vec3 p, float radius, float height) {
     p.y -= height * 0.5;
     vec2 q = vec2(length(p.xz), -p.y);
     vec2 tip = vec2(radius, height);
@@ -133,7 +130,7 @@ float sdCone(vec3 p, float radius, float height) {
 
 // Infinite plane — halfExtents.xyz = normal, halfExtents.w would be offset
 // Since we only have vec3, pass normal in halfExtents and offset in scale.x
-float sdPlane(vec3 p, vec3 normal, float offset) {
+float PlaneSDF(vec3 p, vec3 normal, float offset) {
     return dot(p, normalize(normal)) - offset;
 }
 
@@ -181,43 +178,43 @@ Hit mapScene(vec3 p) {
         localP /= primitives[i].scale; // apply scale
 
         if (primitives[i].type == TYPE_SPHERE) {
-            d = sdSphere(localP, vec3(0.0), primitives[i].halfExtents.x);
+            d = SphereSDF(localP, vec3(0.0), primitives[i].halfExtents.x);
             d *= min(primitives[i].scale.x,
             min(primitives[i].scale.y, primitives[i].scale.z)); // correct scale
         }
         else if (primitives[i].type == TYPE_BOX) {
-            d = sdBox(localP, vec3(0.0), primitives[i].halfExtents);
+            d = BoxSDF(localP, vec3(0.0), primitives[i].halfExtents);
             d *= min(primitives[i].scale.x,
             min(primitives[i].scale.y, primitives[i].scale.z));
         }
         else if (primitives[i].type == TYPE_PYRAMID){
-            d = sdPyramid(localP, primitives[i].halfExtents.y, primitives[i].halfExtents.x);
+            d = PyramidSDF(localP, primitives[i].halfExtents.y, primitives[i].halfExtents.x);
             d *= min(primitives[i].scale.x,
             min(primitives[i].scale.y, primitives[i].scale.z));
         }
         else if (primitives[i].type == TYPE_CAPSULE) {
-            d = sdCapsule(localP,
+            d = CapsuleSDF(localP,
             primitives[i].halfExtents.x,
             primitives[i].halfExtents.y);
             d *= min(primitives[i].scale.x,
             min(primitives[i].scale.y, primitives[i].scale.z));
         }
         else if (primitives[i].type == TYPE_CYLINDER) {
-            d = sdCylinder(localP,
+            d = CylinderSDF(localP,
             primitives[i].halfExtents.x,
             primitives[i].halfExtents.y);
             d *= min(primitives[i].scale.x,
             min(primitives[i].scale.y, primitives[i].scale.z));
         }
         else if (primitives[i].type == TYPE_TORUS) {
-            d = sdTorus(localP,
+            d = TorusSDF(localP,
             primitives[i].halfExtents.x,
             primitives[i].halfExtents.y);
             d *= min(primitives[i].scale.x,
             min(primitives[i].scale.y, primitives[i].scale.z));
         }
         else if (primitives[i].type == TYPE_CONE) {
-            d = sdCone(localP,
+            d = ConeSDF(localP,
             primitives[i].halfExtents.x,
             primitives[i].halfExtents.y);
             d *= min(primitives[i].scale.x,
@@ -225,7 +222,7 @@ Hit mapScene(vec3 p) {
         }
         else if (primitives[i].type == TYPE_PLANE) {
             // Plane ignores scale correction — it's infinite
-            d = sdPlane(localP,
+            d = PlaneSDF(localP,
             primitives[i].halfExtents,
             primitives[i].scale.x);
         }

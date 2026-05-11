@@ -11,6 +11,7 @@ namespace editor::editorWindows {
     int         BenchmarkTool::s_iterationsPerRun = 100;
     bool        BenchmarkTool::s_autoRecompute    = true;
     std::string BenchmarkTool::s_csvOutputPath    = "benchmark_results.csv";
+    std::string BenchmarkTool::s_baseOutputPath   = "Assets/Data/";
 
     std::vector<BenchmarkTool::RegisteredBenchmark> BenchmarkTool::s_registered;
     std::vector<BenchmarkEntry>                     BenchmarkTool::s_entries;
@@ -207,7 +208,7 @@ namespace editor::editorWindows {
     // =========================================================================
 
     bool BenchmarkTool::ExportCSV(const std::string& path) {
-        const std::string& outPath = path.empty() ? s_csvOutputPath : path;
+        const std::string& outPath = s_baseOutputPath + (path.empty() ? s_csvOutputPath : path);
 
         std::ofstream ofs(outPath);
         if (!ofs.is_open()) {

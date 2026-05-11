@@ -67,6 +67,7 @@ namespace editor::editorWindows {
         static int         s_iterationsPerRun;
         static bool        s_autoRecompute;
         static std::string s_csvOutputPath;
+        static std::string s_baseOutputPath;
 
         // ── Benchmark registration ────────────────────────────────────────────
         static void RegisterBenchmark(const std::string& name,
