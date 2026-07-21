@@ -15,6 +15,9 @@
 
 
 namespace core {
+    class Primitive;
+    class Light;
+
     class Material : public Asset {
         static Texture* defaultTexture;
         GLuint shaderProgram;
@@ -23,6 +26,9 @@ namespace core {
         std::unordered_map<std::string, glm::mat4> mat4Uniforms;
         std::unordered_map<std::string, float> floatUniforms;
         std::unordered_map<std::string, int> intUniforms;
+
+        GLuint tex{};
+        GLuint tbo{};
 
     public:
         std::string vertexShaderPath, fragmentShaderPath;
@@ -38,6 +44,10 @@ namespace core {
         void SetMat4(const std::string& name, const glm::mat4& value);
         void SetFloat(const std::string& name, float value);
         void SetInt(const std::string& name, int value);
+
+        void UploadLights(GLuint shader, const std::vector<Light*>& lights) const;
+        void UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) const;
+        void BindPrimitiveBuffer(GLuint shader, int primitiveCount, int textureUnit) const;
 
         void Bind();
 

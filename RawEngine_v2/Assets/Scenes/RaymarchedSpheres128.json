@@ -1,0 +1,4910 @@
+{
+    "ambientColor": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+    },
+    "ambientIntensity": 0.10000000149011612,
+    "name": "RaymarchedSpheres128",
+    "objects": [
+        {
+            "components": [
+                {
+                    "height": 600,
+                    "type": "Camera",
+                    "width": 800
+                },
+                {
+                    "moveSpeed": 500.0,
+                    "rotateSpeed": 10000.0,
+                    "type": "PlayerController"
+                }
+            ],
+            "name": "Camera",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -50.0,
+                    "y": 5.0,
+                    "z": 40.0
+                },
+                "rotation": {
+                    "x": -10.0,
+                    "y": -45.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 0",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -25.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 1",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -25.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 2",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -25.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 3",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -25.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 4",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -25.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 5",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -15.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 6",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -15.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 7",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -15.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 8",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -15.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 9",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -15.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 10",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -5.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 11",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -5.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 12",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -5.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 13",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -5.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 14",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": -5.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 15",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": 5.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 16",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": 5.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 17",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": 5.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 18",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": 5.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 19",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": 5.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 20",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": 15.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 21",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": 15.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 22",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": 15.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 23",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": 15.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 24",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -25.0,
+                    "y": 15.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 25",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -25.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 26",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -25.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 27",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -25.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 28",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -25.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 29",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -25.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 30",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -15.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 31",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -15.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 32",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -15.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 33",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -15.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 34",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -15.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 35",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -5.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 36",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -5.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 37",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -5.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 38",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -5.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 39",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": -5.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 40",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": 5.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 41",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": 5.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 42",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": 5.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 43",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": 5.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 44",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": 5.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 45",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": 15.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 46",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": 15.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 47",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": 15.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 48",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": 15.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 49",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -15.0,
+                    "y": 15.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 50",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -25.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 51",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -25.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 52",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -25.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 53",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -25.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 54",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -25.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 55",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -15.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 56",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -15.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 57",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -15.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 58",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -15.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 59",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -15.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 60",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -5.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 61",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -5.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 62",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -5.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 63",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -5.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 64",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": -5.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 65",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": 5.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 66",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": 5.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 67",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": 5.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 68",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": 5.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 69",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": 5.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 70",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": 15.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 71",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": 15.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 72",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": 15.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 73",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": 15.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 74",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -5.0,
+                    "y": 15.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 75",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -25.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 76",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -25.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 77",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -25.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 78",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -25.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 79",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -25.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 80",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -15.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 81",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -15.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 82",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -15.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 83",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -15.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 84",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -15.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 85",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -5.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 86",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -5.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 87",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -5.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 88",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -5.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 89",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": -5.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 90",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": 5.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 91",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": 5.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 92",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": 5.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 93",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": 5.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 94",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": 5.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 95",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": 15.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 96",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": 15.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 97",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": 15.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 98",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": 15.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 99",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 5.0,
+                    "y": 15.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 100",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -25.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 101",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -25.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 102",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -25.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 103",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -25.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 104",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -25.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 105",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -15.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 106",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -15.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 107",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -15.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 108",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -15.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 109",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -15.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 110",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -5.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 111",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -5.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 112",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -5.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 113",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -5.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 114",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": -5.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 115",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": 5.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 116",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": 5.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 117",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": 5.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 118",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": 5.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 119",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": 5.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 120",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": 15.0,
+                    "z": -25.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 121",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": 15.0,
+                    "z": -15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 122",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": 15.0,
+                    "z": -5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 123",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": 15.0,
+                    "z": 5.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 124",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 15.0,
+                    "y": 15.0,
+                    "z": 15.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 125",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 35.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 126",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 0.0,
+                    "y": 35.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 127",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 0.0,
+                    "y": 35.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        }
+    ]
+}

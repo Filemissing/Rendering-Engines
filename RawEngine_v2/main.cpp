@@ -44,21 +44,8 @@ int main() {
     RenderSettings::Init();
 
     //Scene
-    auto* scene1 = SceneManager::LoadScene("RaymarchedSpheres");
+    auto* scene1 = SceneManager::LoadScene("RaymarchedSpheres128");
     Editor::activeScene = scene1;
-
-    // int i = 0;
-    // for (int x = -20; x < 20; x += 10) {
-    //     for (int y = -20; y < 20; y += 10) {
-    //         for (int z = -20; z < 20; z += 10) {
-    //             auto* newObject = new GameObject(std::format("Sphere {}", i));
-    //             scene1->AddGameObject(newObject);
-    //             ComponentFactory::Create("Primitive", newObject);
-    //             newObject->transform.SetPosition(glm::vec3(x, y, z));
-    //             i++;
-    //         }
-    //     }
-    // }
 
     // Texture CMGaToTexture("Assets/textures/CMGaTo_crop.png");
     // Texture MarbleTexture("Assets/textures/Marble.png");

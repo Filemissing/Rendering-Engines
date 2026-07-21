@@ -24,6 +24,9 @@ namespace core {
         const unsigned int program = GenerateShaderProgram(vertexShader, fragmentShader);
 
         shaderProgram = program;
+
+        glGenBuffers(1, &tbo);
+        glGenTextures(1, &tex);
     }
     Material::~Material() {
         glDeleteProgram(shaderProgram);
@@ -45,7 +48,7 @@ namespace core {
         intUniforms[name] = value;
     }
 
-    void UploadLights(GLuint shader, const std::vector<Light*>& lights)
+    void Material::UploadLights(GLuint shader, const std::vector<Light*>& lights) const
     {
         glUseProgram(shader);
 
@@ -75,36 +78,56 @@ namespace core {
         if (loc == -1) return;
         glUniform1i(loc, lights.size());
     }
-    void UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) {
-        glUseProgram(shader);
+    void Material::UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) const {
+        const int STRIDE = 16; // floats per primitive
+        std::vector<float> buffer;
+        buffer.reserve(primitives.size() * STRIDE);
 
-        for (int i = 0; i < primitives.size(); i++) {
-            const Primitive* primitive = primitives[i];
+        for (const Primitive* p : primitives) {
+            // type (1 float)
+            buffer.push_back((float)p->type);
 
-            std::string base = "primitives[" + std::to_string(i) + "].";
+            // position (3 floats)
+            buffer.push_back(p->gameObject->transform.position.x);
+            buffer.push_back(p->gameObject->transform.position.y);
+            buffer.push_back(p->gameObject->transform.position.z);
 
-            glUniform1i(glGetUniformLocation(shader, (base + "type").c_str()),
-                primitive->type);
+            // rotation (3 floats)
+            buffer.push_back(p->gameObject->transform.rotation.x);
+            buffer.push_back(p->gameObject->transform.rotation.y);
+            buffer.push_back(p->gameObject->transform.rotation.z);
 
-            glUniform3fv(glGetUniformLocation(shader, (base + "position").c_str()),
-                1, glm::value_ptr(primitive->gameObject->transform.position));
+            // scale (3 floats)
+            buffer.push_back(p->gameObject->transform.scale.x);
+            buffer.push_back(p->gameObject->transform.scale.y);
+            buffer.push_back(p->gameObject->transform.scale.z);
 
-            glUniform3fv(glGetUniformLocation(shader, (base + "rotation").c_str()),
-                1, glm::value_ptr(primitive->gameObject->transform.rotation));
+            // halfExtents (3 floats)
+            buffer.push_back(p->halfExtents.x);
+            buffer.push_back(p->halfExtents.y);
+            buffer.push_back(p->halfExtents.z);
 
-            glUniform3fv(glGetUniformLocation(shader, (base + "scale").c_str()),
-                1, glm::value_ptr(primitive->gameObject->transform.scale));
-
-            glUniform3fv(glGetUniformLocation(shader, (base + "halfExtents").c_str()),
-                1, glm::value_ptr(primitive->halfExtents));
-
-            glUniform3fv(glGetUniformLocation(shader, (base + "color").c_str()),
-                1, glm::value_ptr(primitive->color));
+            // color (3 floats)
+            buffer.push_back(p->color.x);
+            buffer.push_back(p->color.y);
+            buffer.push_back(p->color.z);
         }
 
-        GLint loc = glGetUniformLocation(shader, "primitiveCount");
-        if (loc == -1) return;
-        glUniform1i(loc, primitives.size());
+        // Upload to GPU
+        glBindBuffer(GL_TEXTURE_BUFFER, tbo);
+        glBufferData(GL_TEXTURE_BUFFER,
+                     buffer.size() * sizeof(float),
+                     buffer.data(),
+                     GL_DYNAMIC_DRAW);
+
+        glBindTexture(GL_TEXTURE_BUFFER, tex);
+        glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, tbo);
+    }
+    void Material::BindPrimitiveBuffer(GLuint shader, int primitiveCount, int textureUnit = 0) const {
+        glActiveTexture(GL_TEXTURE0 + textureUnit);
+        glBindTexture(GL_TEXTURE_BUFFER, tex);
+        glUniform1i(glGetUniformLocation(shader, "primitiveBuffer"), textureUnit);
+        glUniform1i(glGetUniformLocation(shader, "primitiveCount"), primitiveCount);
     }
     void Material::Bind() {
         glUseProgram(shaderProgram);
@@ -119,6 +142,7 @@ namespace core {
 
         UploadLights(shaderProgram, editor::Editor::activeScene->lights);
         UploadPrimitives(shaderProgram, editor::Editor::activeScene->primitives);
+        BindPrimitiveBuffer(shaderProgram, editor::Editor::activeScene->primitives.size());
 
         this->SetVec4("ambientColor", editor::Editor::activeScene->ambientColor);
         this->SetFloat("ambientIntensity", editor::Editor::activeScene->ambientIntensity);

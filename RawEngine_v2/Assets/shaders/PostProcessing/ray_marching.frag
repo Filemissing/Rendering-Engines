@@ -15,7 +15,7 @@ uniform vec3 cameraPos;
 uniform float _Far;
 
 // -- Objects --
-#define MAX_PRIMITIVES 128
+//#define MAX_PRIMITIVES 128
 #define TYPE_SPHERE    0
 #define TYPE_BOX       1
 #define TYPE_PYRAMID   2
@@ -26,16 +26,38 @@ uniform float _Far;
 #define TYPE_PLANE     7
 
 struct Primitive {
-    int   type;
+    float type; // secretly an int
     vec3  position;
     vec3  rotation;
     vec3  scale;
-    vec3  halfExtents; // box only 
+    vec3  halfExtents;
     vec3  color;
 };
 
-uniform Primitive primitives[MAX_PRIMITIVES];
+//uniform Primitive primitives[MAX_PRIMITIVES];
+uniform samplerBuffer primitiveBuffer;
 uniform int primitiveCount;
+const int STRIDE = 4;
+
+Primitive unpackPrimitive(int index) {
+    int start = STRIDE * index;
+    Primitive p;
+
+    vec4 data1 = texelFetch(primitiveBuffer, start);
+    vec4 data2 = texelFetch(primitiveBuffer, start + 1);
+    vec4 data3 = texelFetch(primitiveBuffer, start + 2);
+    vec4 data4 = texelFetch(primitiveBuffer, start + 3);
+
+    p.type = data1.r;
+    p.position = data1.yzw;
+    p.rotation = data2.xyz;
+    p.scale = vec3(data2.w, data3.xy);
+    p.halfExtents = vec3(data3.zw, data4.x);
+    p.color = data4.gba;
+
+    return p;
+}
+
 
 // Reconstruct distance from depth
 float sceneRayDist() {
@@ -173,58 +195,60 @@ Hit mapScene(vec3 p) {
     h.id   = -1;
 
     for (int i = 0; i < primitiveCount; i++) {
-        float d;
-        vec3 localP = eulerToMat3(primitives[i].rotation) * (p - primitives[i].position);
-        localP /= primitives[i].scale; // apply scale
+        Primitive primitive = unpackPrimitive(i);
 
-        if (primitives[i].type == TYPE_SPHERE) {
-            d = SphereSDF(localP, vec3(0.0), primitives[i].halfExtents.x);
-            d *= min(primitives[i].scale.x,
-            min(primitives[i].scale.y, primitives[i].scale.z)); // correct scale
+        float d;
+        vec3 localP = eulerToMat3(primitive.rotation) * (p - primitive.position);
+        localP /= primitive.scale; // apply scale
+
+        if (primitive.type == TYPE_SPHERE) {
+            d = SphereSDF(localP, vec3(0.0), primitive.halfExtents.x);
+            d *= min(primitive.scale.x,
+            min(primitive.scale.y, primitive.scale.z)); // correct scale
         }
-        else if (primitives[i].type == TYPE_BOX) {
-            d = BoxSDF(localP, vec3(0.0), primitives[i].halfExtents);
-            d *= min(primitives[i].scale.x,
-            min(primitives[i].scale.y, primitives[i].scale.z));
+        else if (primitive.type == TYPE_BOX) {
+            d = BoxSDF(localP, vec3(0.0), primitive.halfExtents);
+            d *= min(primitive.scale.x,
+            min(primitive.scale.y, primitive.scale.z));
         }
-        else if (primitives[i].type == TYPE_PYRAMID){
-            d = PyramidSDF(localP, primitives[i].halfExtents.y, primitives[i].halfExtents.x);
-            d *= min(primitives[i].scale.x,
-            min(primitives[i].scale.y, primitives[i].scale.z));
+        else if (primitive.type == TYPE_PYRAMID){
+            d = PyramidSDF(localP, primitive.halfExtents.y, primitive.halfExtents.x);
+            d *= min(primitive.scale.x,
+            min(primitive.scale.y, primitive.scale.z));
         }
-        else if (primitives[i].type == TYPE_CAPSULE) {
+        else if (primitive.type == TYPE_CAPSULE) {
             d = CapsuleSDF(localP,
-            primitives[i].halfExtents.x,
-            primitives[i].halfExtents.y);
-            d *= min(primitives[i].scale.x,
-            min(primitives[i].scale.y, primitives[i].scale.z));
+            primitive.halfExtents.x,
+            primitive.halfExtents.y);
+            d *= min(primitive.scale.x,
+            min(primitive.scale.y, primitive.scale.z));
         }
-        else if (primitives[i].type == TYPE_CYLINDER) {
+        else if (primitive.type == TYPE_CYLINDER) {
             d = CylinderSDF(localP,
-            primitives[i].halfExtents.x,
-            primitives[i].halfExtents.y);
-            d *= min(primitives[i].scale.x,
-            min(primitives[i].scale.y, primitives[i].scale.z));
+            primitive.halfExtents.x,
+            primitive.halfExtents.y);
+            d *= min(primitive.scale.x,
+            min(primitive.scale.y, primitive.scale.z));
         }
-        else if (primitives[i].type == TYPE_TORUS) {
+        else if (primitive.type == TYPE_TORUS) {
             d = TorusSDF(localP,
-            primitives[i].halfExtents.x,
-            primitives[i].halfExtents.y);
-            d *= min(primitives[i].scale.x,
-            min(primitives[i].scale.y, primitives[i].scale.z));
+            primitive.halfExtents.x,
+            primitive.halfExtents.y);
+            d *= min(primitive.scale.x,
+            min(primitive.scale.y, primitive.scale.z));
         }
-        else if (primitives[i].type == TYPE_CONE) {
+        else if (primitive.type == TYPE_CONE) {
             d = ConeSDF(localP,
-            primitives[i].halfExtents.x,
-            primitives[i].halfExtents.y);
-            d *= min(primitives[i].scale.x,
-            min(primitives[i].scale.y, primitives[i].scale.z));
+            primitive.halfExtents.x,
+            primitive.halfExtents.y);
+            d *= min(primitive.scale.x,
+            min(primitive.scale.y, primitive.scale.z));
         }
-        else if (primitives[i].type == TYPE_PLANE) {
+        else if (primitive.type == TYPE_PLANE) {
             // Plane ignores scale correction — it's infinite
             d = PlaneSDF(localP,
-            primitives[i].halfExtents,
-            primitives[i].scale.x);
+            primitive.halfExtents,
+            primitive.scale.x);
         }
 
         if (d < h.dist) {
