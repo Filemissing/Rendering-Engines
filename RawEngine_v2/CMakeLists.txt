@@ -77,6 +77,10 @@ set(IMGUI_SOURCES
         core/Components/Primitive.h
         editor/EditorWindows/BenchmarkTool.cpp
         editor/EditorWindows/BenchmarkTool.h
+        core/Raymarcher.cpp
+        core/Raymarcher.h
+        editor/EditorWindows/RaymarcherWindow.cpp
+        editor/EditorWindows/RaymarcherWindow.h
 )
 
 add_executable(RawEngine main.cpp

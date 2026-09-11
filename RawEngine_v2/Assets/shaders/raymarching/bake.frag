@@ -1,18 +1,13 @@
-// Assets/shaders/PostProcessing/raymarching.frag
-#version 330 core
+#version 400 core
 
 in vec2 uv;
 out vec4 FragColor;
 
-// -- Standard pipeline uniforms --
-uniform sampler2D _MainTex;
-uniform sampler2D _SceneDepth;
-
-// -- Camera uniforms --
-uniform mat4 _InvView;
-uniform mat4 _InvProj;
-uniform vec3 cameraPos;
-uniform float _Far;
+// -- Volume bounds & slice info --
+uniform vec3 _WorldMin;
+uniform vec3 _WorldMax;
+uniform int  _SliceZ;
+uniform int  _ResolutionZ;
 
 // -- Objects --
 #define MAX_PRIMITIVES 128
@@ -30,43 +25,12 @@ struct Primitive {
     vec3  position;
     vec3  rotation;
     vec3  scale;
-    vec3  halfExtents; // box only 
+    vec3  halfExtents;
     vec3  color;
 };
 
 uniform Primitive primitives[MAX_PRIMITIVES];
 uniform int primitiveCount;
-
-// Reconstruct distance from depth
-float sceneRayDist() {
-    float depth = texture(_SceneDepth, uv).r;
-    if (depth >= 0.9999) return _Far;
-
-    // Reconstruct NDC position
-    vec3 ndc = vec3(uv * 2.0 - 1.0, depth * 2.0 - 1.0);
-
-    // Unproject to view space
-    vec4 viewPos = _InvProj * vec4(ndc, 1.0);
-    viewPos /= viewPos.w;
-
-    // Transform to world space
-    vec4 worldPos = _InvView * viewPos;
-
-    // True distance from camera to that world position along the ray
-    return length(worldPos.xyz - cameraPos);
-}
-
-// Reconstruct world-space ray for this fragment
-vec3 rayDirection() {
-    vec2 ndc = uv * 2.0 - 1.0;
-
-    vec4 viewPos = _InvProj * vec4(ndc, -1.0, 1.0);
-    viewPos.xyz /= viewPos.w;
-    viewPos.w = 0.0;
-
-    vec3 worldDir = normalize((_InvView * viewPos).xyz);
-    return worldDir;
-}
 
 // ----------------------------------------------------------------
 // SDF primitives
@@ -180,14 +144,14 @@ Hit mapScene(vec3 p) {
         if (primitives[i].type == TYPE_SPHERE) {
             d = SphereSDF(localP, vec3(0.0), primitives[i].halfExtents.x);
             d *= min(primitives[i].scale.x,
-            min(primitives[i].scale.y, primitives[i].scale.z)); // correct scale
+            min(primitives[i].scale.y, primitives[i].scale.z));
         }
         else if (primitives[i].type == TYPE_BOX) {
             d = BoxSDF(localP, vec3(0.0), primitives[i].halfExtents);
             d *= min(primitives[i].scale.x,
             min(primitives[i].scale.y, primitives[i].scale.z));
         }
-        else if (primitives[i].type == TYPE_PYRAMID){
+        else if (primitives[i].type == TYPE_PYRAMID) {
             d = PyramidSDF(localP, primitives[i].halfExtents.y, primitives[i].halfExtents.x);
             d *= min(primitives[i].scale.x,
             min(primitives[i].scale.y, primitives[i].scale.z));
@@ -226,6 +190,9 @@ Hit mapScene(vec3 p) {
             primitives[i].halfExtents,
             primitives[i].scale.x);
         }
+        else {
+            d = -999; // no-primitive type matched
+        }
 
         if (d < h.dist) {
             h.dist = d;
@@ -236,71 +203,16 @@ Hit mapScene(vec3 p) {
     return h;
 }
 
-// ----------------------------------------------------------------
-// Helper methods for reconstructing object info
-// ----------------------------------------------------------------
-vec3 calcNormal(vec3 p) {
-    const float e = 0.001;
-    return normalize(vec3(
-    mapScene(p + vec3(e,0,0)).dist - mapScene(p - vec3(e,0,0)).dist,
-    mapScene(p + vec3(0,e,0)).dist - mapScene(p - vec3(0,e,0)).dist,
-    mapScene(p + vec3(0,0,e)).dist - mapScene(p - vec3(0,0,e)).dist
-    ));
-}
-
-// ----------------------------------------------------------------
-// Simple diffuse + ambient shading
-// ----------------------------------------------------------------
-vec3 shade(vec3 pos, vec3 normal, int id) {
-    vec3 lightDir = normalize(vec3(0.6, 1.0, 0.4));
-    float diff    = max(dot(normal, lightDir), 0.0);
-    vec3  col     = primitives[id].color;
-    return col * (0.15 + 0.85 * diff);
-}
-
-// ----------------------------------------------------------------
-// Raymarcher
-// ----------------------------------------------------------------
-uniform int _MaxSteps;
-uniform float _MaxDist;
-uniform float _SurfDist;
-
 void main() {
-    vec3 ro = cameraPos;
-    vec3 rd = rayDirection();
+//    FragColor = vec4(primitives[0].rotation, 1);
+//    return;
 
-    float sceneDepthLinear = sceneRayDist();
+    // (x, y) comes from the quad's uv, matching this slice's resolution
+    // z is reconstructed from which slice we're currently baking
+    vec3 uvw = vec3(uv.x, uv.y, (float(_SliceZ) + 0.5) / float(_ResolutionZ));
+    vec3 worldPos = _WorldMin + uvw * (_WorldMax - _WorldMin);
 
-    float t    = 0.0;
-    int   hitId = -1;
-    int steps = 0;
+    Hit h = mapScene(worldPos);
 
-    for (int i = 0; i < _MaxSteps; i++) {
-        vec3  p = ro + rd * t;
-        Hit   h = mapScene(p);
-
-        if (h.dist < _SurfDist) {
-            hitId = h.id;
-            steps = i;
-            break;
-        }
-
-        t += h.dist;
-
-        // Stop if we've passed existing geometry or marched too far
-        if (t >= sceneDepthLinear || t >= _MaxDist) {
-            steps = i;
-            break;
-        }
-    }
-
-    if (hitId != -1) {
-        vec3 pos    = ro + rd * t;
-        vec3 normal = calcNormal(pos);
-        vec3 color  = shade(pos, normal, hitId);
-        FragColor   = vec4(color, 1.0);
-    } else {
-        // No hit - pass through the existing scene
-        FragColor = texture(_MainTex, uv);
-    }
+    FragColor = vec4(h.dist, 0.0, 0.0, 1.0);
 }

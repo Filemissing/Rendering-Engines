@@ -12,6 +12,7 @@
 #include "EditorWindows/BenchmarkTool.h"
 #include "EditorWindows/HierarchyWindow.h"
 #include "EditorWindows/Inspector.h"
+#include "EditorWindows/RaymarcherWindow.h"
 #include "EditorWindows/SceneLoader.h"
 #include "EditorWindows/TransformWindow.h"
 
@@ -131,6 +132,7 @@ namespace editor {
         windows.push_back(CreateEditorWindow<editorWindows::ViewPort>("ViewPort"));
         windows.push_back(CreateEditorWindow<editorWindows::Inspector>("Inspector"));
         windows.push_back(CreateEditorWindow<editorWindows::BenchmarkTool>("Benchmark Tool"));
+        windows.push_back(CreateEditorWindow<editorWindows::RaymarcherWindow>("Ray-marcher"));
 
         return true;
     }

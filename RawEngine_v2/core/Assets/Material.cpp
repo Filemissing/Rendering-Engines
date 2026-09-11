@@ -29,8 +29,14 @@ namespace core {
         glDeleteProgram(shaderProgram);
     }
 
-    void Material::SetTexture(const std::string& name, GLuint tex) {
-        textures[name] = tex;
+    void Material::SetTexture2D(const std::string& name, GLuint tex) {
+        textures2D[name] = tex;
+    }
+    void Material::SetTexture3D(const std::string& name, GLuint tex) {
+        textures3D[name] = tex;
+    }
+    void Material::SetVec3(const std::string& name, const glm::vec3& value) {
+        vec3Uniforms[name] = value;
     }
     void Material::SetVec4(const std::string& name, const glm::vec4& value) {
         vec4Uniforms[name] = value;
@@ -75,50 +81,18 @@ namespace core {
         if (loc == -1) return;
         glUniform1i(loc, lights.size());
     }
-    void UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) {
-        glUseProgram(shader);
-
-        for (int i = 0; i < primitives.size(); i++) {
-            const Primitive* primitive = primitives[i];
-
-            std::string base = "primitives[" + std::to_string(i) + "].";
-
-            glUniform1i(glGetUniformLocation(shader, (base + "type").c_str()),
-                primitive->type);
-
-            glUniform3fv(glGetUniformLocation(shader, (base + "position").c_str()),
-                1, glm::value_ptr(primitive->gameObject->transform.position));
-
-            glUniform3fv(glGetUniformLocation(shader, (base + "rotation").c_str()),
-                1, glm::value_ptr(primitive->gameObject->transform.rotation));
-
-            glUniform3fv(glGetUniformLocation(shader, (base + "scale").c_str()),
-                1, glm::value_ptr(primitive->gameObject->transform.scale));
-
-            glUniform3fv(glGetUniformLocation(shader, (base + "halfExtents").c_str()),
-                1, glm::value_ptr(primitive->halfExtents));
-
-            glUniform3fv(glGetUniformLocation(shader, (base + "color").c_str()),
-                1, glm::value_ptr(primitive->color));
-        }
-
-        GLint loc = glGetUniformLocation(shader, "primitiveCount");
-        if (loc == -1) return;
-        glUniform1i(loc, primitives.size());
-    }
     void Material::Bind() {
         glUseProgram(shaderProgram);
 
-        if (textures.find("_MainTex") == textures.end()) {
+        if (textures2D.find("_MainTex") == textures2D.end()) {
             if (defaultTexture == nullptr) defaultTexture = new Texture("Assets/textures/white.png");
-            this->SetTexture("_MainTex", defaultTexture->getId());
+            this->SetTexture2D("_MainTex", defaultTexture->getId());
         }
 
         this->SetFloat("smoothness", this->smoothness);
         this->SetFloat("metallic", this->metallic);
 
         UploadLights(shaderProgram, editor::Editor::activeScene->lights);
-        UploadPrimitives(shaderProgram, editor::Editor::activeScene->primitives);
 
         this->SetVec4("ambientColor", editor::Editor::activeScene->ambientColor);
         this->SetFloat("ambientIntensity", editor::Editor::activeScene->ambientIntensity);
@@ -131,6 +105,11 @@ namespace core {
         }
 
         // upload uniforms
+        for (auto& [name, value] : vec3Uniforms) {
+            GLint loc = glGetUniformLocation(shaderProgram, name.c_str());
+            if (loc == -1) continue; // uniform not found
+            glUniform3fv(loc, 1, glm::value_ptr(value));
+        }
         for (auto& [name, value] : vec4Uniforms) {
             GLint loc = glGetUniformLocation(shaderProgram, name.c_str());
             if (loc == -1) continue; // uniform not found
@@ -154,9 +133,15 @@ namespace core {
 
         // bind textures
         int i = 0;
-        for (auto& [name, tex] : textures) {
+        for (auto& [name, tex] : textures2D) {
             glActiveTexture(GL_TEXTURE0 + i);
             glBindTexture(GL_TEXTURE_2D, tex);
+            glUniform1i(glGetUniformLocation(shaderProgram, name.c_str()), i);
+            i++;
+        }
+        for (auto& [name, tex] : textures3D) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_3D, tex);
             glUniform1i(glGetUniformLocation(shaderProgram, name.c_str()), i);
             i++;
         }

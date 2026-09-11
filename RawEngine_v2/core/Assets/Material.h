@@ -18,7 +18,9 @@ namespace core {
     class Material : public Asset {
         static Texture* defaultTexture;
         GLuint shaderProgram;
-        std::unordered_map<std::string, GLuint> textures;
+        std::unordered_map<std::string, GLuint> textures2D;
+        std::unordered_map<std::string, GLuint> textures3D;
+        std::unordered_map<std::string, glm::vec3> vec3Uniforms;
         std::unordered_map<std::string, glm::vec4> vec4Uniforms;
         std::unordered_map<std::string, glm::mat4> mat4Uniforms;
         std::unordered_map<std::string, float> floatUniforms;
@@ -33,11 +35,15 @@ namespace core {
         Material(const std::string &vertexShaderPath, const std::string &fragmentShaderPath);
         ~Material();
 
-        void SetTexture(const std::string& name, GLuint tex);
+        void SetTexture2D(const std::string& name, GLuint tex);
+        void SetTexture3D(const std::string& name, GLuint tex);
+        void SetVec3(const std::string& name, const glm::vec3& value);
         void SetVec4(const std::string& name, const glm::vec4& value);
         void SetMat4(const std::string& name, const glm::mat4& value);
         void SetFloat(const std::string& name, float value);
         void SetInt(const std::string& name, int value);
+
+        GLuint GetShaderProgram() { return shaderProgram; }
 
         void Bind();
 

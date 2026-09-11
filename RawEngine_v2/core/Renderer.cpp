@@ -13,26 +13,6 @@ namespace core {
     Renderer::Renderer() {
         glGenQueries(1, &m_timeQuery);
 
-        // add effects to list
-        // raymarching
-        postProcessingEffects.push_back(
-            new PostProcessEffect("Ray-marching",
-                {
-                    new PostProcessPass(
-                        new Material(
-                            "Assets/shaders/PostProcessing/viewSpace.vert",
-                            "Assets/shaders/PostProcessing/ray_marching.frag"),
-                        {
-                            PostProcessingParameter("_MaxSteps", typeid(int), 0, 96),
-                            PostProcessingParameter("_MaxDist", typeid(float), 200),
-                            PostProcessingParameter("_SurfDist", typeid(float), 0.001)
-                        }
-                    )
-                }
-            )
-        );
-
-
         // auto* blur_horizontal = new PostProcessPass(new Material(
         //                 "Assets/shaders/PostProcessing/viewSpace.vert",
         //                 "Assets/shaders/PostProcessing/blur_horizontal.frag"));
@@ -86,19 +66,19 @@ namespace core {
         //     )
         // );
 
-        postProcessingEffects.push_back(
-            new PostProcessEffect("Hue Shift",
-                {
-                    new PostProcessPass(
-                        new Material(
-                            "Assets/shaders/PostProcessing/viewSpace.vert",
-                            "Assets/shaders/PostProcessing/Hue shift.frag"),
-                            {PostProcessingParameter("_Degrees", typeid(float), 0.0f)}
-                    )
-                }
-            )
-        );
-        //
+        // postProcessingEffects.push_back(
+        //     new PostProcessEffect("Hue Shift",
+        //         {
+        //             new PostProcessPass(
+        //                 new Material(
+        //                     "Assets/shaders/PostProcessing/viewSpace.vert",
+        //                     "Assets/shaders/PostProcessing/Hue shift.frag"),
+        //                     {PostProcessingParameter("_Degrees", typeid(float), 0.0f)}
+        //             )
+        //         }
+        //     )
+        // );
+
         // postProcessingEffects.push_back(
         //     new PostProcessEffect("Invert",
         //         {
@@ -112,6 +92,19 @@ namespace core {
         //     )
         // );
 
+        // postProcessingEffects.push_back(
+        //     new PostProcessEffect("Test",
+        //         {
+        //             new PostProcessPass(
+        //                 new Material(
+        //                     "Assets/shaders/PostProcecssion/viewspace.vert",
+        //                     "Assets/shaders/raymarching/bake.frag"
+        //                 )
+        //             )
+        //         }
+        //     )
+        // );
+
         std::vector<Mesh> meshes = std::vector<Mesh>();
         meshes.push_back(Mesh::generateQuad());
         quadModel = new Model(std::move(meshes));
@@ -119,9 +112,12 @@ namespace core {
         ppFbo[0] = ppFbo[1] = 0;
         ppTex[0] = ppTex[1] = 0;
         ppDepth[0] = ppDepth[1] = 0;
+
+        m_raymarcher = new Raymarcher();
     }
     Renderer::~Renderer() {
         DestroyFbo();
+        delete m_raymarcher;
         for (auto& pass : postProcessingEffects) {
             delete pass;
         }
@@ -165,11 +161,16 @@ namespace core {
         );
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glDisable(GL_DEPTH_TEST); // disable depth test for post-processing
 
-        GLuint input = ppTex[0];
-        GLuint depthTex = ppDepth[0];
-        GLuint output = ppFbo[1];
-        bool ping = true;
+        // render Ray-marched content
+        m_raymarcher->Render(ppFbo[1], ppTex[0], sceneDepth, Camera::GetMainCamera());
+
+        GLuint input = 0;
+        GLuint depthTex = 0;
+        GLuint output = 0;
+
+        bool ping = false;
         // 2. Execute post-processing passes
         for (auto& effect : postProcessingEffects) {
             if (!effect->enabled)
@@ -184,14 +185,14 @@ namespace core {
 
                 // set input textures
                 input = ping ? ppTex[0] : ppTex[1];
-                pass->material->SetTexture("_MainTex", input);
+                pass->material->SetTexture2D("_MainTex", input);
 
                 depthTex = ping ? ppDepth[0] : ppDepth[1];
-                pass->material->SetTexture("_DepthTex", depthTex);
+                pass->material->SetTexture2D("_DepthTex", depthTex);
 
 
-                pass->material->SetTexture("_SceneColor", sceneColor);
-                pass->material->SetTexture("_SceneDepth", sceneDepth);
+                pass->material->SetTexture2D("_SceneColor", sceneColor);
+                pass->material->SetTexture2D("_SceneDepth", sceneDepth);
 
                 pass->material->SetVec4("_TexelSize", glm::vec4(1.0f/float(width), 1.0f/float(height), 0, 0));
 
@@ -237,6 +238,7 @@ namespace core {
             GL_NEAREST
         );
 
+        glEnable(GL_DEPTH_TEST); // re-enable depth test
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         if (!m_queryInFlight) {
@@ -265,9 +267,9 @@ namespace core {
         // Create color texture storage
         glBindTexture(GL_TEXTURE_2D, sceneColor);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // Optional wrap
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
