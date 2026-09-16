@@ -23,7 +23,8 @@ namespace core {
             Cylinder,
             Torus,
             Cone,
-            Plane
+            Plane,
+            Terrain
         };
 
         PrimitiveType type = Sphere;

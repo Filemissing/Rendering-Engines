@@ -13,12 +13,16 @@ namespace core {
         volumeTex = 0;
         bakeFbo = 0;
 
-        bakeMaterial = new Material(
-            "Assets/shaders/PostProcessing/viewSpace.vert",
-            "Assets/shaders/raymarching/bake.frag");
         marchMaterial = new Material(
             "Assets/shaders/PostProcessing/viewSpace.vert",
             "Assets/shaders/raymarching/march.frag");
+        debugSliceMaterial = new Material(
+            "Assets/shaders/PostProcessing/viewSpace.vert",
+            "Assets/shaders/debug/slice_view.frag");
+
+        classifyShader = new ComputeShader("Assets/shaders/raymarching/classify.comp");
+        jfaStepShader = new ComputeShader("Assets/shaders/raymarching/jfaStep.comp");
+        jfaFinalizeShader = new ComputeShader("Assets/shaders/raymarching/jfaFinalize.comp");
 
         std::vector<Mesh> meshes = std::vector<Mesh>();
         meshes.push_back(Mesh::generateQuad());
@@ -29,14 +33,19 @@ namespace core {
     }
     Raymarcher::~Raymarcher() {
         DestroyFbo();
-        delete bakeMaterial;
         delete marchMaterial;
+        delete quadModel;
+
+        delete classifyShader;
+        delete jfaStepShader;
+        delete jfaFinalizeShader;
     }
 
     void Raymarcher::EnsureVolumeSized(glm::ivec3 newResolution) {
         resolution = newResolution;
-
         DestroyFbo();
+        EnsureJFAResourcesSized();
+
         glGenTextures(1, &volumeTex);
         glGenFramebuffers(1, &bakeFbo);
 
@@ -67,9 +76,45 @@ namespace core {
             std::cerr << "GL error after EnsureFboSized(): 0x" << std::hex << e << std::dec << std::endl;
         }
     }
+    void Raymarcher::EnsureJFAResourcesSized() {
+        // ping-pong textures
+        glGenTextures(1, &jfaTexA);
+        glBindTexture(GL_TEXTURE_3D, jfaTexA);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA32F, resolution.x, resolution.y, resolution.z,
+                     0, GL_RGBA, GL_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // NEAREST — these are indices, not colors to blend
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        glGenTextures(1, &jfaTexB);
+        glBindTexture(GL_TEXTURE_3D, jfaTexB);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA32F, resolution.x, resolution.y, resolution.z,
+                     0, GL_RGBA, GL_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        // sign/occupancy, single channel, persists across JFA passes (never ping-ponged)
+        glGenTextures(1, &signTex);
+        glBindTexture(GL_TEXTURE_3D, signTex);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, resolution.x, resolution.y, resolution.z,
+                     0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    }
     void Raymarcher::DestroyFbo() {
         if (volumeTex) glDeleteTextures(1, &volumeTex);
         if (bakeFbo) glDeleteFramebuffers(1, &bakeFbo);
+        if (jfaTexA) glDeleteTextures(1, &jfaTexA);
+        if (jfaTexB) glDeleteTextures(1, &jfaTexB);
+        if (signTex) glDeleteTextures(1, &signTex);
     }
 
     void UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) {
@@ -105,46 +150,77 @@ namespace core {
     }
     void Raymarcher::Bake(const std::vector<Primitive*>& primitives) {
         printf("Baking %zu primitives\n", primitives.size());
-        glBindFramebuffer(GL_FRAMEBUFFER, bakeFbo);
+        const int gx = (resolution.x + 7) / 8;
+        const int gy = (resolution.y + 7) / 8;
+        const int gz = (resolution.z + 7) / 8;
 
-        glDisable(GL_DEPTH_TEST);
+        // ---- Pass 1: classify ----
+        // writes each voxel's OWN position into jfaTexA if it's a seed (a surface-adjacent voxel),
+        // or an invalid marker (w=0) otherwise
+        classifyShader->SetVec3("_WorldMin", worldMin);
+        classifyShader->SetVec3("_WorldMax", worldMax);
+        classifyShader->SetVec3("_Resolution", resolution);
+        classifyShader->SetInt("_Octaves", octaves);
+        classifyShader->SetFloat("_WarpStrength", warpStrength);
+        classifyShader->SetFloat("_Lacunarity", lacunarity);
+        classifyShader->SetFloat("_Persistence", persistence);
+        UploadPrimitives(classifyShader->GetProgram(), editor::Editor::activeScene->primitives);
+        classifyShader->Bind();
+        classifyShader->BindImage(0, jfaTexA, GL_WRITE_ONLY, GL_RGBA32F);
+        classifyShader->BindImage(1, signTex, GL_WRITE_ONLY, GL_R8);
+        classifyShader->Dispatch(gx, gy, gz);
 
-        GLint prevViewport[4];
-        glGetIntegerv(GL_VIEWPORT, prevViewport);
-        glViewport(0, 0, resolution.x, resolution.y);
+        // ---- Pass 2: JFA step iterations, ping-ponging A<->B ----
+        // step size halves each pass: N/2, N/4, ..., 1
+        bool pingIsA = true;
+        int step = std::max({resolution.x, resolution.y, resolution.z}) / 2;
+        while (step >= 1) {
+            GLuint src = pingIsA ? jfaTexA : jfaTexB;
+            GLuint dst = pingIsA ? jfaTexB : jfaTexA;
 
-        bakeMaterial->SetVec3("_WorldMin", worldMin);
-        bakeMaterial->SetVec3("_WorldMax", worldMax);
+            jfaStepShader->SetInt("_Step", step);
+            jfaStepShader->SetVec3("_Resolution", resolution);
+            jfaStepShader->Bind();
+            jfaStepShader->BindImage(0, src, GL_READ_ONLY, GL_RGBA32F);
+            jfaStepShader->BindImage(1, dst, GL_WRITE_ONLY, GL_RGBA32F);
+            jfaStepShader->Dispatch(gx, gy, gz);
 
-        bakeMaterial->SetInt("_ResolutionZ", resolution.z);
-
-        UploadPrimitives(bakeMaterial->GetShaderProgram(), primitives);
-        bakeMaterial->Bind();
-
-        GLint sliceLoc = glGetUniformLocation(bakeMaterial->GetShaderProgram(), "_SliceZ");
-        for (int z = 0; z < resolution.z; z++) {
-            glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, volumeTex, 0, z);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            glUniform1i(sliceLoc, z);
-            quadModel->render();
+            pingIsA = !pingIsA;
+            step /= 2;
         }
+        finalSeedTex = pingIsA ? jfaTexA : jfaTexB;
 
-        glEnable(GL_DEPTH_TEST);
-        glViewport(prevViewport[0], prevViewport[1], prevViewport[2], prevViewport[3]);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        // ---- Pass 3: finalize — convert nearest-seed position into signed distance, write to volumeTex ----
+        jfaFinalizeShader->SetVec3("_WorldMin", worldMin);
+        jfaFinalizeShader->SetVec3("_WorldMax", worldMax);
+        jfaFinalizeShader->SetVec3("_Resolution", resolution);
+        jfaFinalizeShader->Bind();
+        jfaFinalizeShader->BindImage(0, finalSeedTex, GL_READ_ONLY, GL_RGBA32F);
+        jfaFinalizeShader->BindImage(1, signTex, GL_READ_ONLY, GL_R8);
+        jfaFinalizeShader->BindImage(2, volumeTex, GL_WRITE_ONLY, GL_R16F);
+        jfaFinalizeShader->Dispatch(gx, gy, gz);
 
         dirty = false;
     }
 
     void Raymarcher::Render(GLuint targetFbo, GLuint sceneColorTex, GLuint sceneDepthTex, Camera* cam) {
+        if (debug) {
+            GLuint dTex = 0;
+            if (debugTex == dSignTex) dTex = signTex;
+            if (debugTex == dSeedTex) dTex = finalSeedTex;
+            if (debugTex == dVolumeTex) dTex = volumeTex;
+            RenderDebugSlice(targetFbo, dTex);
+            return;
+        }
+
+
         glBindFramebuffer(GL_FRAMEBUFFER, targetFbo);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBindTexture(GL_TEXTURE_3D, volumeTex);
-        std::vector<float> data(resolution.x * resolution.y * resolution.z);
-        glGetTexImage(GL_TEXTURE_3D, 0, GL_RED, GL_FLOAT, data.data());
-        printf("pixel: %f, %f, %f\n", data[99], data[100], data[101]);
+        // std::vector<float> data(resolution.x * resolution.y * resolution.z);
+        // glGetTexImage(GL_TEXTURE_3D, 0, GL_RED, GL_FLOAT, data.data());
+        // printf("pixel: %f, %f, %f\n", data[99], data[100], data[101]);
 
         marchMaterial->SetTexture2D("_MainTex", sceneColorTex);
         marchMaterial->SetTexture2D("_SceneDepth", sceneDepthTex);
@@ -165,6 +241,22 @@ namespace core {
         marchMaterial->Bind();
         quadModel->render();
 
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    // Raymarcher.cpp
+    void Raymarcher::RenderDebugSlice(GLuint targetFbo, GLuint textureToView) {
+        glBindFramebuffer(GL_FRAMEBUFFER, targetFbo);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glDisable(GL_DEPTH_TEST);
+
+        debugSliceMaterial->SetTexture3D("_Volume", textureToView);
+        debugSliceMaterial->SetFloat("_SliceZ", sliceZ);
+        debugSliceMaterial->SetInt("_Mode", mode);
+        debugSliceMaterial->SetFloat("_DisplayScale", displayScale);
+        debugSliceMaterial->Bind();
+        quadModel->render();
+
+        glEnable(GL_DEPTH_TEST);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 

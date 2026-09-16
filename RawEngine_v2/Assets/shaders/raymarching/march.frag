@@ -63,11 +63,28 @@ vec3 shade(vec3 pos, vec3 normal) {
     return col * (0.15 + 0.85 * diff);
 }
 
+bool intersectAABB(vec3 ro, vec3 rd, out float tEnter, out float tExit) {
+    vec3 invD = 1.0 / rd;
+    vec3 t0 = (_WorldMin - ro) * invD;
+    vec3 t1 = (_WorldMax - ro) * invD;
+    vec3 tMin = min(t0, t1);
+    vec3 tMax = max(t0, t1);
+    tEnter = max(max(tMin.x, tMin.y), tMin.z);
+    tExit  = min(min(tMax.x, tMax.y), tMax.z);
+    return tExit >= max(tEnter, 0.0);
+}
+
 void main() {
     vec3 ro = _CameraPos;
     vec3 rd = rayDirection();
 
     float sceneDepthLinear = sceneRayDist();
+
+    float tEnter, tExit;
+    if (!intersectAABB(ro, rd, tEnter, tExit)) {
+        FragColor = texture(_MainTex, uv); // ray never touches the box at all
+        return;
+    }
 
     float t = 0.0;
     bool hit = false;

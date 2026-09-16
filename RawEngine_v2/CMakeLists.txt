@@ -81,6 +81,8 @@ set(IMGUI_SOURCES
         core/Raymarcher.h
         editor/EditorWindows/RaymarcherWindow.cpp
         editor/EditorWindows/RaymarcherWindow.h
+        core/Assets/ComputeShader.cpp
+        core/Assets/ComputeShader.h
 )
 
 add_executable(RawEngine main.cpp

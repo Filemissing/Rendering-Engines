@@ -29,7 +29,8 @@ namespace core {
             "Cylinder",
             "Torus",
             "Cone",
-            "Plane"
+            "Plane",
+            "Terrain"
         };
 
         int value = static_cast<int>(type);

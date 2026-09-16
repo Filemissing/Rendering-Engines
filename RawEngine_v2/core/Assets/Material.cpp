@@ -29,10 +29,10 @@ namespace core {
         glDeleteProgram(shaderProgram);
     }
 
-    void Material::SetTexture2D(const std::string& name, GLuint tex) {
+    void Material::SetTexture2D(const std::string& name, const GLuint tex) {
         textures2D[name] = tex;
     }
-    void Material::SetTexture3D(const std::string& name, GLuint tex) {
+    void Material::SetTexture3D(const std::string& name, const GLuint tex) {
         textures3D[name] = tex;
     }
     void Material::SetVec3(const std::string& name, const glm::vec3& value) {

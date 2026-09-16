@@ -1,16 +1,23 @@
-#version 400 core
+#version 430 core
 
-in vec2 uv;
-out vec4 FragColor;
+layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 
-// -- Volume bounds & slice info --
+layout(rgba32f, binding = 0) uniform writeonly image3D seedOut;
+layout(r8, binding = 1) uniform writeonly image3D signOut;
+
+// world bounds
 uniform vec3 _WorldMin;
 uniform vec3 _WorldMax;
-uniform int  _SliceZ;
-uniform int  _ResolutionZ;
+uniform vec3 _Resolution;
+
+// terrain uniforms
+uniform int _Octaves;
+uniform float _WarpStrength;
+uniform float _Lacunarity;
+uniform float _Persistence;
 
 // -- Objects --
-#define MAX_PRIMITIVES 128
+#define MAX_PRIMITIVES 64
 #define TYPE_SPHERE    0
 #define TYPE_BOX       1
 #define TYPE_PYRAMID   2
@@ -248,7 +255,7 @@ Hit mapScene(vec3 p) {
 
         if (d < h.dist) {
             h.dist = d;
-            h.id   = i; // use index directly — look up color from array
+            h.id   = i; // use index directly - look up color from array
         }
     }
 
@@ -256,12 +263,16 @@ Hit mapScene(vec3 p) {
 }
 
 void main() {
-    // (x, y) comes from the quad's uv, matching this slice's resolution
-    // z is reconstructed from which slice we're currently baking
-    vec3 uvw = vec3(uv.x, uv.y, (float(_SliceZ) + 0.5) / float(_ResolutionZ));
+    ivec3 texel = ivec3(gl_GlobalInvocationID);
+
+    vec3 uvw = (vec3(texel) + 0.5) / vec3(_Resolution);
     vec3 worldPos = _WorldMin + uvw * (_WorldMax - _WorldMin);
+    float voxelSize = length((_WorldMax - _WorldMin) / _Resolution); // gets the maximum size of a voxel (corner to corner)
 
     Hit h = mapScene(worldPos);
+    float sign = (h.dist <= 0.0) ? 1.0 : 0.0;             // every voxel gets this
+    float isSeed = (abs(h.dist) < voxelSize) ? 1.0 : 0.0; // only near-surface voxels
 
-    FragColor = vec4(h.dist, 0.0, 0.0, 1.0);
+    imageStore(signOut, texel, vec4(sign));
+    imageStore(seedOut, texel, vec4(texel, isSeed));
 }
