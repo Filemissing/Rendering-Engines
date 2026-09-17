@@ -6,7 +6,7 @@ layout(rgba32f, binding = 0) uniform readonly  image3D srcSeeds;
 layout(rgba32f, binding = 1) uniform writeonly image3D dstSeeds;
 
 uniform int _Step;
-uniform ivec3 _Resolution;
+uniform vec3 _Resolution;
 
 void main() {
     ivec3 texel = ivec3(gl_GlobalInvocationID);

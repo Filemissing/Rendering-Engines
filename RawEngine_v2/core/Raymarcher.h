@@ -13,7 +13,6 @@
 namespace core {
     class Raymarcher {
         GLuint volumeTex;
-        GLuint bakeFbo;
         Material* marchMaterial;
         Material* debugSliceMaterial;
 

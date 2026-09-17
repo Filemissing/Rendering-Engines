@@ -11,7 +11,6 @@
 namespace core {
     Raymarcher::Raymarcher() {
         volumeTex = 0;
-        bakeFbo = 0;
 
         marchMaterial = new Material(
             "Assets/shaders/PostProcessing/viewSpace.vert",
@@ -47,8 +46,6 @@ namespace core {
         EnsureJFAResourcesSized();
 
         glGenTextures(1, &volumeTex);
-        glGenFramebuffers(1, &bakeFbo);
-
 
         glBindTexture(GL_TEXTURE_3D, volumeTex);
         glTexImage3D(GL_TEXTURE_3D, 0, GL_R16F, resolution.x, resolution.y, resolution.z, 0, GL_RED, GL_HALF_FLOAT, nullptr);
@@ -58,18 +55,6 @@ namespace core {
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-
-        // // Bind FBO and attach the color texture
-        // glBindFramebuffer(GL_FRAMEBUFFER, bakeFbo);
-        // GLenum drawbuf = GL_COLOR_ATTACHMENT0;
-        // glDrawBuffers(1, &drawbuf);
-
-        // Check completeness
-        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        if (status != GL_FRAMEBUFFER_COMPLETE) {
-            std::cerr << "[Raymarcher] bakeFbo " << " incomplete! status=0x" << std::hex << status << std::dec << std::endl;
-        }
 
         // Final error check
         while (GLenum e = glGetError()) {
@@ -111,7 +96,6 @@ namespace core {
     }
     void Raymarcher::DestroyFbo() {
         if (volumeTex) glDeleteTextures(1, &volumeTex);
-        if (bakeFbo) glDeleteFramebuffers(1, &bakeFbo);
         if (jfaTexA) glDeleteTextures(1, &jfaTexA);
         if (jfaTexB) glDeleteTextures(1, &jfaTexB);
         if (signTex) glDeleteTextures(1, &signTex);
@@ -250,7 +234,7 @@ namespace core {
         glDisable(GL_DEPTH_TEST);
 
         debugSliceMaterial->SetTexture3D("_Volume", textureToView);
-        debugSliceMaterial->SetFloat("_SliceZ", sliceZ);
+        debugSliceMaterial->SetFloat("_SliceZ", static_cast<float>(sliceZ) / static_cast<float>(resolution.z));
         debugSliceMaterial->SetInt("_Mode", mode);
         debugSliceMaterial->SetFloat("_DisplayScale", displayScale);
         debugSliceMaterial->Bind();

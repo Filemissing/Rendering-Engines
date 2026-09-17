@@ -23,7 +23,9 @@ void main() {
     vec3 seedTexel = imageLoad(finalSeeds, texel).xyz;
     vec3 seedPos = getWorldPos(seedTexel);
 
-    float dist = distance(pos, seedPos);
+    float dist = abs(distance(pos, seedPos));
 
-    imageStore(volumeTex, texel, vec4(dist));
+    float sign = imageLoad(signTex, texel).r; // 1.0 = inside, 0.0 = outside per your classify convention
+    float signedDist = (sign > 0.5) ? -dist : dist;
+    imageStore(volumeTex, texel, vec4(signedDist));
 }

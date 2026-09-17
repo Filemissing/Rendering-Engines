@@ -270,9 +270,28 @@ void main() {
     float voxelSize = length((_WorldMax - _WorldMin) / _Resolution); // gets the maximum size of a voxel (corner to corner)
 
     Hit h = mapScene(worldPos);
-    float sign = (h.dist <= 0.0) ? 1.0 : 0.0;             // every voxel gets this
+    float m_sign = (h.dist <= 0.0) ? 1.0 : 0.0;             // every voxel gets this
     float isSeed = (abs(h.dist) < voxelSize) ? 1.0 : 0.0; // only near-surface voxels
 
-    imageStore(signOut, texel, vec4(sign));
-    imageStore(seedOut, texel, vec4(texel, isSeed));
+    vec3 refinedTexel = vec3(texel); // fallback stays, but should rarely trigger now
+
+    if (isSeed > 0.5) {
+        float eps = voxelSize * 0.25;
+
+        float dx = mapScene(worldPos + vec3(eps,0,0)).dist - mapScene(worldPos - vec3(eps,0,0)).dist;
+        float dy = mapScene(worldPos + vec3(0,eps,0)).dist - mapScene(worldPos - vec3(0,eps,0)).dist;
+        float dz = mapScene(worldPos + vec3(0,0,eps)).dist - mapScene(worldPos - vec3(0,0,eps)).dist;
+        vec3 grad = vec3(dx, dy, dz);
+
+        if (length(grad) > 1e-6) {
+            vec3 gradN = normalize(grad);
+            vec3 surfaceWorldPos = worldPos - h.dist * gradN; // walk back along the gradient to the zero-crossing
+
+            vec3 surfaceUvw = (surfaceWorldPos - _WorldMin) / (_WorldMax - _WorldMin);
+            refinedTexel = surfaceUvw * vec3(_Resolution) - 0.5;
+        }
+    }
+
+    imageStore(seedOut, texel, vec4(refinedTexel, isSeed));
+    imageStore(signOut, texel, vec4(m_sign));
 }
