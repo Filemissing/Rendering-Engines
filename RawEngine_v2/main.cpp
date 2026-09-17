@@ -44,7 +44,7 @@ int main() {
     RenderSettings::Init();
 
     //Scene
-    auto* scene1 = SceneManager::LoadScene("RaymarchedSpheres");
+    auto* scene1 = SceneManager::LoadScene("Terrain_test");
     Editor::activeScene = scene1;
 
     // int i = 0;

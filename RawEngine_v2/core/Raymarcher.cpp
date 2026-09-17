@@ -148,6 +148,7 @@ namespace core {
         classifyShader->SetFloat("_WarpStrength", warpStrength);
         classifyShader->SetFloat("_Lacunarity", lacunarity);
         classifyShader->SetFloat("_Persistence", persistence);
+        classifyShader->SetFloat("_HeightScale", heightScale);
         UploadPrimitives(classifyShader->GetProgram(), editor::Editor::activeScene->primitives);
         classifyShader->Bind();
         classifyShader->BindImage(0, jfaTexA, GL_WRITE_ONLY, GL_RGBA32F);
@@ -158,6 +159,19 @@ namespace core {
         // step size halves each pass: N/2, N/4, ..., 1
         bool pingIsA = true;
         int step = std::max({resolution.x, resolution.y, resolution.z}) / 2;
+        { // 1+JFA extra pass
+            GLuint src = pingIsA ? jfaTexA : jfaTexB;
+            GLuint dst = pingIsA ? jfaTexB : jfaTexA;
+
+            jfaStepShader->SetInt("_Step", 1);
+            jfaStepShader->SetVec3("_Resolution", resolution);
+            jfaStepShader->Bind();
+            jfaStepShader->BindImage(0, src, GL_READ_ONLY, GL_RGBA32F);
+            jfaStepShader->BindImage(1, dst, GL_WRITE_ONLY, GL_RGBA32F);
+            jfaStepShader->Dispatch(gx, gy, gz);
+
+            pingIsA = !pingIsA;
+        }
         while (step >= 1) {
             GLuint src = pingIsA ? jfaTexA : jfaTexB;
             GLuint dst = pingIsA ? jfaTexB : jfaTexA;
@@ -172,6 +186,22 @@ namespace core {
             pingIsA = !pingIsA;
             step /= 2;
         }
+        // // JFA+2 extra passes
+        // for (int extra = 2; extra > 0; extra--) {
+        //     GLuint src = pingIsA ? jfaTexA : jfaTexB;
+        //     GLuint dst = pingIsA ? jfaTexB : jfaTexA;
+        //
+        //     jfaStepShader->SetInt("_Step", extra);
+        //     jfaStepShader->SetVec3("_Resolution", resolution);
+        //     jfaStepShader->Bind();
+        //     jfaStepShader->BindImage(0, src, GL_READ_ONLY, GL_RGBA32F);
+        //     jfaStepShader->BindImage(1, dst, GL_WRITE_ONLY, GL_RGBA32F);
+        //     jfaStepShader->Dispatch(gx, gy, gz);
+        //
+        //     pingIsA = !pingIsA;
+        // }
+        finalSeedTex = pingIsA ? jfaTexA : jfaTexB;
+
         finalSeedTex = pingIsA ? jfaTexA : jfaTexB;
 
         // ---- Pass 3: finalize — convert nearest-seed position into signed distance, write to volumeTex ----

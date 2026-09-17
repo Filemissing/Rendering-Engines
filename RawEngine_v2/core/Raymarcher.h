@@ -44,7 +44,8 @@ namespace core {
         int octaves = 8;
         float warpStrength = 1.0f;
         float lacunarity = 2.0f;
-        float persistence = 0.5f;
+        float persistence = 0.3f;
+        float heightScale = 8.0f;
 
         // debug settings
         bool debug = false;

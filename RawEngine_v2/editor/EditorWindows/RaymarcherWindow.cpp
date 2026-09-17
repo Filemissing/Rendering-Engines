@@ -50,6 +50,7 @@ namespace editor::editorWindows {
     ImGui::DragFloat("Lacunarity", &raymarcher->lacunarity, 0.01f, 1.0f, 4.0f);
     ImGui::DragFloat("Persistence", &raymarcher->persistence, 0.01f, 0.0f, 1.0f);
     ImGui::DragFloat("Warp Strength", &raymarcher->warpStrength, 0.01f, 0.0f, 10.0f);
+    ImGui::DragFloat("Height Scale", &raymarcher->heightScale, 0.1f, 0.0f, 10.0f);
 
     ImGui::Spacing();
     ImGui::SeparatorText("Debug Visualization");
