@@ -82,11 +82,16 @@ void main() {
 
     float tEnter, tExit;
     if (!intersectAABB(ro, rd, tEnter, tExit)) {
-        FragColor = texture(_MainTex, uv); // ray never touches the box at all
+        FragColor = texture(_MainTex, uv); // Ray never touches the box
         return;
     }
 
-    float t = 0.0;
+    // Start at the box wall (or 0.0 if the camera is inside the box)
+    float t = max(0.0, tEnter);
+
+    // Stop marching if we exit the box, hit the far plane, or hit scene geometry
+    float tMax = min(min(tExit, _MaxDist), sceneDepthLinear);
+
     bool hit = false;
 
     for (int i = 0; i < _MaxSteps; i++) {
@@ -100,7 +105,7 @@ void main() {
 
         t += d;
 
-        if (t >= sceneDepthLinear || t >= _MaxDist) break;
+        if (t >= tMax) break;
     }
 
     if (hit) {
