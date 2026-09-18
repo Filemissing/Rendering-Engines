@@ -7,9 +7,12 @@
 #include <iostream>
 
 #include "../editor/Editor.h"
+#include "../editor/EditorWindows/BenchmarkTool.h"
 
 namespace core {
     Raymarcher::Raymarcher() {
+        glGenQueries(1, &m_timeQuery);
+
         volumeTex = 0;
 
         marchMaterial = new Material(
@@ -134,6 +137,11 @@ namespace core {
     }
     void Raymarcher::Bake(const std::vector<Primitive*>& primitives) {
         printf("Baking %zu primitives\n", primitives.size());
+
+        if (!m_queryInFlight) {
+            glBeginQuery(GL_TIME_ELAPSED, m_timeQuery);
+        }
+
         const int gx = (resolution.x + 7) / 8;
         const int gy = (resolution.y + 7) / 8;
         const int gz = (resolution.z + 7) / 8;
@@ -215,9 +223,26 @@ namespace core {
         jfaFinalizeShader->Dispatch(gx, gy, gz);
 
         dirty = false;
+
+        if (!m_queryInFlight) {
+            glEndQuery(GL_TIME_ELAPSED);
+            m_queryInFlight = true;
+        }
     }
 
     void Raymarcher::Render(GLuint targetFbo, GLuint sceneColorTex, GLuint sceneDepthTex, Camera* cam) {
+        if (m_queryInFlight) {
+            GLint available = 0;
+            glGetQueryObjectiv(m_timeQuery, GL_QUERY_RESULT_AVAILABLE, &available);
+            if (available) {
+                GLuint64 elapsedNs = 0;
+                glGetQueryObjectui64v(m_timeQuery, GL_QUERY_RESULT, &elapsedNs);
+                editor::editorWindows::BenchmarkTool::PushSample("Bake time",
+                    static_cast<double>(elapsedNs) * 1e-6);
+                m_queryInFlight = false;
+            }
+        }
+
         if (debug) {
             GLuint dTex = 0;
             if (debugTex == dSignTex) dTex = signTex;
@@ -226,7 +251,6 @@ namespace core {
             RenderDebugSlice(targetFbo, dTex);
             return;
         }
-
 
         glBindFramebuffer(GL_FRAMEBUFFER, targetFbo);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

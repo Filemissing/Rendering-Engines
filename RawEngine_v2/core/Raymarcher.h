@@ -12,6 +12,9 @@
 
 namespace core {
     class Raymarcher {
+        GLuint m_timeQuery = 0;
+        bool m_queryInFlight = false;
+
         GLuint volumeTex;
         Material* marchMaterial;
         Material* debugSliceMaterial;
@@ -30,8 +33,8 @@ namespace core {
         void EnsureJFAResourcesSized();
 
         // general settings
-        glm::ivec3 resolution;
-        glm::vec3 worldMin, worldMax;
+        glm::ivec3 resolution{};
+        glm::vec3 worldMin{}, worldMax{};
         bool dirty = true;
 
     public:
