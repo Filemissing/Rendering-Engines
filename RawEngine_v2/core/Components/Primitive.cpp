@@ -20,6 +20,18 @@ namespace core {
         }
     }
 
+    GPUPrimitive Primitive::GetGPUPrimitive() const {
+        GPUPrimitive primitive{};
+        primitive.type = type;
+        primitive.position = gameObject->transform.position;
+        primitive.rotation = gameObject->transform.rotation;
+        primitive.scale = gameObject->transform.scale;
+        primitive.data = data;
+        primitive.color = color;
+        return primitive;
+    }
+
+
     void Primitive::OnInspectorGUI() {
         static const char* lightTypeLabels[] = {
             "Sphere",
@@ -45,7 +57,7 @@ namespace core {
         }
 
         ImGui::SliderFloat3("color", glm::value_ptr(color), 0.0f, 1.0f);
-        ImGui::DragFloat3("halfExtents", glm::value_ptr(halfExtents));
+        ImGui::DragFloat3("halfExtents", glm::value_ptr(data));
     }
 
     nlohmann::json Primitive::Serialize() {
@@ -59,9 +71,9 @@ namespace core {
         json["color"]["b"] = color.b;
 
         json["halfExtents"] = {};
-        json["halfExtents"]["x"] = halfExtents.x;
-        json["halfExtents"]["y"] = halfExtents.y;
-        json["halfExtents"]["z"] = halfExtents.z;
+        json["halfExtents"]["x"] = data.x;
+        json["halfExtents"]["y"] = data.y;
+        json["halfExtents"]["z"] = data.z;
 
         return json;
     }
@@ -74,7 +86,7 @@ namespace core {
             json["color"]["b"]
             );
 
-        halfExtents = glm::vec3(
+        data = glm::vec3(
             json["halfExtents"]["x"],
             json["halfExtents"]["y"],
             json["halfExtents"]["z"]

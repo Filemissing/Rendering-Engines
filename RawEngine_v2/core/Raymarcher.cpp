@@ -13,6 +13,8 @@ namespace core {
     Raymarcher::Raymarcher() {
         glGenQueries(1, &m_timeQuery);
 
+        glGenBuffers(1, &primitivesBuffer);
+
         volumeTex = 0;
 
         marchMaterial = new Material(
@@ -30,10 +32,11 @@ namespace core {
         meshes.push_back(Mesh::generateQuad());
         quadModel = new Model(std::move(meshes));
 
-        EnsureVolumeSized(glm::ivec3(128, 128, 128));
-        SetWorldBounds(glm::vec3(-30, -30, -30), glm::vec3(30, 30, 30));
+        EnsureVolumeSized(glm::ivec3(512));
+        SetWorldBounds(glm::vec3(-30), glm::vec3(30));
     }
     Raymarcher::~Raymarcher() {
+        glDeleteBuffers(1, &primitivesBuffer);
         DestroyFbo();
         delete marchMaterial;
         delete quadModel;
@@ -104,32 +107,22 @@ namespace core {
         if (signTex) glDeleteTextures(1, &signTex);
     }
 
-    void UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) {
+    void Raymarcher::UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) {
         glUseProgram(shader);
 
+        GPUPrimitive* GPUPrimitives = new GPUPrimitive[primitives.size()];
+
         for (int i = 0; i < primitives.size(); i++) {
-            const Primitive* primitive = primitives[i];
-
-            std::string base = "primitives[" + std::to_string(i) + "].";
-
-            glUniform1i(glGetUniformLocation(shader, (base + "type").c_str()),
-                primitive->type);
-
-            glUniform3fv(glGetUniformLocation(shader, (base + "position").c_str()),
-                1, glm::value_ptr(primitive->gameObject->transform.position));
-
-            glUniform3fv(glGetUniformLocation(shader, (base + "rotation").c_str()),
-                1, glm::value_ptr(primitive->gameObject->transform.rotation));
-
-            glUniform3fv(glGetUniformLocation(shader, (base + "scale").c_str()),
-                1, glm::value_ptr(primitive->gameObject->transform.scale));
-
-            glUniform3fv(glGetUniformLocation(shader, (base + "halfExtents").c_str()),
-                1, glm::value_ptr(primitive->halfExtents));
-
-            glUniform3fv(glGetUniformLocation(shader, (base + "color").c_str()),
-                1, glm::value_ptr(primitive->color));
+            GPUPrimitives[i] = primitives[i]->GetGPUPrimitive();
         }
+
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER,  primitivesBuffer);
+        glBufferData(
+            GL_SHADER_STORAGE_BUFFER,
+            primitives.size() * sizeof(GPUPrimitive),
+            GPUPrimitives,
+            GL_DYNAMIC_DRAW
+        );
 
         GLint loc = glGetUniformLocation(shader, "primitiveCount");
         if (loc == -1) return;

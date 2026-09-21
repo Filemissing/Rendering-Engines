@@ -10,6 +10,15 @@
 #include "Component.h"
 
 namespace core {
+    struct GPUPrimitive {
+        int type;
+        glm::vec3  position;
+        glm::vec3  rotation;
+        glm::vec3  scale;
+        glm::vec3  data;
+        glm::vec3  color;
+    };
+
     class Primitive : public Component {
     public:
         using Component::Component; // inherit Constructors
@@ -29,16 +38,16 @@ namespace core {
 
         PrimitiveType type = Sphere;
         glm::vec3 color = glm::vec3(1);
-        glm::vec3 halfExtents = glm::vec3(1, 1, 1);
+        glm::vec3 data = glm::vec3(1, 1, 1);
+
+        GPUPrimitive GetGPUPrimitive() const;
 
         void Start() override;
-
-        const char* GetTypeName() override { return "Primitive"; }
-
         void OnInspectorGUI() override;
 
         nlohmann::json Serialize() override;
         void Deserialize(const nlohmann::json& json) override;
+        const char* GetTypeName() override { return "Primitive"; }
     };
 
     REGISTER_COMPONENT(Primitive)

@@ -15,27 +15,29 @@ namespace core {
         GLuint m_timeQuery = 0;
         bool m_queryInFlight = false;
 
-        GLuint volumeTex;
-        Material* marchMaterial;
-        Material* debugSliceMaterial;
+        GLuint primitivesBuffer = 0;
 
-        Model* quadModel;
+        // general settings
+        glm::ivec3 resolution{};
+        glm::vec3 worldMin{}, worldMax{};
+        bool dirty = true;
 
         // JFA
         ComputeShader* classifyShader = nullptr;
         ComputeShader* jfaStepShader = nullptr;
         ComputeShader* jfaFinalizeShader = nullptr;
-        // seed-position ping-pong buffers: xyz = nearest seed voxel coord, w = valid flag (0/1)
+        // seed-position ping-pong buffers: xyz = nearest seed voxel coord, w = valid flag
         GLuint jfaTexA = 0, jfaTexB = 0;
         GLuint finalSeedTex = 0;
         GLuint signTex = 0;
 
         void EnsureJFAResourcesSized();
 
-        // general settings
-        glm::ivec3 resolution{};
-        glm::vec3 worldMin{}, worldMax{};
-        bool dirty = true;
+        // final render
+        GLuint volumeTex;
+        Material* marchMaterial;
+        Material* debugSliceMaterial;
+        Model* quadModel;
 
     public:
         // general settings
@@ -67,6 +69,7 @@ namespace core {
 
         void EnsureVolumeSized(glm::ivec3 newResolution);
         void DestroyFbo();
+        void UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives);
         void Bake(const std::vector<Primitive*>& primitives);
         void Render(GLuint targetFbo, GLuint sceneColorTex, GLuint sceneDepthTex, Camera* cam);
         void RenderDebugSlice(GLuint targetFbo, GLuint textureToView);
