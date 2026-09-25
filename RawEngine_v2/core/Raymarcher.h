@@ -22,6 +22,13 @@ namespace core {
         glm::vec3 worldMin{}, worldMax{};
         bool dirty = true;
 
+        // noise generation
+        GLuint noise2DTexture = 0;
+        GLuint noise3DTexture = 0;
+
+        ComputeShader* noise2DShader;
+        ComputeShader* noise3DShader;
+
         // JFA
         ComputeShader* classifyShader = nullptr;
         ComputeShader* jfaStepShader = nullptr;
@@ -45,6 +52,19 @@ namespace core {
         float maxDist = 200.0f;
         float surfDist = 0.001f;
 
+        // noise settings
+        glm::ivec2 noise2DResolution{512, 512};
+        glm::ivec3 noise3DResolution{256, 256, 256};
+
+        float noise2DFrequency = 8.0f;
+        float noise3DFrequency = 8.0f;
+
+        unsigned int noiseSeed = 12345;
+
+        void EnsureNoiseResourcesSized();
+        void DestroyNoiseResources();
+        void BakeNoise();
+
         // terrain settings
         int octaves = 8;
         float warpStrength = 1.0f;
@@ -60,13 +80,15 @@ namespace core {
         enum DebugTexture {
             dSignTex,
             dSeedTex,
-            dVolumeTex
+            dVolumeTex,
+            dNoise3DTex
         };
         DebugTexture debugTex = dSignTex;
 
         Raymarcher();
         ~Raymarcher();
 
+        // general methods
         void EnsureVolumeSized(glm::ivec3 newResolution);
         void DestroyFbo();
         void UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) const;

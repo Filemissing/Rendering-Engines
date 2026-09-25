@@ -30,6 +30,28 @@ namespace editor::editorWindows {
     }
 
     ImGui::Spacing();
+    ImGui::SeparatorText("Noise");
+
+    ImGui::DragInt2("2D Resolution", &raymarcher->noise2DResolution.x,
+                    1.0f, 1, 4096);
+
+    ImGui::DragInt3("3D Resolution", &raymarcher->noise3DResolution.x,
+                    1.0f, 1, 512);
+
+    ImGui::DragFloat("2D Frequency", &raymarcher->noise2DFrequency,
+                     0.1f, 0.01f, 100.0f);
+
+    ImGui::DragFloat("3D Frequency", &raymarcher->noise3DFrequency,
+                     0.1f, 0.01f, 100.0f);
+
+    ImGui::InputScalar("Seed", ImGuiDataType_U32, &raymarcher->noiseSeed);
+
+    if (ImGui::Button("Rebake Noise")) {
+        raymarcher->BakeNoise();
+        raymarcher->MarkDirty();
+    }
+
+    ImGui::Spacing();
     ImGui::SeparatorText("Bake");
     ImGui::Text("State: %s", raymarcher->IsDirty() ? "Dirty" : "Up to date");
     ImGui::BeginDisabled(!raymarcher->IsDirty());
@@ -57,7 +79,7 @@ namespace editor::editorWindows {
     ImGui::Checkbox("Enable Debug View", &raymarcher->debug);
 
     if (raymarcher->debug) {
-        const char* texNames[] = { "Sign Texture", "Seed Texture", "Volume Texture" };
+        const char* texNames[] = { "Sign Texture", "Seed Texture", "Volume Texture", "3D Noise Texture" };
         int currentTex = static_cast<int>(raymarcher->debugTex);
         if (ImGui::Combo("Texture", &currentTex, texNames, IM_ARRAYSIZE(texNames))) {
             raymarcher->debugTex = static_cast<core::Raymarcher::DebugTexture>(currentTex);

@@ -24,6 +24,11 @@ namespace core {
             "Assets/shaders/PostProcessing/viewSpace.vert",
             "Assets/shaders/debug/slice_view.frag");
 
+        noise2DShader = new ComputeShader("Assets/shaders/raymarching/noise2D.comp");
+        noise3DShader = new ComputeShader("Assets/shaders/raymarching/noise3D.comp");
+
+        EnsureNoiseResourcesSized();
+
         classifyShader = new ComputeShader("Assets/shaders/raymarching/classify.comp");
         jfaStepShader = new ComputeShader("Assets/shaders/raymarching/jfaStep.comp");
         jfaFinalizeShader = new ComputeShader("Assets/shaders/raymarching/jfaFinalize.comp");
@@ -38,8 +43,13 @@ namespace core {
     Raymarcher::~Raymarcher() {
         glDeleteBuffers(1, &primitivesBuffer);
         DestroyFbo();
+        DestroyNoiseResources();
+
         delete marchMaterial;
         delete quadModel;
+
+        delete noise2DShader;
+        delete noise3DShader;
 
         delete classifyShader;
         delete jfaStepShader;
@@ -100,16 +110,82 @@ namespace core {
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     }
+    void Raymarcher::EnsureNoiseResourcesSized() {
+        DestroyNoiseResources();
+
+        // 2D noise
+        glGenTextures(1, &noise2DTexture);
+        glBindTexture(GL_TEXTURE_2D, noise2DTexture);
+
+        glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_R16F,
+            noise2DResolution.x,
+            noise2DResolution.y,
+            0,
+            GL_RED,
+            GL_HALF_FLOAT,
+            nullptr
+        );
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+
+        // 3D noise
+        glGenTextures(1, &noise3DTexture);
+        glBindTexture(GL_TEXTURE_3D, noise3DTexture);
+
+        glTexImage3D(
+            GL_TEXTURE_3D,
+            0,
+            GL_R16F,
+            noise3DResolution.x,
+            noise3DResolution.y,
+            noise3DResolution.z,
+            0,
+            GL_RED,
+            GL_HALF_FLOAT,
+            nullptr
+        );
+
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_3D, 0);
+    }
     void Raymarcher::DestroyFbo() {
         if (volumeTex) glDeleteTextures(1, &volumeTex);
         if (jfaTexA) glDeleteTextures(1, &jfaTexA);
         if (jfaTexB) glDeleteTextures(1, &jfaTexB);
         if (signTex) glDeleteTextures(1, &signTex);
     }
+    void Raymarcher::DestroyNoiseResources()
+    {
+        if (noise2DTexture) {
+            glDeleteTextures(1, &noise2DTexture);
+            noise2DTexture = 0;
+        }
+
+        if (noise3DTexture) {
+            glDeleteTextures(1, &noise3DTexture);
+            noise3DTexture = 0;
+        }
+    }
 
     void Raymarcher::UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) const {
         glUseProgram(shader);
 
+        // assert offsets
         static_assert(offsetof(GPUPrimitive, position) == 0);
         static_assert(offsetof(GPUPrimitive, rotation) == 16);
         static_assert(offsetof(GPUPrimitive, scale)    == 32);
@@ -162,6 +238,8 @@ namespace core {
         classifyShader->SetFloat("_Lacunarity", lacunarity);
         classifyShader->SetFloat("_Persistence", persistence);
         classifyShader->SetFloat("_HeightScale", heightScale);
+        classifyShader->SetTexture2D("_Noise2D", noise2DTexture);
+        classifyShader->SetTexture3D("_Noise3D", noise3DTexture);
         UploadPrimitives(classifyShader->GetProgram(), editor::Editor::activeScene->primitives);
         classifyShader->Bind();
         classifyShader->BindImage(0, jfaTexA, GL_WRITE_ONLY, GL_RGBA32F);
@@ -235,6 +313,53 @@ namespace core {
         }
     }
 
+    void Raymarcher::BakeNoise() {
+        EnsureNoiseResourcesSized();
+
+        // 2D noise
+        noise2DShader->SetVec3("_Resolution", glm::vec3(noise2DResolution, 0));
+        noise2DShader->SetInt("_Seed", noiseSeed);
+        noise2DShader->SetFloat("_Frequency", noise2DFrequency);
+
+        noise2DShader->Bind();
+
+        noise2DShader->BindImage(
+            0,
+            noise2DTexture,
+            GL_WRITE_ONLY,
+            GL_R16F
+        );
+
+        const int noise2DGX = (noise2DResolution.x + 7) / 8;
+        const int noise2DGY = (noise2DResolution.y + 7) / 8;
+
+        noise2DShader->Dispatch(noise2DGX,noise2DGY,1);
+
+        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+
+        // 3D noise
+        noise3DShader->SetVec3("_Resolution", glm::vec3(noise3DResolution));
+        noise3DShader->SetInt("_Seed", noiseSeed);
+        noise3DShader->SetFloat("_Frequency", noise3DFrequency);
+
+        noise3DShader->Bind();
+
+        noise3DShader->BindImage(
+            0,
+            noise3DTexture,
+            GL_WRITE_ONLY,
+            GL_R16F
+        );
+
+        const int noise3DGX = (noise3DResolution.x + 7) / 8;
+        const int noise3DGY = (noise3DResolution.y + 7) / 8;
+        const int noise3DGZ = (noise3DResolution.z + 7) / 8;
+
+        noise3DShader->Dispatch(noise3DGX,noise3DGY,noise3DGZ);
+
+        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+    }
+
     void Raymarcher::Render(GLuint targetFbo, GLuint sceneColorTex, GLuint sceneDepthTex, Camera* cam) {
         if (m_queryInFlight) {
             GLint available = 0;
@@ -253,6 +378,7 @@ namespace core {
             if (debugTex == dSignTex) dTex = signTex;
             if (debugTex == dSeedTex) dTex = finalSeedTex;
             if (debugTex == dVolumeTex) dTex = volumeTex;
+            if (debugTex == dNoise3DTex) dTex = noise3DTexture;
             RenderDebugSlice(targetFbo, dTex);
             return;
         }
@@ -286,7 +412,6 @@ namespace core {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
-    // Raymarcher.cpp
     void Raymarcher::RenderDebugSlice(GLuint targetFbo, GLuint textureToView) {
         glBindFramebuffer(GL_FRAMEBUFFER, targetFbo);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -308,5 +433,4 @@ namespace core {
         worldMax = max;
         MarkDirty();
     }
-
 } // core

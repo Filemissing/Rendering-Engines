@@ -1,0 +1,54 @@
+#version 430 core
+
+layout(local_size_x = 8, local_size_y = 8) in;
+
+layout(r16f, binding = 0) uniform writeonly image2D noiseOut;
+
+uniform vec3 _Resolution;
+uniform float _Frequency;
+uniform int _Seed;
+
+float hash2D(vec2 p)
+{
+    p += float(_Seed) * vec2(17.123, 43.719);
+
+    p = fract(p * vec2(0.1031, 0.11369));
+    p += dot(p, p.yx + 33.33);
+
+    return fract((p.x + p.y) * p.x);
+}
+
+float valueNoise2D(vec2 p)
+{
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+
+    float a = hash2D(i);
+    float b = hash2D(i + vec2(1.0, 0.0));
+    float c = hash2D(i + vec2(0.0, 1.0));
+    float d = hash2D(i + vec2(1.0, 1.0));
+
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(
+    mix(a, b, u.x),
+    mix(c, d, u.x),
+    u.y
+    );
+}
+
+void main()
+{
+    ivec2 texel = ivec2(gl_GlobalInvocationID.xy);
+
+    // bounds check
+    if (any(greaterThanEqual(texel, _Resolution.xy)))
+    return;
+
+    // One noise period across the texture
+    vec2 uv = (vec2(texel) + 0.5) / vec2(_Resolution.xy);
+
+    float value = valueNoise2D(uv * _Frequency);
+
+    imageStore(noiseOut, texel, vec4(value));
+}

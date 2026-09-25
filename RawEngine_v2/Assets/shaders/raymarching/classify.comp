@@ -2,8 +2,23 @@
 
 layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 
+// outputs
 layout(rgba32f, binding = 0) uniform writeonly image3D seedOut;
 layout(r8, binding = 1) uniform writeonly image3D signOut;
+
+// noise textures
+uniform sampler2D _Noise2D;
+uniform sampler3D _Noise3D;
+
+float sampleNoise2D(vec2 p)
+{
+    return texture(_Noise2D, fract(p)).r;
+}
+
+float sampleNoise3D(vec3 p)
+{
+    return texture(_Noise3D, fract(p)).r;
+}
 
 // world bounds
 uniform vec3 _WorldMin;
@@ -109,39 +124,10 @@ float PlaneSDF(vec3 p, vec3 normal, float offset) {
 }
 
 // Terrain generation
-float hash2D(vec2 p) {
-    p = fract(p * vec2(123.34, 456.21));
-    p += dot(p, p + 45.32);
-    return fract(p.x * p.y);
-}
-vec3 hash3D(vec3 p) {
-    p = fract(p * vec3(123.34, 456.21, 789.12));
-    p += dot(p, p + 45.32);
-    return fract(vec3(p.x * p.y, p.y * p.z, p.z * p.x));
-}
-
-float smoothNoise3D(vec3 p) {
-    vec3 i = floor(p);
-    vec3 f = fract(p);
-    vec3 u = f * f * (3.0 - 2.0 * f);
-
-    // Sample 8 corners of the 3D voxel cell using component .x of hash3D
-    float a = hash3D(i + vec3(0.0,0.0,0.0)).x;
-    float b = hash3D(i + vec3(1.0,0.0,0.0)).x;
-    float c = hash3D(i + vec3(0.0,1.0,0.0)).x;
-    float d = hash3D(i + vec3(1.0,1.0,0.0)).x;
-    float e = hash3D(i + vec3(0.0,0.0,1.0)).x;
-    float g = hash3D(i + vec3(1.0,0.0,1.0)).x;
-    float h = hash3D(i + vec3(0.0,1.0,1.0)).x;
-    float j = hash3D(i + vec3(1.0,1.0,1.0)).x;
-
-    return mix(mix(mix(a, b, u.x), mix(c, d, u.x), u.y),
-    mix(mix(e, g, u.x), mix(h, j, u.x), u.y), u.z);
-}
 vec3 warp(vec3 p, float warp_amplitude) {
-    float ox = smoothNoise3D(p);
-    float oy = smoothNoise3D(p + vec3(31.41, 15.92, 65.35));
-    float oz = smoothNoise3D(p + vec3(89.79, 32.38, 46.26));
+    float ox = sampleNoise3D(p);
+    float oy = sampleNoise3D(p + vec3(31.41, 15.92, 65.35));
+    float oz = sampleNoise3D(p + vec3(89.79, 32.38, 46.26));
 
     vec3 offset = vec3(ox, oy, oz) * 2.0 - 1.0;
 
@@ -151,23 +137,12 @@ vec3 warp(vec3 p, float warp_amplitude) {
     return p + offset * warp_amplitude;
 }
 
-float valueNoise2D(vec2 p) {
-    vec2 i = floor(p);
-    vec2 f = fract(p);
-    float a = hash2D(i);
-    float b = hash2D(i + vec2(1.0, 0.0));
-    float c = hash2D(i + vec2(0.0, 1.0));
-    float d = hash2D(i + vec2(1.0, 1.0));
-    vec2 u = f * f * (3.0 - 2.0 * f);
-    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
-}
-
 float fbm(vec2 p, int octaves, float lucanarity, float persistence) {
     float value = 0.0;
     float amplitude = 0.5;
     float frequency = 1.0;
     for (int i = 0; i < octaves; i++) {
-        value += amplitude * valueNoise2D(p * frequency);
+        value += amplitude * sampleNoise2D(p * frequency);
         frequency *= lucanarity;
         amplitude *= persistence;
     }
