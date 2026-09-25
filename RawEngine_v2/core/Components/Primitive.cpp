@@ -22,12 +22,11 @@ namespace core {
 
     GPUPrimitive Primitive::GetGPUPrimitive() const {
         GPUPrimitive primitive{};
-        primitive.type = type;
-        primitive.position = gameObject->transform.position;
-        primitive.rotation = gameObject->transform.rotation;
-        primitive.scale = gameObject->transform.scale;
-        primitive.data = data;
-        primitive.color = color;
+        primitive.position = glm::vec4(gameObject->transform.position, type);
+        primitive.rotation = glm::vec4(gameObject->transform.rotation, 0);
+        primitive.scale = glm::vec4(gameObject->transform.scale, 0);
+        primitive.data = glm::vec4(data, 0);
+        primitive.color = glm::vec4(color, 0);
         return primitive;
     }
 

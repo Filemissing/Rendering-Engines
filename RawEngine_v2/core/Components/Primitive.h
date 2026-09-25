@@ -11,12 +11,11 @@
 
 namespace core {
     struct GPUPrimitive {
-        int type;
-        glm::vec3  position;
-        glm::vec3  rotation;
-        glm::vec3  scale;
-        glm::vec3  data;
-        glm::vec3  color;
+        glm::vec4 position; // xyz = position, w = type
+        glm::vec4 rotation; // xyz = rotation
+        glm::vec4 scale;    // xyz = scale
+        glm::vec4 data;     // xyz = data
+        glm::vec4 color;    // xyz = color
     };
 
     class Primitive : public Component {

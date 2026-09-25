@@ -107,26 +107,38 @@ namespace core {
         if (signTex) glDeleteTextures(1, &signTex);
     }
 
-    void Raymarcher::UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) {
+    void Raymarcher::UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) const {
         glUseProgram(shader);
 
-        GPUPrimitive* GPUPrimitives = new GPUPrimitive[primitives.size()];
+        static_assert(offsetof(GPUPrimitive, position) == 0);
+        static_assert(offsetof(GPUPrimitive, rotation) == 16);
+        static_assert(offsetof(GPUPrimitive, scale)    == 32);
+        static_assert(offsetof(GPUPrimitive, data)     == 48);
+        static_assert(offsetof(GPUPrimitive, color)    == 64);
+        static_assert(sizeof(GPUPrimitive) == 80);
 
-        for (int i = 0; i < primitives.size(); i++) {
+        auto* GPUPrimitives = new GPUPrimitive[primitives.size()];
+
+        for (size_t i = 0; i < primitives.size(); i++) {
             GPUPrimitives[i] = primitives[i]->GetGPUPrimitive();
         }
 
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER,  primitivesBuffer);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, primitivesBuffer);
+
         glBufferData(
             GL_SHADER_STORAGE_BUFFER,
             primitives.size() * sizeof(GPUPrimitive),
             GPUPrimitives,
             GL_DYNAMIC_DRAW
         );
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, primitivesBuffer);
 
         GLint loc = glGetUniformLocation(shader, "primitiveCount");
-        if (loc == -1) return;
-        glUniform1i(loc, primitives.size());
+        if (loc != -1) {
+            glUniform1i(loc, static_cast<GLint>(primitives.size()));
+        }
+
+        delete[] GPUPrimitives;
     }
     void Raymarcher::Bake(const std::vector<Primitive*>& primitives) {
         printf("Baking %zu primitives\n", primitives.size());

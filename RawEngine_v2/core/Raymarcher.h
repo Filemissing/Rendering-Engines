@@ -69,7 +69,7 @@ namespace core {
 
         void EnsureVolumeSized(glm::ivec3 newResolution);
         void DestroyFbo();
-        void UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives);
+        void UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) const;
         void Bake(const std::vector<Primitive*>& primitives);
         void Render(GLuint targetFbo, GLuint sceneColorTex, GLuint sceneDepthTex, Camera* cam);
         void RenderDebugSlice(GLuint targetFbo, GLuint textureToView);
