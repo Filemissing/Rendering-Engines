@@ -10,6 +10,10 @@ uniform int _Seed;
 
 float hash3D(vec3 p)
 {
+    const float period = 64.0;
+
+    p = mod(p, period);
+
     p += vec3(
         float(_Seed) * 0.123,
         float(_Seed) * 0.456,
@@ -56,8 +60,7 @@ void main()
     // One noise period across the texture
     vec3 uv = (vec3(texel) + 0.5) / vec3(_Resolution);
 
-//    float value = smoothNoise3D(uv * _Frequency);
+    float value = smoothNoise3D(uv * 64);
 
-    float value = smoothNoise3D(uv * _Frequency);
     imageStore(noiseOut, texel, vec4(value));
 }

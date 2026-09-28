@@ -240,6 +240,8 @@ namespace core {
         classifyShader->SetFloat("_HeightScale", heightScale);
         classifyShader->SetTexture2D("_Noise2D", noise2DTexture);
         classifyShader->SetTexture3D("_Noise3D", noise3DTexture);
+        classifyShader->SetFloat("_Noise2DFrequency", noise2DFrequency);
+        classifyShader->SetFloat("_Noise3DFrequency", noise3DFrequency);
         UploadPrimitives(classifyShader->GetProgram(), editor::Editor::activeScene->primitives);
         classifyShader->Bind();
         classifyShader->BindImage(0, jfaTexA, GL_WRITE_ONLY, GL_RGBA32F);
@@ -319,7 +321,6 @@ namespace core {
         // 2D noise
         noise2DShader->SetVec3("_Resolution", glm::vec3(noise2DResolution, 0));
         noise2DShader->SetInt("_Seed", noiseSeed);
-        noise2DShader->SetFloat("_Frequency", noise2DFrequency);
 
         noise2DShader->Bind();
 
@@ -340,7 +341,6 @@ namespace core {
         // 3D noise
         noise3DShader->SetVec3("_Resolution", glm::vec3(noise3DResolution));
         noise3DShader->SetInt("_Seed", noiseSeed);
-        noise3DShader->SetFloat("_Frequency", noise3DFrequency);
 
         noise3DShader->Bind();
 

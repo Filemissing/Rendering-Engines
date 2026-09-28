@@ -5,11 +5,14 @@ layout(local_size_x = 8, local_size_y = 8) in;
 layout(r16f, binding = 0) uniform writeonly image2D noiseOut;
 
 uniform vec3 _Resolution;
-uniform float _Frequency;
 uniform int _Seed;
 
 float hash2D(vec2 p)
 {
+    const float period = 64.0;
+
+    p = mod(p, period);
+
     p += float(_Seed) * vec2(17.123, 43.719);
 
     p = fract(p * vec2(0.1031, 0.11369));
@@ -46,9 +49,9 @@ void main()
     return;
 
     // One noise period across the texture
-    vec2 uv = (vec2(texel) + 0.5) / vec2(_Resolution.xy);
+    vec2 uv = (vec2(texel) + 0.5) / vec2(_Resolution);
 
-    float value = valueNoise2D(uv * _Frequency);
+    float value = valueNoise2D(uv * 64.0);
 
     imageStore(noiseOut, texel, vec4(value));
 }

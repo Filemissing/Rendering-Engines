@@ -56,8 +56,8 @@ namespace core {
         glm::ivec2 noise2DResolution{512, 512};
         glm::ivec3 noise3DResolution{256, 256, 256};
 
-        float noise2DFrequency = 8.0f;
-        float noise3DFrequency = 8.0f;
+        float noise2DFrequency = 1.0f;
+        float noise3DFrequency = 1.0f;
 
         unsigned int noiseSeed = 12345;
 

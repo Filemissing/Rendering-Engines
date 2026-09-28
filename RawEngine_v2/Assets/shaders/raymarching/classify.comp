@@ -6,24 +6,28 @@ layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 layout(rgba32f, binding = 0) uniform writeonly image3D seedOut;
 layout(r8, binding = 1) uniform writeonly image3D signOut;
 
+// world bounds
+uniform vec3 _WorldMin;
+uniform vec3 _WorldMax;
+uniform vec3 _Resolution;
+
 // noise textures
 uniform sampler2D _Noise2D;
 uniform sampler3D _Noise3D;
+uniform float _Noise2DFrequency;
+uniform float _Noise3DFrequency;
 
 float sampleNoise2D(vec2 p)
 {
+    p = p / (_Noise2DFrequency * (_WorldMax - _WorldMin).x);
     return texture(_Noise2D, fract(p)).r;
 }
 
 float sampleNoise3D(vec3 p)
 {
+    p = p / (_Noise3DFrequency * (_WorldMax - _WorldMin).x);
     return texture(_Noise3D, fract(p)).r;
 }
-
-// world bounds
-uniform vec3 _WorldMin;
-uniform vec3 _WorldMax;
-uniform vec3 _Resolution;
 
 // terrain uniforms
 uniform int _Octaves;
