@@ -81,8 +81,8 @@ namespace core {
         // ping-pong textures
         glGenTextures(1, &jfaTexA);
         glBindTexture(GL_TEXTURE_3D, jfaTexA);
-        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA32F, resolution.x, resolution.y, resolution.z,
-                     0, GL_RGBA, GL_FLOAT, nullptr);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA16F, resolution.x, resolution.y, resolution.z,
+                     0, GL_RGBA, GL_HALF_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // NEAREST — these are indices, not colors to blend
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -91,8 +91,8 @@ namespace core {
 
         glGenTextures(1, &jfaTexB);
         glBindTexture(GL_TEXTURE_3D, jfaTexB);
-        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA32F, resolution.x, resolution.y, resolution.z,
-                     0, GL_RGBA, GL_FLOAT, nullptr);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA16F, resolution.x, resolution.y, resolution.z,
+                     0, GL_RGBA, GL_HALF_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -171,15 +171,8 @@ namespace core {
     }
     void Raymarcher::DestroyNoiseResources()
     {
-        if (noise2DTexture) {
-            glDeleteTextures(1, &noise2DTexture);
-            noise2DTexture = 0;
-        }
-
-        if (noise3DTexture) {
-            glDeleteTextures(1, &noise3DTexture);
-            noise3DTexture = 0;
-        }
+        if (noise2DTexture) glDeleteTextures(1, &noise2DTexture);
+        if (noise3DTexture) glDeleteTextures(1, &noise3DTexture);
     }
 
     void Raymarcher::UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) const {
@@ -228,8 +221,7 @@ namespace core {
         const int gz = (resolution.z + 7) / 8;
 
         // ---- Pass 1: classify ----
-        // writes each voxel's OWN position into jfaTexA if it's a seed (a surface-adjacent voxel),
-        // or an invalid marker (w=0) otherwise
+        // writes each voxel's OWN position into jfaTexA if it's a seed (a surface-adjacent voxel), or an invalid marker (w=0) otherwise
         classifyShader->SetVec3("_WorldMin", worldMin);
         classifyShader->SetVec3("_WorldMax", worldMax);
         classifyShader->SetVec3("_Resolution", resolution);
@@ -244,7 +236,7 @@ namespace core {
         classifyShader->SetFloat("_Noise3DFrequency", noise3DFrequency);
         UploadPrimitives(classifyShader->GetProgram(), editor::Editor::activeScene->primitives);
         classifyShader->Bind();
-        classifyShader->BindImage(0, jfaTexA, GL_WRITE_ONLY, GL_RGBA32F);
+        classifyShader->BindImage(0, jfaTexA, GL_WRITE_ONLY, GL_RGBA16F);
         classifyShader->BindImage(1, signTex, GL_WRITE_ONLY, GL_R8);
         classifyShader->Dispatch(gx, gy, gz);
 
@@ -259,8 +251,8 @@ namespace core {
             jfaStepShader->SetInt("_Step", 1);
             jfaStepShader->SetVec3("_Resolution", resolution);
             jfaStepShader->Bind();
-            jfaStepShader->BindImage(0, src, GL_READ_ONLY, GL_RGBA32F);
-            jfaStepShader->BindImage(1, dst, GL_WRITE_ONLY, GL_RGBA32F);
+            jfaStepShader->BindImage(0, src, GL_READ_ONLY, GL_RGBA16F);
+            jfaStepShader->BindImage(1, dst, GL_WRITE_ONLY, GL_RGBA16F);
             jfaStepShader->Dispatch(gx, gy, gz);
 
             pingIsA = !pingIsA;
@@ -272,8 +264,8 @@ namespace core {
             jfaStepShader->SetInt("_Step", step);
             jfaStepShader->SetVec3("_Resolution", resolution);
             jfaStepShader->Bind();
-            jfaStepShader->BindImage(0, src, GL_READ_ONLY, GL_RGBA32F);
-            jfaStepShader->BindImage(1, dst, GL_WRITE_ONLY, GL_RGBA32F);
+            jfaStepShader->BindImage(0, src, GL_READ_ONLY, GL_RGBA16F);
+            jfaStepShader->BindImage(1, dst, GL_WRITE_ONLY, GL_RGBA16F);
             jfaStepShader->Dispatch(gx, gy, gz);
 
             pingIsA = !pingIsA;
@@ -287,8 +279,8 @@ namespace core {
         //     jfaStepShader->SetInt("_Step", extra);
         //     jfaStepShader->SetVec3("_Resolution", resolution);
         //     jfaStepShader->Bind();
-        //     jfaStepShader->BindImage(0, src, GL_READ_ONLY, GL_RGBA32F);
-        //     jfaStepShader->BindImage(1, dst, GL_WRITE_ONLY, GL_RGBA32F);
+        //     jfaStepShader->BindImage(0, src, GL_READ_ONLY, GL_RGBA16F);
+        //     jfaStepShader->BindImage(1, dst, GL_WRITE_ONLY, GL_RGBA16F);
         //     jfaStepShader->Dispatch(gx, gy, gz);
         //
         //     pingIsA = !pingIsA;
@@ -302,7 +294,7 @@ namespace core {
         jfaFinalizeShader->SetVec3("_WorldMax", worldMax);
         jfaFinalizeShader->SetVec3("_Resolution", resolution);
         jfaFinalizeShader->Bind();
-        jfaFinalizeShader->BindImage(0, finalSeedTex, GL_READ_ONLY, GL_RGBA32F);
+        jfaFinalizeShader->BindImage(0, finalSeedTex, GL_READ_ONLY, GL_RGBA16F);
         jfaFinalizeShader->BindImage(1, signTex, GL_READ_ONLY, GL_R8);
         jfaFinalizeShader->BindImage(2, volumeTex, GL_WRITE_ONLY, GL_R16F);
         jfaFinalizeShader->Dispatch(gx, gy, gz);

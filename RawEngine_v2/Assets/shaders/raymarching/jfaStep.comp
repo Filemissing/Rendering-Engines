@@ -2,8 +2,8 @@
 
 layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 
-layout(rgba32f, binding = 0) uniform readonly  image3D srcSeeds;
-layout(rgba32f, binding = 1) uniform writeonly image3D dstSeeds;
+layout(rgba16f, binding = 0) uniform readonly  image3D srcSeeds;
+layout(rgba16f, binding = 1) uniform writeonly image3D dstSeeds;
 
 uniform int _Step;
 uniform vec3 _Resolution;

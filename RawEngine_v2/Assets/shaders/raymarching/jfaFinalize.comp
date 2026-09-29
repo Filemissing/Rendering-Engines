@@ -2,7 +2,7 @@
 
 layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 
-layout(rgba32f, binding = 0) uniform readonly image3D finalSeeds;
+layout(rgba16f, binding = 0) uniform readonly image3D finalSeeds;
 layout(r8, binding = 1) uniform readonly image3D signTex;
 layout(r16f, binding = 2) uniform writeonly image3D volumeTex;
 
