@@ -23,8 +23,8 @@ namespace core {
         bool dirty = true;
 
         // noise generation
-        GLuint noise2DTexture = 0;
-        GLuint noise3DTexture = 0;
+        GLuint noise2DTex = 0;
+        GLuint noise3DTex = 0;
 
         ComputeShader* noise2DShader;
         ComputeShader* noise3DShader;
@@ -40,10 +40,21 @@ namespace core {
 
         void EnsureJFAResourcesSized();
 
-        // final render
+        // final output
+        static constexpr int BRICK_CORE = 8;
+        static constexpr int BRICK_STORE = BRICK_CORE + 1; // 9 — includes the apron sample
+
+        glm::ivec3 brickGridResolution = glm::ivec3(0); // number of bricks per axis
+        GLuint brickPoolTex = 0;   // R16F, holds baked distances, laid out as brickGridResolution * BRICK_STORE texels
+        GLuint lookupTex = 0; // RGBA32F, one texel per brick, xyz = this brick's own origin in pool space, w reserved
+
+        void EnsureBrickResourcesSized();
+        void DestroyBrickResources();
+
         GLuint volumeTex;
         Material* marchMaterial;
         Material* debugSliceMaterial;
+        Material* debugTextureMaterial;
         Model* quadModel;
 
     public:
@@ -73,17 +84,23 @@ namespace core {
         float heightScale = 8.0f;
 
         // debug settings
-        bool debug = false;
+        bool debug3D = false;
+        bool debug2D = false;
         int sliceZ = 0;
         int mode = 0;
         float displayScale = 1.0f;
-        enum DebugTexture {
+        enum DebugTexture3D {
             dSignTex,
             dSeedTex,
-            dVolumeTex,
-            dNoise3DTex
+            dNoise3DTex,
+            dLookupTex,
+            dBrickPoolTex
         };
-        DebugTexture debugTex = dSignTex;
+        DebugTexture3D debugTex3D = dSignTex;
+        enum DebugTexture2D {
+            dNoise2DTex
+        };
+        DebugTexture2D debugTex2D = dNoise2DTex;
 
         Raymarcher();
         ~Raymarcher();
@@ -95,6 +112,7 @@ namespace core {
         void Bake(const std::vector<Primitive*>& primitives);
         void Render(GLuint targetFbo, GLuint sceneColorTex, GLuint sceneDepthTex, Camera* cam);
         void RenderDebugSlice(GLuint targetFbo, GLuint textureToView);
+        void RenderDebugTexture(GLuint targetFbo, GLuint textureToView);
 
         void SetWorldBounds(glm::vec3 min, glm::vec3 max);
         void MarkDirty() {dirty = true;}

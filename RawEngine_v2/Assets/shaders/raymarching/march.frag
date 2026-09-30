@@ -1,4 +1,3 @@
-// Assets/shaders/PostProcessing/raymarching_volume.frag
 #version 400 core
 
 in vec2 uv;
@@ -6,10 +5,17 @@ out vec4 FragColor;
 
 uniform sampler2D _MainTex;
 uniform sampler2D _SceneDepth;
-uniform sampler3D _VolumeTex;
+uniform sampler3D _LookupTex;
+uniform sampler3D _BrickPoolTex;
 
 uniform vec3 _WorldMin;
 uniform vec3 _WorldMax;
+
+uniform vec3 _Resolution;
+uniform vec3 _GridResolution;
+uniform vec3 _PoolResolution;
+uniform int BRICK_CORE;
+uniform int BRICK_STORE;
 
 uniform mat4 _InvView;
 uniform mat4 _InvProj;
@@ -44,7 +50,18 @@ vec3 worldToUVW(vec3 p) {
 }
 
 float sampleVolume(vec3 p) {
-    return texture(_VolumeTex, worldToUVW(p)).r;
+    vec3 voxel = (p - _WorldMin) / (_WorldMax - _WorldMin) * _Resolution; // continuous dense-voxel position
+
+    vec3 brickIndex = floor(voxel / float(BRICK_CORE));
+    brickIndex = clamp(brickIndex, vec3(0.0), _GridResolution - 1.0); // guard float edge cases at the volume boundary
+
+    vec3 localOffset = voxel - brickIndex * float(BRICK_CORE); // 0..8 within this brick's own 9-texel block
+
+    vec3 poolOrigin = texelFetch(_LookupTex, ivec3(brickIndex), 0).xyz; // exact fetch — never filtered, same reasoning as jfaTex/signTex
+    vec3 poolTexelCoord = poolOrigin + localOffset;
+
+    vec3 uvw = poolTexelCoord / _PoolResolution;
+    return texture(_BrickPoolTex, uvw).r;
 }
 
 vec3 calcNormal(vec3 p) {
