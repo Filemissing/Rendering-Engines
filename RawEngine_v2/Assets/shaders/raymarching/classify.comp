@@ -5,6 +5,9 @@ layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 // outputs
 layout(rgba16f, binding = 0) uniform writeonly image3D seedOut;
 layout(r8, binding = 1) uniform writeonly image3D signOut;
+layout(r8, binding = 2) uniform writeonly image3D brickActiveOut;
+
+uniform int BRICK_CORE;
 
 // world bounds
 uniform vec3 _WorldMin;
@@ -316,4 +319,9 @@ void main() {
 
     imageStore(seedOut, texel, vec4(refinedTexel, isSeed));
     imageStore(signOut, texel, vec4(m_sign));
+
+    if (isSeed > 0.5) {
+        ivec3 brickIndex = texel / BRICK_CORE;
+        imageStore(brickActiveOut, brickIndex, vec4(1.0));
+    }
 }

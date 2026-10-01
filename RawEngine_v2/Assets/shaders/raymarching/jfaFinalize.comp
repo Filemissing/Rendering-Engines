@@ -5,7 +5,7 @@ layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 layout(rgba16f, binding = 0) uniform readonly image3D finalSeeds;
 layout(r8, binding = 1) uniform readonly image3D signTex;
 layout(r16f, binding = 2) uniform writeonly image3D brickPoolTexOut;
-layout(rgba32f, binding = 3) uniform writeonly image3D lookupTexOut;
+layout(rgba32f, binding = 3) uniform readonly image3D reverseLookupTex;
 
 uniform vec3 _WorldMin;
 uniform vec3 _WorldMax;
@@ -25,10 +25,14 @@ void main() {
     ivec3 poolRes = ivec3(_PoolResolution);
     if (any(greaterThanEqual(poolTexel, poolRes))) return;
 
-    ivec3 brickIndex  = poolTexel / BRICK_STORE;
-    ivec3 localOffset = poolTexel - brickIndex * BRICK_STORE;
+    ivec3 poolBrickCoord = poolTexel / BRICK_STORE;
+    vec4 owner = imageLoad(reverseLookupTex, poolBrickCoord);
+    if (owner.w < 0.5) return; // this pool slot was never allocated — nothing to compute
 
-    ivec3 sourceVoxel = brickIndex * BRICK_CORE + localOffset; // local==8 → neighbor's first voxel (apron)
+    ivec3 brickIndex = ivec3(owner.xyz);
+    ivec3 localOffset = poolTexel - poolBrickCoord * BRICK_STORE;
+
+    ivec3 sourceVoxel = brickIndex * BRICK_CORE + localOffset;
     sourceVoxel = clamp(sourceVoxel, ivec3(0), ivec3(_Resolution) - ivec3(1));
 
     vec3 pos = getWorldPos(vec3(sourceVoxel));
@@ -40,9 +44,4 @@ void main() {
     float signedDist = (sign > 0.5) ? -dist : dist;
 
     imageStore(brickPoolTexOut, poolTexel, vec4(signedDist));
-
-    if (localOffset == ivec3(0)) {
-        vec3 poolOrigin = vec3(brickIndex * BRICK_STORE); // this brick's own origin in pool-texel space
-        imageStore(lookupTexOut, brickIndex, vec4(poolOrigin, 1.0));
-    }
 }

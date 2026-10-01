@@ -15,8 +15,6 @@ namespace core {
 
         glGenBuffers(1, &primitivesBuffer);
 
-        volumeTex = 0;
-
         marchMaterial = new Material(
             "Assets/shaders/PostProcessing/viewSpace.vert",
             "Assets/shaders/raymarching/march.frag");
@@ -36,6 +34,9 @@ namespace core {
         jfaStepShader = new ComputeShader("Assets/shaders/raymarching/jfaStep.comp");
         jfaFinalizeShader = new ComputeShader("Assets/shaders/raymarching/jfaFinalize.comp");
 
+        clearShader = new ComputeShader("Assets/shaders/raymarching/clear.comp");
+        allocateShader = new ComputeShader("Assets/shaders/raymarching/allocate.comp");
+
         std::vector<Mesh> meshes = std::vector<Mesh>();
         meshes.push_back(Mesh::generateQuad());
         quadModel = new Model(std::move(meshes));
@@ -45,7 +46,8 @@ namespace core {
     }
     Raymarcher::~Raymarcher() {
         glDeleteBuffers(1, &primitivesBuffer);
-        DestroyFbo();
+        DestroyJFAResources();
+        DestroyBrickResources();
         DestroyNoiseResources();
 
         delete marchMaterial;
@@ -61,20 +63,8 @@ namespace core {
 
     void Raymarcher::EnsureVolumeSized(glm::ivec3 newResolution) {
         resolution = newResolution;
-        DestroyFbo();
         EnsureJFAResourcesSized();
         EnsureBrickResourcesSized();
-
-        glGenTextures(1, &volumeTex);
-
-        glBindTexture(GL_TEXTURE_3D, volumeTex);
-        glTexImage3D(GL_TEXTURE_3D, 0, GL_R16F, resolution.x, resolution.y, resolution.z, 0, GL_RED, GL_HALF_FLOAT, nullptr);
-
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
         // Final error check
         while (GLenum e = glGetError()) {
@@ -82,6 +72,8 @@ namespace core {
         }
     }
     void Raymarcher::EnsureJFAResourcesSized() {
+        DestroyJFAResources();
+
         // ping-pong textures
         glGenTextures(1, &jfaTexA);
         glBindTexture(GL_TEXTURE_3D, jfaTexA);
@@ -108,6 +100,58 @@ namespace core {
         glBindTexture(GL_TEXTURE_3D, signTex);
         glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, resolution.x, resolution.y, resolution.z,
                      0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    }
+    void Raymarcher::EnsureBrickResourcesSized() {
+        DestroyBrickResources();
+
+        brickGridResolution = (resolution + glm::ivec3(BRICK_CORE - 1)) / BRICK_CORE; // round up
+
+        glm::ivec3 poolTexelSize = brickPoolDim * BRICK_STORE;
+
+        glGenBuffers(1, &allocationCounter);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, allocationCounter);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GLuint), nullptr, GL_DYNAMIC_DRAW);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, allocationCounter); // binding = 0, matches allocate.comp
+
+        glGenTextures(1, &brickPoolTex);
+        glBindTexture(GL_TEXTURE_3D, brickPoolTex);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_R16F, poolTexelSize.x, poolTexelSize.y, poolTexelSize.z,
+                     0, GL_RED, GL_HALF_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        glGenTextures(1, &brickActiveTex);
+        glBindTexture(GL_TEXTURE_3D, brickActiveTex);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, brickGridResolution.x, brickGridResolution.y, brickGridResolution.z,
+                    0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        glGenTextures(1, &lookupTex);
+        glBindTexture(GL_TEXTURE_3D, lookupTex);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA32F, brickGridResolution.x, brickGridResolution.y, brickGridResolution.z,
+                     0, GL_RGBA, GL_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        glGenTextures(1, &reverseLookupTex);
+        glBindTexture(GL_TEXTURE_3D, reverseLookupTex);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA32F, brickPoolDim.x, brickPoolDim.y, brickPoolDim.z,
+                    0, GL_RGBA, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -167,47 +211,21 @@ namespace core {
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindTexture(GL_TEXTURE_3D, 0);
     }
-    void Raymarcher::EnsureBrickResourcesSized() {
-        DestroyBrickResources();
-
-        brickGridResolution = (resolution + glm::ivec3(BRICK_CORE - 1)) / BRICK_CORE; // round up
-
-        glm::ivec3 poolTexelSize = brickGridResolution * BRICK_STORE;
-
-        glGenTextures(1, &brickPoolTex);
-        glBindTexture(GL_TEXTURE_3D, brickPoolTex);
-        glTexImage3D(GL_TEXTURE_3D, 0, GL_R16F, poolTexelSize.x, poolTexelSize.y, poolTexelSize.z,
-                     0, GL_RED, GL_HALF_FLOAT, nullptr);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-        glGenTextures(1, &lookupTex);
-        glBindTexture(GL_TEXTURE_3D, lookupTex);
-        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA32F, brickGridResolution.x, brickGridResolution.y, brickGridResolution.z,
-                     0, GL_RGBA, GL_FLOAT, nullptr);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    }
-    void Raymarcher::DestroyFbo() {
-        if (volumeTex) glDeleteTextures(1, &volumeTex);
+    void Raymarcher::DestroyJFAResources() {
         if (jfaTexA) glDeleteTextures(1, &jfaTexA);
         if (jfaTexB) glDeleteTextures(1, &jfaTexB);
         if (signTex) glDeleteTextures(1, &signTex);
+    }
+    void Raymarcher::DestroyBrickResources() {
+        if (brickPoolTex) glDeleteTextures(1, &brickPoolTex);
+        if (lookupTex) glDeleteTextures(1, &lookupTex);
+        if (brickActiveTex) glDeleteTextures(1, &brickActiveTex);
+        if (reverseLookupTex) glDeleteTextures(1, &reverseLookupTex);
     }
     void Raymarcher::DestroyNoiseResources()
     {
         if (noise2DTex) glDeleteTextures(1, &noise2DTex);
         if (noise3DTex) glDeleteTextures(1, &noise3DTex);
-    }
-    void Raymarcher::DestroyBrickResources() {
-        if (brickPoolTex) glDeleteTextures(1, &brickPoolTex);
-        if (lookupTex) glDeleteTextures(1, &lookupTex);
     }
 
     void Raymarcher::UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) const {
@@ -255,8 +273,26 @@ namespace core {
         const int gy = (resolution.y + 7) / 8;
         const int gz = (resolution.z + 7) / 8;
 
+        const int bgx = (brickGridResolution.x + 7) / 8;
+        const int bgy = (brickGridResolution.y + 7) / 8;
+        const int bgz = (brickGridResolution.z + 7) / 8;
+
+        glm::ivec3 poolTexelSize = brickPoolDim * BRICK_STORE;
+        const int pgx = (poolTexelSize.x + 7) / 8;
+        const int pgy = (poolTexelSize.y + 7) / 8;
+        const int pgz = (poolTexelSize.z + 7) / 8;
+
+        // ---- Pass 0: clear — zero the allocation counter and brickActiveTex ----
+        GLuint zero = 0;
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, allocationCounter);
+        glClearBufferSubData(GL_SHADER_STORAGE_BUFFER, GL_R32UI, 0, sizeof(GLuint), GL_RED_INTEGER, GL_UNSIGNED_INT, &zero);
+
+        clearShader->SetVec3("_GridResolution", glm::vec3(brickGridResolution));
+        clearShader->Bind();
+        clearShader->BindImage(0, brickActiveTex, GL_WRITE_ONLY, GL_R8);
+        clearShader->Dispatch(bgx, bgy, bgz);
+
         // ---- Pass 1: classify ----
-        // writes each voxel's OWN position into jfaTexA if it's a seed (a surface-adjacent voxel), or an invalid marker (w=0) otherwise
         classifyShader->SetVec3("_WorldMin", worldMin);
         classifyShader->SetVec3("_WorldMax", worldMax);
         classifyShader->SetVec3("_Resolution", resolution);
@@ -269,14 +305,15 @@ namespace core {
         classifyShader->SetTexture3D("_Noise3D", noise3DTex);
         classifyShader->SetFloat("_Noise2DFrequency", noise2DFrequency);
         classifyShader->SetFloat("_Noise3DFrequency", noise3DFrequency);
+        classifyShader->SetInt("BRICK_CORE", BRICK_CORE);
         UploadPrimitives(classifyShader->GetProgram(), editor::Editor::activeScene->primitives);
         classifyShader->Bind();
         classifyShader->BindImage(0, jfaTexA, GL_WRITE_ONLY, GL_RGBA16F);
         classifyShader->BindImage(1, signTex, GL_WRITE_ONLY, GL_R8);
+        classifyShader->BindImage(2, brickActiveTex, GL_WRITE_ONLY, GL_R8);
         classifyShader->Dispatch(gx, gy, gz);
 
         // ---- Pass 2: JFA step iterations, ping-ponging A<->B ----
-        // step size halves each pass: N/2, N/4, ..., 1
         bool pingIsA = true;
         int step = std::max({resolution.x, resolution.y, resolution.z}) / 2;
         { // 1+JFA extra pass
@@ -306,41 +343,30 @@ namespace core {
             pingIsA = !pingIsA;
             step /= 2;
         }
-        // // JFA+2 extra passes
-        // for (int extra = 2; extra > 0; extra--) {
-        //     GLuint src = pingIsA ? jfaTexA : jfaTexB;
-        //     GLuint dst = pingIsA ? jfaTexB : jfaTexA;
-        //
-        //     jfaStepShader->SetInt("_Step", extra);
-        //     jfaStepShader->SetVec3("_Resolution", resolution);
-        //     jfaStepShader->Bind();
-        //     jfaStepShader->BindImage(0, src, GL_READ_ONLY, GL_RGBA16F);
-        //     jfaStepShader->BindImage(1, dst, GL_WRITE_ONLY, GL_RGBA16F);
-        //     jfaStepShader->Dispatch(gx, gy, gz);
-        //
-        //     pingIsA = !pingIsA;
-        // }
         finalSeedTex = pingIsA ? jfaTexA : jfaTexB;
 
-        finalSeedTex = pingIsA ? jfaTexA : jfaTexB;
+        // ---- Pass 3: allocate — one invocation per WORLD brick, claims a unique pool slot per active brick ----
+        allocateShader->SetVec3("_GridResolution", glm::vec3(brickGridResolution));
+        allocateShader->SetVec3("_PoolGridDim", glm::vec3(brickPoolDim));
+        allocateShader->SetInt("BRICK_STORE", BRICK_STORE);
+        allocateShader->Bind();
+        allocateShader->BindImage(0, brickActiveTex, GL_READ_ONLY, GL_R8);
+        allocateShader->BindImage(1, lookupTex, GL_WRITE_ONLY, GL_RGBA32F);
+        allocateShader->BindImage(2, reverseLookupTex, GL_WRITE_ONLY, GL_RGBA32F);
+        allocateShader->Dispatch(bgx, bgy, bgz);
 
-        // ---- Pass 3: finalize — convert nearest-seed position into signed distance, write to Brick pool ----
-        glm::ivec3 poolTexelSize = brickGridResolution * BRICK_STORE;
-        const int pgx = (poolTexelSize.x + 7) / 8;
-        const int pgy = (poolTexelSize.y + 7) / 8;
-        const int pgz = (poolTexelSize.z + 7) / 8;
-
+        // ---- Pass 4: finalize — one invocation per POOL texel, reads reverseLookupTex to find its owning world brick ----
         jfaFinalizeShader->SetVec3("_WorldMin", worldMin);
         jfaFinalizeShader->SetVec3("_WorldMax", worldMax);
         jfaFinalizeShader->SetVec3("_Resolution", resolution);
-        jfaFinalizeShader->SetVec3("_PoolResolution", brickGridResolution * BRICK_STORE);
+        jfaFinalizeShader->SetVec3("_PoolResolution", glm::vec3(poolTexelSize));
         jfaFinalizeShader->SetInt("BRICK_CORE", BRICK_CORE);
         jfaFinalizeShader->SetInt("BRICK_STORE", BRICK_STORE);
         jfaFinalizeShader->Bind();
         jfaFinalizeShader->BindImage(0, finalSeedTex, GL_READ_ONLY, GL_RGBA16F);
         jfaFinalizeShader->BindImage(1, signTex, GL_READ_ONLY, GL_R8);
         jfaFinalizeShader->BindImage(2, brickPoolTex, GL_WRITE_ONLY, GL_R16F);
-        jfaFinalizeShader->BindImage(3, lookupTex, GL_WRITE_ONLY, GL_RGBA32F);
+        jfaFinalizeShader->BindImage(3, reverseLookupTex, GL_READ_ONLY, GL_RGBA32F);
         jfaFinalizeShader->Dispatch(pgx, pgy, pgz);
 
         dirty = false;
@@ -414,7 +440,9 @@ namespace core {
             if (debugTex3D == dSignTex) dTex = signTex;
             if (debugTex3D == dSeedTex) dTex = finalSeedTex;
             if (debugTex3D == dNoise3DTex) dTex = noise3DTex;
+            if (debugTex3D == dBrickActiveTex) dTex = brickActiveTex;
             if (debugTex3D == dLookupTex) dTex = lookupTex;
+            if (debugTex3D == dReverseLookupTex) dTex = reverseLookupTex;
             if (debugTex3D == dBrickPoolTex) dTex = brickPoolTex;
             RenderDebugSlice(targetFbo, dTex);
             return;
@@ -440,7 +468,7 @@ namespace core {
 
         marchMaterial->SetVec3("_Resolution", resolution);
         marchMaterial->SetVec3("_GridResolution", brickGridResolution);
-        marchMaterial->SetVec3("_PoolResolution", brickGridResolution * BRICK_STORE);
+        marchMaterial->SetVec3("_PoolResolution", glm::vec3(brickPoolDim * BRICK_STORE));
         marchMaterial->SetInt("BRICK_CORE", BRICK_CORE);
         marchMaterial->SetInt("BRICK_STORE", BRICK_STORE);
 
@@ -487,7 +515,6 @@ namespace core {
         glEnable(GL_DEPTH_TEST);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
-
 
     void Raymarcher::SetWorldBounds(glm::vec3 min, glm::vec3 max) {
         worldMin = min;

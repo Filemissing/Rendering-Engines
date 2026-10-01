@@ -7,9 +7,8 @@
 namespace editor::editorWindows {
     void RaymarcherWindow::OnEnable() {
         raymarcher = Editor::viewPort->GetRenderer()->GetRaymarcher();
-        pendingResX = raymarcher->GetResolution().x;
-        pendingResY = raymarcher->GetResolution().y;
-        pendingResZ = raymarcher->GetResolution().z;
+        pendingRes = raymarcher->GetResolution();
+        pendingBrickPoolDim = raymarcher->GetBrickPoolDim();
     }
 
     void RaymarcherWindow::OnGUI() {
@@ -19,35 +18,15 @@ namespace editor::editorWindows {
         }
 
         ImGui::SeparatorText("Volume");
-        ImGui::DragInt3("Resolution", &pendingResX, 1.0f, 1, 512);
+        ImGui::DragInt3("Resolution", &pendingRes.x, 1.0f, 1);
         ImGui::DragFloat3("World Min", &pendingWorldMin.x, 0.1f);
         ImGui::DragFloat3("World Max", &pendingWorldMax.x, 0.1f);
+        ImGui::DragInt3("Brick pool dimensions", &pendingBrickPoolDim.x, 0.1f);
 
         if (ImGui::Button("Apply Volume Settings")) {
-            raymarcher->EnsureVolumeSized(glm::ivec3(pendingResX, pendingResY, pendingResZ));
+            raymarcher->SetBrickPoolDim(pendingBrickPoolDim);
             raymarcher->SetWorldBounds(pendingWorldMin, pendingWorldMax);
-            raymarcher->MarkDirty();
-        }
-
-        ImGui::Spacing();
-        ImGui::SeparatorText("Noise");
-
-        ImGui::DragInt2("2D Resolution", &raymarcher->noise2DResolution.x,
-                        1.0f, 1, 4096);
-
-        ImGui::DragInt3("3D Resolution", &raymarcher->noise3DResolution.x,
-                        1.0f, 1, 512);
-
-        ImGui::DragFloat("2D Frequency", &raymarcher->noise2DFrequency,
-                         0.1f, 0.01f, 100.0f);
-
-        ImGui::DragFloat("3D Frequency", &raymarcher->noise3DFrequency,
-                         0.1f, 0.01f, 100.0f);
-
-        ImGui::InputScalar("Seed", ImGuiDataType_U32, &raymarcher->noiseSeed);
-
-        if (ImGui::Button("Rebake Noise")) {
-            raymarcher->BakeNoise();
+            raymarcher->EnsureVolumeSized(pendingRes);
             raymarcher->MarkDirty();
         }
 
@@ -67,6 +46,18 @@ namespace editor::editorWindows {
         ImGui::DragFloat("Surface Distance", &raymarcher->surfDist, 0.0001f, 0.00001f, 1.0f, "%.5f");
 
         ImGui::Spacing();
+        ImGui::SeparatorText("Noise");
+        ImGui::DragInt2("2D Resolution", &raymarcher->noise2DResolution.x, 1.0f, 1, 4096);
+        ImGui::DragInt3("3D Resolution", &raymarcher->noise3DResolution.x, 1.0f, 1, 512);
+        ImGui::DragFloat("2D Frequency", &raymarcher->noise2DFrequency, 0.1f, 0.01f, 100.0f);
+        ImGui::DragFloat("3D Frequency", &raymarcher->noise3DFrequency, 0.1f, 0.01f, 100.0f);
+        ImGui::InputScalar("Seed", ImGuiDataType_U32, &raymarcher->noiseSeed);
+        if (ImGui::Button("Rebake Noise")) {
+            raymarcher->BakeNoise();
+            raymarcher->MarkDirty();
+        }
+
+        ImGui::Spacing();
         ImGui::SeparatorText("Terrain");
         ImGui::DragInt("Octaves", &raymarcher->octaves, 1.0f, 1, 12);
         ImGui::DragFloat("Lacunarity", &raymarcher->lacunarity, 0.01f, 1.0f, 4.0f);
@@ -79,7 +70,7 @@ namespace editor::editorWindows {
         ImGui::Checkbox("Enable 3D texture view", &raymarcher->debug3D);
 
         if (raymarcher->debug3D) {
-            const char* texNames[] = { "Sign Texture", "Seed Texture", "3D Noise Texture", "Lookup Texture", "BrickPool Texture" };
+            const char* texNames[] = { "Sign Texture", "Seed Texture", "3D Noise Texture", "Brick active Texture", "Lookup Texture", "Reverse Lookup Texture", "BrickPool Texture" };
             int currentTex = static_cast<int>(raymarcher->debugTex3D);
             if (ImGui::Combo("Texture", &currentTex, texNames, IM_ARRAYSIZE(texNames))) {
                 raymarcher->debugTex3D = static_cast<core::Raymarcher::DebugTexture3D>(currentTex);

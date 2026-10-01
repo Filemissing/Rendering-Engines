@@ -39,23 +39,35 @@ namespace core {
         GLuint signTex = 0;
 
         void EnsureJFAResourcesSized();
+        void DestroyJFAResources();
 
-        // final output
+        // brick pool
         static constexpr int BRICK_CORE = 8;
         static constexpr int BRICK_STORE = BRICK_CORE + 1; // 9 — includes the apron sample
 
         glm::ivec3 brickGridResolution = glm::ivec3(0); // number of bricks per axis
+        glm::ivec3 brickPoolDim = glm::ivec3(32); // the dimensions of the brick pool
+
+        GLuint allocationCounter = 0; // atomic counter buffer for brick allocation
+
         GLuint brickPoolTex = 0;   // R16F, holds baked distances, laid out as brickGridResolution * BRICK_STORE texels
+        GLuint brickActiveTex = 0;
         GLuint lookupTex = 0; // RGBA32F, one texel per brick, xyz = this brick's own origin in pool space, w reserved
+        GLuint reverseLookupTex = 0; // RGBA32F, sized brickPoolDim, points to the bricks world index
+
+        ComputeShader* clearShader;
+        ComputeShader* allocateShader;
 
         void EnsureBrickResourcesSized();
         void DestroyBrickResources();
 
-        GLuint volumeTex;
+        // final output
         Material* marchMaterial;
         Material* debugSliceMaterial;
         Material* debugTextureMaterial;
         Model* quadModel;
+
+        void UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) const;
 
     public:
         // general settings
@@ -93,7 +105,9 @@ namespace core {
             dSignTex,
             dSeedTex,
             dNoise3DTex,
+            dBrickActiveTex,
             dLookupTex,
+            dReverseLookupTex,
             dBrickPoolTex
         };
         DebugTexture3D debugTex3D = dSignTex;
@@ -107,8 +121,6 @@ namespace core {
 
         // general methods
         void EnsureVolumeSized(glm::ivec3 newResolution);
-        void DestroyFbo();
-        void UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) const;
         void Bake(const std::vector<Primitive*>& primitives);
         void Render(GLuint targetFbo, GLuint sceneColorTex, GLuint sceneDepthTex, Camera* cam);
         void RenderDebugSlice(GLuint targetFbo, GLuint textureToView);
@@ -119,7 +131,9 @@ namespace core {
         bool IsDirty() const { return dirty; }
 
         glm::ivec3 GetResolution() const { return resolution; }
-        GLuint GetVolumeTexture() const { return volumeTex; }
+
+        glm::ivec3 GetBrickPoolDim() const { return brickPoolDim; }
+        void SetBrickPoolDim(const glm::ivec3 dim) { brickPoolDim = dim; }
     };
 } // core
 
