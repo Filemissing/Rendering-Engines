@@ -116,7 +116,7 @@ namespace core {
         glGenBuffers(1, &allocationCounter);
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, allocationCounter);
         glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GLuint), nullptr, GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, allocationCounter); // binding = 0, matches allocate.comp
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, allocationCounter); // binding = 1, to avoid collision with the primitives buffer
 
         glGenTextures(1, &brickPoolTex);
         glBindTexture(GL_TEXTURE_3D, brickPoolTex);
