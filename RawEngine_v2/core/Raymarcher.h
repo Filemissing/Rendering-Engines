@@ -71,7 +71,7 @@ namespace core {
 
     public:
         // general settings
-        int maxSteps = 96;
+        int maxSteps = 256;
         float maxDist = 200.0f;
         float surfDist = 0.001f;
 

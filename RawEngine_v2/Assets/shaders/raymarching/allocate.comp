@@ -50,8 +50,6 @@ void main() {
     );
     vec3 poolOrigin = vec3(poolBrickCoord * BRICK_STORE);
 
-//    imageStore(lookupOut, brickIndex, vec4(poolBrickCoord, 1.0));
-    imageStore(lookupOut, brickIndex, vec4(poolOrigin, 1.0)); // correct
-//    imageStore(reverseLookupOut, brickIndex, vec4(poolBrickCoord, 1.0));
-    imageStore(reverseLookupOut, poolBrickCoord, vec4(vec3(brickIndex), 1.0)); // correct
+    imageStore(lookupOut, brickIndex, vec4(poolOrigin, 1.0));
+    imageStore(reverseLookupOut, poolBrickCoord, vec4(vec3(brickIndex), 1.0));
 }
