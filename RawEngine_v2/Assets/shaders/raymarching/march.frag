@@ -49,28 +49,62 @@ vec3 worldToUVW(vec3 p) {
     return (p - _WorldMin) / (_WorldMax - _WorldMin);
 }
 
-float sampleVolume(vec3 p) {
-    vec3 voxel = (p - _WorldMin) / (_WorldMax - _WorldMin) * _Resolution; // continuous dense-voxel position
+float sampleVolumeRaw(vec3 p, float fallback) {
+    vec3 voxel = (p - _WorldMin) / (_WorldMax - _WorldMin) * _Resolution;
 
-    vec3 brickIndex = floor(voxel / float(BRICK_CORE));
-    brickIndex = clamp(brickIndex, vec3(0.0), _GridResolution - 1.0); // guard float edge cases at the volume boundary
+    vec3 brickIndexF = floor(voxel / float(BRICK_CORE));
+    brickIndexF = clamp(brickIndexF, vec3(0.0), _GridResolution - 1.0);
+    ivec3 brickIndex = ivec3(brickIndexF);
 
-    vec3 localOffset = voxel - brickIndex * float(BRICK_CORE); // 0..8 within this brick's own 9-texel block
+    vec4 lookup = texelFetch(_LookupTex, brickIndex, 0);
+    if (lookup.w < 0.5) return fallback; // no data here — assume "same as center", contributes ~0 to the gradient
 
-    vec3 poolOrigin = texelFetch(_LookupTex, ivec3(brickIndex), 0).xyz; // exact fetch — never filtered, same reasoning as jfaTex/signTex
-    vec3 poolTexelCoord = poolOrigin + localOffset;
-
-    vec3 uvw = poolTexelCoord / _PoolResolution;
+    vec3 localOffset = clamp(voxel - brickIndexF * float(BRICK_CORE), 0.0, float(BRICK_STORE - 1));
+    vec3 poolTexelCoord = lookup.xyz + localOffset;
+    vec3 uvw = (poolTexelCoord + 0.5) / _PoolResolution;
     return texture(_BrickPoolTex, uvw).r;
 }
 
 vec3 calcNormal(vec3 p) {
-    const float e = 0.5; // in world units — matches ~1 voxel; tune per volume size
+    float center = sampleVolumeRaw(p, 0.0); // p itself is always inside an allocated brick — this hit, so fallback here is moot
+    const float e = 0.5;
     return normalize(vec3(
-    sampleVolume(p + vec3(e,0,0)) - sampleVolume(p - vec3(e,0,0)),
-    sampleVolume(p + vec3(0,e,0)) - sampleVolume(p - vec3(0,e,0)),
-    sampleVolume(p + vec3(0,0,e)) - sampleVolume(p - vec3(0,0,e))
+    sampleVolumeRaw(p + vec3(e,0,0), center) - sampleVolumeRaw(p - vec3(e,0,0), center),
+    sampleVolumeRaw(p + vec3(0,e,0), center) - sampleVolumeRaw(p - vec3(0,e,0), center),
+    sampleVolumeRaw(p + vec3(0,0,e), center) - sampleVolumeRaw(p - vec3(0,0,e), center)
     ));
+}
+
+float sampleVolumeWithSkip(vec3 p, vec3 rd, out float skipDist) {
+    skipDist = 0.0;
+
+    vec3 voxel = (p - _WorldMin) / (_WorldMax - _WorldMin) * _Resolution;
+
+    vec3 brickIndexF = floor(voxel / float(BRICK_CORE));
+    brickIndexF = clamp(brickIndexF, vec3(0.0), _GridResolution - 1.0);
+    ivec3 brickIndex = ivec3(brickIndexF);
+
+    vec4 lookup = texelFetch(_LookupTex, brickIndex, 0);
+
+    if (lookup.w < 0.5) {
+        // compute this brick's world-space AABB and find where the ray exits it
+        vec3 brickWorldMin = _WorldMin + (brickIndexF * float(BRICK_CORE)) / _Resolution * (_WorldMax - _WorldMin);
+        vec3 brickWorldMax = _WorldMin + ((brickIndexF + 1.0) * float(BRICK_CORE)) / _Resolution * (_WorldMax - _WorldMin);
+
+        vec3 invD = 1.0 / rd;
+        vec3 t0 = (brickWorldMin - p) * invD;
+        vec3 t1 = (brickWorldMax - p) * invD;
+        vec3 tMax = max(t0, t1);
+        float tExit = min(min(tMax.x, tMax.y), tMax.z);
+
+        skipDist = max(tExit, 0.0001); // guard against a degenerate/zero step if p sits exactly on the boundary
+        return 1e9; // signal "no surface here" — the caller advances by skipDist, not this value, as the step
+    }
+
+    vec3 localOffset = clamp(voxel - brickIndexF * float(BRICK_CORE), 0.0, float(BRICK_STORE - 1));
+    vec3 poolTexelCoord = lookup.xyz + localOffset;
+    vec3 uvw = (poolTexelCoord + 0.5) / _PoolResolution;
+    return texture(_BrickPoolTex, uvw).r;
 }
 
 vec3 shade(vec3 pos, vec3 normal) {
@@ -113,14 +147,16 @@ void main() {
 
     for (int i = 0; i < _MaxSteps; i++) {
         vec3 p = ro + rd * t;
-        float d = sampleVolume(p);
 
-        if (d < _SurfDist) {
-            hit = true;
-            break;
+        float skipDist;
+        float d = sampleVolumeWithSkip(p, rd, skipDist);
+
+        if (skipDist > 0.0) {
+            t += skipDist; // empty brick — jump straight to its far face, not an SDF step
+        } else {
+            if (d < _SurfDist) { hit = true; break; }
+            t += d;
         }
-
-        t += d;
 
         if (t >= tMax) break;
     }
