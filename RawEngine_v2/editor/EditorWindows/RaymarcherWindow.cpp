@@ -67,6 +67,8 @@ namespace editor::editorWindows {
 
         ImGui::Spacing();
         ImGui::SeparatorText("Debug Visualization");
+        ImGui::Checkbox("Keep Debug resources", &raymarcher->keepDebugResources);
+
         ImGui::Checkbox("Enable 3D texture view", &raymarcher->debug3D);
 
         if (raymarcher->debug3D) {

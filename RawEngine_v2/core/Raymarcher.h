@@ -96,6 +96,8 @@ namespace core {
         float heightScale = 8.0f;
 
         // debug settings
+        // Raymarcher.h
+        bool keepDebugResources = true;
         bool debug3D = false;
         bool debug2D = false;
         int sliceZ = 0;
@@ -115,6 +117,8 @@ namespace core {
             dNoise2DTex
         };
         DebugTexture2D debugTex2D = dNoise2DTex;
+
+        void FreeDebugResources();
 
         Raymarcher();
         ~Raymarcher();

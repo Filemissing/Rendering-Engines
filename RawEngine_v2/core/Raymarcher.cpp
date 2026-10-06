@@ -227,6 +227,12 @@ namespace core {
         if (noise2DTex) glDeleteTextures(1, &noise2DTex);
         if (noise3DTex) glDeleteTextures(1, &noise3DTex);
     }
+    void Raymarcher::FreeDebugResources() {
+        DestroyJFAResources(); // all JFA resources are safe to delete when baking is done
+
+        if (brickActiveTex) glDeleteTextures(1, &brickActiveTex);
+        if (reverseLookupTex) glDeleteTextures(1, &reverseLookupTex);
+    }
 
     void Raymarcher::UploadPrimitives(GLuint shader, const std::vector<Primitive*>& primitives) const {
         glUseProgram(shader);
@@ -368,6 +374,10 @@ namespace core {
         jfaFinalizeShader->BindImage(2, brickPoolTex, GL_WRITE_ONLY, GL_R16F);
         jfaFinalizeShader->BindImage(3, reverseLookupTex, GL_READ_ONLY, GL_RGBA32F);
         jfaFinalizeShader->Dispatch(pgx, pgy, pgz);
+
+        // clear all resources that aren't necessary to keep after baking
+        // if memory during baking is still a problem this can be improved to clear certain resources immediately in multiple steps during baking
+        if (!keepDebugResources) FreeDebugResources();
 
         dirty = false;
 
