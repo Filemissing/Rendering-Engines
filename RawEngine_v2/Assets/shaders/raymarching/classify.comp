@@ -187,9 +187,11 @@ struct Hit {
 };
 
 mat3 eulerToMat3(vec3 euler) {
-    float cx = cos(euler.x), sx = sin(euler.x);
-    float cy = cos(euler.y), sy = sin(euler.y);
-    float cz = cos(euler.z), sz = sin(euler.z);
+    vec3 rad = radians(euler);
+
+    float cx = cos(rad.x), sx = sin(rad.x);
+    float cy = cos(rad.y), sy = sin(rad.y);
+    float cz = cos(rad.z), sz = sin(rad.z);
 
     // ZYX order — most common convention (matches GLM default)
     mat3 rx = mat3(
