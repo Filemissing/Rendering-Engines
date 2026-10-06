@@ -13,12 +13,22 @@ uniform vec3 _GridResolution;
 uniform vec3 _PoolGridDim;
 uniform int BRICK_STORE;
 
+float isActive(ivec3 brickIndex) {
+    return imageLoad(brickActiveTex, brickIndex).r +
+    imageLoad(brickActiveTex, brickIndex + ivec3(1, 0, 0)).r +
+    imageLoad(brickActiveTex, brickIndex + ivec3(-1, 0, 0)).r +
+    imageLoad(brickActiveTex, brickIndex + ivec3(0, 1, 0)).r +
+    imageLoad(brickActiveTex, brickIndex + ivec3(0, -1, 0)).r +
+    imageLoad(brickActiveTex, brickIndex + ivec3(0, 0, 1)).r +
+    imageLoad(brickActiveTex, brickIndex + ivec3(0, 0, -1)).r;
+}
+
 void main() {
     ivec3 brickIndex = ivec3(gl_GlobalInvocationID);
     ivec3 gridRes = ivec3(_GridResolution);
     if (any(greaterThanEqual(brickIndex, gridRes))) return;
 
-    float _active = imageLoad(brickActiveTex, brickIndex).r;
+    float _active = isActive(brickIndex);
     if (_active < 0.5) {
         imageStore(lookupOut, brickIndex, vec4(0.0));
         return;
