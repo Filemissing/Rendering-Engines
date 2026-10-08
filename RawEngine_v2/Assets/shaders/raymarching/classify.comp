@@ -6,6 +6,7 @@ layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 layout(rgba16f, binding = 0) uniform writeonly image3D seedOut;
 layout(r8, binding = 1) uniform writeonly image3D signOut;
 layout(r8, binding = 2) uniform writeonly image3D brickActiveOut;
+layout(r8, binding = 3) uniform writeonly image3D brickSignOut;
 
 uniform int BRICK_CORE;
 
@@ -322,8 +323,12 @@ void main() {
     imageStore(seedOut, texel, vec4(refinedTexel, isSeed));
     imageStore(signOut, texel, vec4(m_sign));
 
+    ivec3 brickIndex = texel / BRICK_CORE;
     if (isSeed > 0.5) {
-        ivec3 brickIndex = texel / BRICK_CORE;
         imageStore(brickActiveOut, brickIndex, vec4(1.0));
+    }
+    // only writes the bricks origin, this works because it's only used for bricks that aren't near a surface and thus have a uniform sign
+    if (texel == brickIndex * BRICK_CORE) {
+        imageStore(brickSignOut, brickIndex, vec4(m_sign));
     }
 }

@@ -51,7 +51,8 @@ namespace core {
         GLuint allocationCounter = 0; // atomic counter buffer for brick allocation
 
         GLuint brickPoolTex = 0;   // R16F, holds baked distances, laid out as brickGridResolution * BRICK_STORE texels
-        GLuint brickActiveTex = 0;
+        GLuint brickActiveTex = 0; //R8, defines whether a brick is near a surface
+        GLuint brickSignTex = 0; //R8, stores the sign of the bricks origin, used to determine solid/empty when marked inactive
         GLuint lookupTex = 0; // RGBA32F, one texel per brick, xyz = this brick's own origin in pool space, w reserved
         GLuint reverseLookupTex = 0; // RGBA32F, sized brickPoolDim, points to the bricks world index
 
@@ -97,7 +98,7 @@ namespace core {
 
         // debug settings
         // Raymarcher.h
-        bool keepDebugResources = true;
+        bool keepDebugResources = false;
         bool debug3D = false;
         bool debug2D = false;
         int sliceZ = 0;

@@ -9,6 +9,9 @@
 #include "../editor/Editor.h"
 #include "../editor/EditorWindows/BenchmarkTool.h"
 
+#define GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX 0x9048
+#define GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_MEMORY_NVX 0x9049
+
 namespace core {
     Raymarcher::Raymarcher() {
         glGenQueries(1, &m_timeQuery);
@@ -130,6 +133,16 @@ namespace core {
 
         glGenTextures(1, &brickActiveTex);
         glBindTexture(GL_TEXTURE_3D, brickActiveTex);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, brickGridResolution.x, brickGridResolution.y, brickGridResolution.z,
+                    0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        glGenTextures(1, &brickSignTex);
+        glBindTexture(GL_TEXTURE_3D, brickSignTex);
         glTexImage3D(GL_TEXTURE_3D, 0, GL_R8, brickGridResolution.x, brickGridResolution.y, brickGridResolution.z,
                     0, GL_RED, GL_UNSIGNED_BYTE, nullptr);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -317,6 +330,7 @@ namespace core {
         classifyShader->BindImage(0, jfaTexA, GL_WRITE_ONLY, GL_RGBA16F);
         classifyShader->BindImage(1, signTex, GL_WRITE_ONLY, GL_R8);
         classifyShader->BindImage(2, brickActiveTex, GL_WRITE_ONLY, GL_R8);
+        classifyShader->BindImage(3, brickSignTex, GL_WRITE_ONLY, GL_R8);
         classifyShader->Dispatch(gx, gy, gz);
 
         // ---- Pass 2: JFA step iterations, ping-ponging A<->B ----
@@ -359,6 +373,7 @@ namespace core {
         allocateShader->BindImage(0, brickActiveTex, GL_READ_ONLY, GL_R8);
         allocateShader->BindImage(1, lookupTex, GL_WRITE_ONLY, GL_RGBA32F);
         allocateShader->BindImage(2, reverseLookupTex, GL_WRITE_ONLY, GL_RGBA32F);
+        allocateShader->BindImage(3, brickSignTex, GL_READ_ONLY, GL_R8);
         allocateShader->Dispatch(bgx, bgy, bgz);
 
         // ---- Pass 4: finalize — one invocation per POOL texel, reads reverseLookupTex to find its owning world brick ----
@@ -374,6 +389,12 @@ namespace core {
         jfaFinalizeShader->BindImage(2, brickPoolTex, GL_WRITE_ONLY, GL_R16F);
         jfaFinalizeShader->BindImage(3, reverseLookupTex, GL_READ_ONLY, GL_RGBA32F);
         jfaFinalizeShader->Dispatch(pgx, pgy, pgz);
+
+        GLint totalMemKb = 0, availMemKb = 0;
+        glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &totalMemKb);
+        glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_MEMORY_NVX, &availMemKb);
+        double usedMiB = (totalMemKb - availMemKb) / 1024.0;
+        editor::editorWindows::BenchmarkTool::PushSample("VRAM used during bake (MiB)", usedMiB);
 
         // clear all resources that aren't necessary to keep after baking
         // if memory during baking is still a problem this can be improved to clear certain resources immediately in multiple steps during baking
@@ -495,6 +516,12 @@ namespace core {
         quadModel->render();
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        GLint totalMemKb = 0, availMemKb = 0;
+        glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &totalMemKb);
+        glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_MEMORY_NVX, &availMemKb);
+        double usedMiB = (totalMemKb - availMemKb) / 1024.0;
+        editor::editorWindows::BenchmarkTool::PushSample("VRAM used during render (MiB)", usedMiB);
     }
     void Raymarcher::RenderDebugSlice(GLuint targetFbo, GLuint textureToView) {
         glBindFramebuffer(GL_FRAMEBUFFER, targetFbo);

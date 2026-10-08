@@ -86,7 +86,15 @@ float sampleVolumeWithSkip(vec3 p, vec3 rd, out float skipDist) {
 
     vec4 lookup = texelFetch(_LookupTex, brickIndex, 0);
 
-    if (lookup.w < 0.5) {
+    if (lookup.w >= 0.5) {
+        vec3 localOffset = clamp(voxel - brickIndexF * float(BRICK_CORE), 0.0, float(BRICK_STORE - 1));
+        vec3 poolTexelCoord = lookup.xyz + localOffset;
+        vec3 uvw = (poolTexelCoord + 0.5) / _PoolResolution;
+        return texture(_BrickPoolTex, uvw).r;
+    } else if (lookup.w <= -0.5) {
+        skipDist = 0.0;
+        return -1.0; // negative distance means inside surface
+    } else {
         // compute this brick's world-space AABB and find where the ray exits it
         vec3 brickWorldMin = _WorldMin + (brickIndexF * float(BRICK_CORE)) / _Resolution * (_WorldMax - _WorldMin);
         vec3 brickWorldMax = _WorldMin + ((brickIndexF + 1.0) * float(BRICK_CORE)) / _Resolution * (_WorldMax - _WorldMin);
@@ -100,11 +108,6 @@ float sampleVolumeWithSkip(vec3 p, vec3 rd, out float skipDist) {
         skipDist = max(tExit, 0.0001); // guard against a degenerate/zero step if p sits exactly on the boundary
         return 1e9; // signal "no surface here" — the caller advances by skipDist, not this value, as the step
     }
-
-    vec3 localOffset = clamp(voxel - brickIndexF * float(BRICK_CORE), 0.0, float(BRICK_STORE - 1));
-    vec3 poolTexelCoord = lookup.xyz + localOffset;
-    vec3 uvw = (poolTexelCoord + 0.5) / _PoolResolution;
-    return texture(_BrickPoolTex, uvw).r;
 }
 
 vec3 shade(vec3 pos, vec3 normal) {

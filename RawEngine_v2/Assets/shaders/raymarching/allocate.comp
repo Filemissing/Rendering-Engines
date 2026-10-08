@@ -2,6 +2,7 @@
 layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 
 layout(r8, binding = 0) uniform readonly image3D brickActiveTex;
+layout(r8, binding = 3) uniform readonly image3D brickSignTex;
 layout(rgba32f, binding = 1) uniform writeonly image3D lookupOut;
 layout(rgba32f, binding = 2) uniform writeonly image3D reverseLookupOut;
 
@@ -30,7 +31,9 @@ void main() {
 
     float _active = isActive(brickIndex);
     if (_active < 0.5) {
-        imageStore(lookupOut, brickIndex, vec4(0.0));
+        float brickSign = imageLoad(brickSignTex, brickIndex).r;
+        float w = (brickSign > 0.5) ? -1.0 : 0.0; // solid : empty
+        imageStore(lookupOut, brickIndex, vec4(0.0, 0.0, 0.0, w));
         return;
     }
 

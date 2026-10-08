@@ -35,6 +35,15 @@ using namespace editor;
 #include <imgui_impl_opengl3.h>
 #endif
 
+bool HasNVXMemoryInfo() {
+    GLint n = 0;
+    glGetIntegerv(GL_NUM_EXTENSIONS, &n);
+    for (GLint i = 0; i < n; i++) {
+        if (strcmp((const char*)glGetStringi(GL_EXTENSIONS, i), "GL_NVX_gpu_memory_info") == 0) return true;
+    }
+    return false;
+}
+
 int main() {
     // Setup
     if (!Editor::Init()) {
@@ -47,22 +56,12 @@ int main() {
     auto* scene1 = SceneManager::LoadScene("Terrain_test");
     Editor::activeScene = scene1;
 
-    // int i = 0;
-    // for (int x = -20; x < 20; x += 10) {
-    //     for (int y = -20; y < 20; y += 10) {
-    //         for (int z = -20; z < 20; z += 10) {
-    //             auto* newObject = new GameObject(std::format("Sphere {}", i));
-    //             scene1->AddGameObject(newObject);
-    //             ComponentFactory::Create("Primitive", newObject);
-    //             newObject->transform.SetPosition(glm::vec3(x, y, z));
-    //             i++;
-    //         }
-    //     }
-    // }
-
     // Texture CMGaToTexture("Assets/textures/CMGaTo_crop.png");
     // Texture MarbleTexture("Assets/textures/Marble.png");
     // Texture MetalTexture("Assets/textures/Metal.png");
+
+    bool hasMeminfo = HasNVXMemoryInfo();
+    printf("VRam info available: %s", hasMeminfo ? "yes" : "no");
 
     while (!glfwWindowShouldClose(Editor::mainWindow)) {
         // calculate delta mouse
