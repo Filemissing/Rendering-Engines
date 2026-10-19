@@ -61,7 +61,7 @@ int main() {
     // Texture MetalTexture("Assets/textures/Metal.png");
 
     bool hasMeminfo = HasNVXMemoryInfo();
-    printf("VRam info available: %s", hasMeminfo ? "yes" : "no");
+    printf("VRam info available: %s \n", hasMeminfo ? "yes" : "no");
 
     while (!glfwWindowShouldClose(Editor::mainWindow)) {
         // calculate delta mouse
