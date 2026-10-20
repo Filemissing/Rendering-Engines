@@ -37,6 +37,7 @@ namespace core {
         GLuint jfaTexA = 0, jfaTexB = 0;
         GLuint finalSeedTex = 0;
         GLuint signTex = 0;
+        GLuint idTex = 0; // R16UI, index of the nearest primitive per voxel, copied into brickIdTex by finalize
 
         void EnsureJFAResourcesSized();
         void DestroyJFAResources();
@@ -51,6 +52,7 @@ namespace core {
         GLuint allocationCounter = 0; // atomic counter buffer for brick allocation
 
         GLuint brickPoolTex = 0;   // R16F, holds baked distances, laid out as brickGridResolution * BRICK_STORE texels
+        GLuint brickIdTex = 0;     // R16UI, same layout as brickPoolTex, index of the nearest primitive (for color)
         GLuint brickActiveTex = 0; //R8, defines whether a brick is near a surface
         GLuint brickSignTex = 0; //R8, stores the sign of the bricks origin, used to determine solid/empty when marked inactive
         GLuint lookupTex = 0; // RGBA32F, one texel per brick, xyz = this brick's own origin in pool space, w reserved

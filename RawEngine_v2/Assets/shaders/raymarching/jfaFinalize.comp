@@ -6,6 +6,8 @@ layout(rgba16f, binding = 0) uniform readonly image3D finalSeeds;
 layout(r8, binding = 1) uniform readonly image3D signTex;
 layout(r16f, binding = 2) uniform writeonly image3D brickPoolTexOut;
 layout(rgba32f, binding = 3) uniform readonly image3D reverseLookupTex;
+layout(r16ui, binding = 4) uniform readonly uimage3D idTex;
+layout(r16ui, binding = 5) uniform writeonly uimage3D brickIdOut;
 
 uniform vec3 _WorldMin;
 uniform vec3 _WorldMax;
@@ -44,4 +46,5 @@ void main() {
     float signedDist = (sign > 0.5) ? -dist : dist;
 
     imageStore(brickPoolTexOut, poolTexel, vec4(signedDist));
+    imageStore(brickIdOut, poolTexel, imageLoad(idTex, sourceVoxel));
 }

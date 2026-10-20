@@ -108,6 +108,17 @@ namespace core {
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        // nearest primitive id, only needed until finalize copies it into the pool
+        glGenTextures(1, &idTex);
+        glBindTexture(GL_TEXTURE_3D, idTex);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_R16UI, resolution.x, resolution.y, resolution.z,
+                     0, GL_RED_INTEGER, GL_UNSIGNED_SHORT, nullptr);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     }
     void Raymarcher::EnsureBrickResourcesSized() {
         DestroyBrickResources();
@@ -127,6 +138,16 @@ namespace core {
                      0, GL_RED, GL_HALF_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        glGenTextures(1, &brickIdTex);
+        glBindTexture(GL_TEXTURE_3D, brickIdTex);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_R16UI, poolTexelSize.x, poolTexelSize.y, poolTexelSize.z,
+                     0, GL_RED_INTEGER, GL_UNSIGNED_SHORT, nullptr);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // NEAREST — integer ids can't be filtered
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -228,9 +249,11 @@ namespace core {
         if (jfaTexA) glDeleteTextures(1, &jfaTexA);
         if (jfaTexB) glDeleteTextures(1, &jfaTexB);
         if (signTex) glDeleteTextures(1, &signTex);
+        if (idTex) glDeleteTextures(1, &idTex);
     }
     void Raymarcher::DestroyBrickResources() {
         if (brickPoolTex) glDeleteTextures(1, &brickPoolTex);
+        if (brickIdTex) glDeleteTextures(1, &brickIdTex);
         if (lookupTex) glDeleteTextures(1, &lookupTex);
         if (brickActiveTex) glDeleteTextures(1, &brickActiveTex);
         if (reverseLookupTex) glDeleteTextures(1, &reverseLookupTex);
@@ -331,6 +354,7 @@ namespace core {
         classifyShader->BindImage(1, signTex, GL_WRITE_ONLY, GL_R8);
         classifyShader->BindImage(2, brickActiveTex, GL_WRITE_ONLY, GL_R8);
         classifyShader->BindImage(3, brickSignTex, GL_WRITE_ONLY, GL_R8);
+        classifyShader->BindImage(4, idTex, GL_WRITE_ONLY, GL_R16UI);
         classifyShader->Dispatch(gx, gy, gz);
 
         // ---- Pass 2: JFA step iterations, ping-ponging A<->B ----
@@ -388,6 +412,8 @@ namespace core {
         jfaFinalizeShader->BindImage(1, signTex, GL_READ_ONLY, GL_R8);
         jfaFinalizeShader->BindImage(2, brickPoolTex, GL_WRITE_ONLY, GL_R16F);
         jfaFinalizeShader->BindImage(3, reverseLookupTex, GL_READ_ONLY, GL_RGBA32F);
+        jfaFinalizeShader->BindImage(4, idTex, GL_READ_ONLY, GL_R16UI);
+        jfaFinalizeShader->BindImage(5, brickIdTex, GL_WRITE_ONLY, GL_R16UI);
         jfaFinalizeShader->Dispatch(pgx, pgy, pgz);
 
         GLint totalMemKb = 0, availMemKb = 0;
@@ -493,6 +519,7 @@ namespace core {
         marchMaterial->SetTexture2D("_SceneDepth", sceneDepthTex);
         marchMaterial->SetTexture3D("_LookupTex", lookupTex);
         marchMaterial->SetTexture3D("_BrickPoolTex", brickPoolTex);
+        marchMaterial->SetTexture3D("_BrickIdTex", brickIdTex);
 
         marchMaterial->SetVec3("_WorldMin", worldMin);
         marchMaterial->SetVec3("_WorldMax", worldMax);
@@ -513,6 +540,8 @@ namespace core {
         marchMaterial->SetFloat("_SurfDist", surfDist);
 
         marchMaterial->Bind();
+        // re-uploaded every frame so color edits show without a rebake (the baked ids index into this buffer)
+        UploadPrimitives(marchMaterial->GetShaderProgram(), editor::Editor::activeScene->primitives);
         quadModel->render();
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

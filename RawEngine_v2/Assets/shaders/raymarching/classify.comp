@@ -7,6 +7,7 @@ layout(rgba16f, binding = 0) uniform writeonly image3D seedOut;
 layout(r8, binding = 1) uniform writeonly image3D signOut;
 layout(r8, binding = 2) uniform writeonly image3D brickActiveOut;
 layout(r8, binding = 3) uniform writeonly image3D brickSignOut;
+layout(r16ui, binding = 4) uniform writeonly uimage3D idOut; // index of the nearest primitive, 0xFFFF = none
 
 uniform int BRICK_CORE;
 
@@ -41,7 +42,6 @@ uniform float _Persistence;
 uniform float _HeightScale;
 
 // -- Objects --
-#define MAX_PRIMITIVES 64
 #define TYPE_SPHERE    0
 #define TYPE_BOX       1
 #define TYPE_PYRAMID   2
@@ -322,6 +322,7 @@ void main() {
 
     imageStore(seedOut, texel, vec4(refinedTexel, isSeed));
     imageStore(signOut, texel, vec4(m_sign));
+    imageStore(idOut, texel, uvec4(h.id < 0 ? 0xFFFFu : uint(h.id)));
 
     ivec3 brickIndex = texel / BRICK_CORE;
     if (isSeed > 0.5) {
