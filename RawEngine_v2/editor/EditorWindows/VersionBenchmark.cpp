@@ -68,6 +68,25 @@ namespace editor::editorWindows {
         if (s_versionEnabled.size() != versions.size()) s_versionEnabled.assign(versions.size(), true);
 
         const bool running = IsRunning();
+
+        // run controls first, so they stay visible however small the window is
+        if (!running) {
+            if (ImGui::Button("Run comparison")) StartRun();
+        } else {
+            if (ImGui::Button("Abort")) Abort("Aborted by user");
+        }
+        ImGui::SameLine();
+        ImGui::TextWrapped("%s", s_status.c_str());
+        if (running) {
+            const char* phase = s_phase == Phase::Baking ? "baking" :
+                                s_phase == Phase::Warmup ? "warming up" :
+                                s_phase == Phase::Measure ? "measuring" : "preparing";
+            ImGui::Text("Version %d/%zu, pose %d/%zu: %s", s_versionCursor + 1, s_runList.size(),
+                        std::min(s_poseIndex + 1, static_cast<int>(s_poses.size())), s_poses.size(), phase);
+        }
+        if (running && s_ticksWithoutRender >= 60)
+            ImGui::TextColored(ImVec4(1, 0.6f, 0, 1), "Paused: the ViewPort must stay visible while measuring.");
+
         ImGui::BeginDisabled(running);
 
         ImGui::SeparatorText("Scene and camera");
@@ -110,17 +129,7 @@ namespace editor::editorWindows {
 
         ImGui::EndDisabled();
 
-        ImGui::Separator();
-        if (!running) {
-            if (ImGui::Button("Run comparison")) StartRun();
-        } else {
-            if (ImGui::Button("Abort")) Abort("Aborted by user");
-        }
-        ImGui::SameLine();
-        ImGui::TextWrapped("%s", s_status.c_str());
-        if (running && s_ticksWithoutRender >= 60)
-            ImGui::TextColored(ImVec4(1, 0.6f, 0, 1), "Paused: the ViewPort must stay visible while measuring.");
-
+        ImGui::SeparatorText("Results");
         constexpr ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg |
                                           ImGuiTableFlags_ScrollY | ImGuiTableFlags_SizingFixedFit;
         if (ImGui::BeginTable("##versionResults", 5, flags)) {
