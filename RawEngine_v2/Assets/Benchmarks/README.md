@@ -8,10 +8,12 @@ Every working raymarcher version is built into the engine and can be switched at
 | `v0-direct` | 0bdbf15 | No cache: evaluates every primitive per pixel per step |
 | `v1-dense-raster` | 20aca78 | Dense 3D texture, baked slice by slice in a fragment shader |
 | `v2-dense-jfa` | ef5bc68 | Dense 3D texture, baked with jump flooding in compute shaders |
-| `v3-sparse` | current | Sparse brick pool |
+| `v3-sparse` | ea5db90 | Sparse brick pool, sphere tracing inside bricks |
+| `v4-analytic` | current | Sparse brick pool, analytic cubic ray/trilinear intersection per voxel cell |
 
 Each old version's code and shaders are copies from its commit (`core/RaymarchVersions/v1`, `v2`,
-`Assets/shaders/versions/`). Only include paths, namespaces and shader paths were changed, plus the
+`Assets/shaders/versions/`). v3 shares the current bake code with v4; only its march shader
+(`Assets/shaders/versions/v3-sparse/march.frag`) is a copy. Only include paths, namespaces and shader paths were changed, plus the
 `Primitive::halfExtents` → `data` rename. The one exception is v1's per-frame debug readback of the whole
 volume, which is commented out (as it was later in ef5bc68) because it distorted v1's timings. Their bugs are
 otherwise deliberately kept.

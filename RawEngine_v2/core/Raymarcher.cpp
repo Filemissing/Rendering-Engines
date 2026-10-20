@@ -13,14 +13,14 @@
 #define GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_MEMORY_NVX 0x9049
 
 namespace core {
-    Raymarcher::Raymarcher() {
+    Raymarcher::Raymarcher(const char* marchShaderPath) {
         glGenQueries(1, &m_timeQuery);
 
         glGenBuffers(1, &primitivesBuffer);
 
         marchMaterial = new Material(
             "Assets/shaders/PostProcessing/viewSpace.vert",
-            "Assets/shaders/raymarching/march.frag");
+            marchShaderPath);
         debugSliceMaterial = new Material(
             "Assets/shaders/PostProcessing/viewSpace.vert",
             "Assets/shaders/debug/slice_view.frag");

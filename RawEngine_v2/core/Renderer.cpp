@@ -113,7 +113,7 @@ namespace core {
         ppTex[0] = ppTex[1] = 0;
         ppDepth[0] = ppDepth[1] = 0;
 
-        SetRaymarchVersion("v3-sparse");
+        SetRaymarchVersion("v4-analytic");
     }
     Renderer::~Renderer() {
         DestroyFbo();

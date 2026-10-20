@@ -109,14 +109,15 @@ namespace core {
             }
         };
 
-        // ---- v1 / v2 / v3: thin forwarding adapters ----
+        // ---- v1 / v2 / v3 / v4: thin forwarding adapters ----
         template <typename T>
         class VolumeAdapter : public RaymarchBackend {
         protected:
             T* raymarcher;
 
         public:
-            VolumeAdapter() : raymarcher(new T()) {}
+            template <typename... Args>
+            explicit VolumeAdapter(Args... args) : raymarcher(new T(args...)) {}
             ~VolumeAdapter() override { delete raymarcher; }
 
             void SetVolume(glm::ivec3 resolution, glm::vec3 worldMin, glm::vec3 worldMax) override {
@@ -149,9 +150,19 @@ namespace core {
             void PrepareBake() override { raymarcher->BakeNoise(); }
         };
 
+        // v3 shares the current Raymarcher (bake and brick pool are unchanged); only its march shader is a copy
         class V3Sparse : public VolumeAdapter<Raymarcher> {
         public:
+            V3Sparse() : VolumeAdapter("Assets/shaders/versions/v3-sparse/march.frag") {}
             const char* Id() const override { return "v3-sparse"; }
+            bool SupportsTerrain() const override { return true; }
+            void PrepareBake() override { raymarcher->BakeNoise(); }
+            Raymarcher* GetCurrentRaymarcher() override { return raymarcher; }
+        };
+
+        class V4Analytic : public VolumeAdapter<Raymarcher> {
+        public:
+            const char* Id() const override { return "v4-analytic"; }
             bool SupportsTerrain() const override { return true; }
             void PrepareBake() override { raymarcher->BakeNoise(); }
             Raymarcher* GetCurrentRaymarcher() override { return raymarcher; }
@@ -166,8 +177,10 @@ namespace core {
                 [] { return std::unique_ptr<RaymarchBackend>(new V1DenseRaster()); }},
             {"v2-dense-jfa", "Dense 3D texture baked with jump flooding in compute shaders", "ef5bc68", true,
                 [] { return std::unique_ptr<RaymarchBackend>(new V2DenseJfa()); }},
-            {"v3-sparse", "Sparse brick pool (current)", "303f41e", true,
+            {"v3-sparse", "Sparse brick pool, sphere tracing inside bricks", "ea5db90", true,
                 [] { return std::unique_ptr<RaymarchBackend>(new V3Sparse()); }},
+            {"v4-analytic", "Sparse brick pool, analytic cubic intersection per voxel cell (current)", "current", true,
+                [] { return std::unique_ptr<RaymarchBackend>(new V4Analytic()); }},
         };
         return versions;
     }

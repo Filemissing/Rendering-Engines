@@ -35,7 +35,7 @@ namespace editor::editorWindows {
                 backend->PrepareBake();
                 backend->Bake(Editor::activeScene->primitives);
             }
-            ImGui::TextDisabled("The settings below are only available for v3-sparse.");
+            ImGui::TextDisabled("The settings below are only available for v3-sparse and v4-analytic.");
             ImGui::TextDisabled("Older versions use their own defaults; the Version Benchmark window sets them for runs.");
             return;
         }

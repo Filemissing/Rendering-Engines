@@ -121,7 +121,7 @@ namespace core {
 
         void FreeDebugResources();
 
-        Raymarcher();
+        explicit Raymarcher(const char* marchShaderPath = "Assets/shaders/raymarching/march.frag");
         ~Raymarcher();
 
         // general methods
