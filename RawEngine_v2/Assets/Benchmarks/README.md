@@ -12,7 +12,9 @@ Every working raymarcher version is built into the engine and can be switched at
 
 Each old version's code and shaders are copies from its commit (`core/RaymarchVersions/v1`, `v2`,
 `Assets/shaders/versions/`). Only include paths, namespaces and shader paths were changed, plus the
-`Primitive::halfExtents` → `data` rename. Their bugs are deliberately kept.
+`Primitive::halfExtents` → `data` rename. The one exception is v1's per-frame debug readback of the whole
+volume, which is commented out (as it was later in ef5bc68) because it distorted v1's timings. Their bugs are
+otherwise deliberately kept.
 
 ## What is identical for every version
 - Scene (reloaded fresh for each version), camera poses, render size, volume resolution and bounds,

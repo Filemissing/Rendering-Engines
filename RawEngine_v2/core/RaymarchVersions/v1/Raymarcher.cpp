@@ -1,5 +1,6 @@
 // Copied from commit 20aca78 for the raymarcher-versions benchmark.
-// Only include paths, namespace, include guard, shader paths and the renamed Primitive::halfExtents -> data field were changed; the logic is untouched.
+// Only include paths, namespace, include guard, shader paths and the renamed Primitive::halfExtents -> data field were changed,
+// plus the per-frame debug readback in Render commented out; the logic is otherwise untouched.
 //
 // Created by micha on 09/09/2026.
 //
@@ -144,9 +145,10 @@ namespace core::v1 {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBindTexture(GL_TEXTURE_3D, volumeTex);
-        std::vector<float> data(resolution.x * resolution.y * resolution.z);
-        glGetTexImage(GL_TEXTURE_3D, 0, GL_RED, GL_FLOAT, data.data());
-        printf("pixel: %f, %f, %f\n", data[99], data[100], data[101]);
+        // debug readback of the whole volume, commented out for the benchmark (as it later was in ef5bc68)
+        // std::vector<float> data(resolution.x * resolution.y * resolution.z);
+        // glGetTexImage(GL_TEXTURE_3D, 0, GL_RED, GL_FLOAT, data.data());
+        // printf("pixel: %f, %f, %f\n", data[99], data[100], data[101]);
 
         marchMaterial->SetTexture2D("_MainTex", sceneColorTex);
         marchMaterial->SetTexture2D("_SceneDepth", sceneDepthTex);
