@@ -14,6 +14,7 @@
 #include "core/Components/Primitive.h"
 #include "editor/Editor.h"
 #include "editor/Utils/SceneManager.h"
+#include "editor/EditorWindows/VersionBenchmark.h"
 
 using namespace core;
 using namespace editor;
@@ -35,6 +36,14 @@ using namespace editor;
 #include <imgui_impl_opengl3.h>
 #endif
 
+#ifdef _WIN32
+// ask hybrid-graphics laptops for the discrete GPU, so benchmarks never land on the integrated one
+extern "C" {
+    __declspec(dllexport) unsigned long NvOptimusEnablement = 1;
+    __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+#endif
+
 bool HasNVXMemoryInfo() {
     GLint n = 0;
     glGetIntegerv(GL_NUM_EXTENSIONS, &n);
@@ -44,7 +53,7 @@ bool HasNVXMemoryInfo() {
     return false;
 }
 
-int main() {
+int main(int argc, char** argv) {
     // Setup
     if (!Editor::Init()) {
         printf("Editor Failed to Initialize\n");
@@ -55,6 +64,15 @@ int main() {
     //Scene
     auto* scene1 = SceneManager::LoadScene("Terrain_test");
     Editor::activeScene = scene1;
+
+    // RawEngine --version-benchmark <scene> [--quick]: compare every raymarcher version, then exit
+    for (int i = 1; i < argc; i++) {
+        if (std::string(argv[i]) == "--version-benchmark" && i + 1 < argc) {
+            bool quick = false;
+            for (int j = 1; j < argc; j++) quick |= std::string(argv[j]) == "--quick";
+            editorWindows::VersionBenchmark::RunFromCommandLine(argv[i + 1], quick);
+        }
+    }
 
     // Texture CMGaToTexture("Assets/textures/CMGaTo_crop.png");
     // Texture MarbleTexture("Assets/textures/Marble.png");

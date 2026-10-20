@@ -83,6 +83,15 @@ set(IMGUI_SOURCES
         editor/EditorWindows/RaymarcherWindow.h
         core/Assets/ComputeShader.cpp
         core/Assets/ComputeShader.h
+        core/RaymarchVersions/RaymarchBackend.h
+        core/RaymarchVersions/RaymarchVersions.cpp
+        core/RaymarchVersions/GpuTimer.h
+        core/RaymarchVersions/v1/Raymarcher.cpp
+        core/RaymarchVersions/v1/Raymarcher.h
+        core/RaymarchVersions/v2/Raymarcher.cpp
+        core/RaymarchVersions/v2/Raymarcher.h
+        editor/EditorWindows/VersionBenchmark.cpp
+        editor/EditorWindows/VersionBenchmark.h
 )
 
 add_executable(RawEngine main.cpp
@@ -96,6 +105,16 @@ add_executable(RawEngine main.cpp
         core/Assets/model.h
         main.cpp
 )
+
+# commit hash written into benchmark metadata (taken when CMake configures)
+execute_process(COMMAND git rev-parse --short HEAD
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE RAWENGINE_GIT_HASH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET)
+if(RAWENGINE_GIT_HASH)
+    target_compile_definitions(RawEngine PRIVATE RAWENGINE_GIT_HASH="${RAWENGINE_GIT_HASH}")
+endif()
 
 add_custom_command(
         TARGET RawEngine PRE_BUILD

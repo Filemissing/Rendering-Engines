@@ -88,6 +88,8 @@ namespace editor::editorWindows {
 
         // ── CSV export ────────────────────────────────────────────────────────
         static bool ExportCSV(const std::string& path = "");
+        // writes entries in the same format as ExportCSV, to a full path
+        static bool WriteCSV(const std::string& outPath, const std::vector<BenchmarkEntry>& entries);
 
         // ── Accessors ─────────────────────────────────────────────────────────
         static const std::vector<BenchmarkEntry>& GetEntries() { return s_entries; }

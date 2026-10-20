@@ -15,6 +15,7 @@
 #include "EditorWindows/RaymarcherWindow.h"
 #include "EditorWindows/SceneLoader.h"
 #include "EditorWindows/TransformWindow.h"
+#include "EditorWindows/VersionBenchmark.h"
 
 namespace editor {
     // static fields
@@ -133,6 +134,7 @@ namespace editor {
         windows.push_back(CreateEditorWindow<editorWindows::Inspector>("Inspector"));
         windows.push_back(CreateEditorWindow<editorWindows::BenchmarkTool>("Benchmark Tool"));
         windows.push_back(CreateEditorWindow<editorWindows::RaymarcherWindow>("Ray-marcher"));
+        windows.push_back(CreateEditorWindow<editorWindows::VersionBenchmark>("Version Benchmark"));
 
         return true;
     }
@@ -141,6 +143,9 @@ namespace editor {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        // before any window draws, so a benchmark can swap the scene/version and place the camera for this frame
+        editorWindows::VersionBenchmark::Tick();
 
         DrawDockSpace();
         DrawMainMenu();
@@ -227,6 +232,8 @@ namespace editor {
     }
 
     void Editor::Shutdown() {
+        editorWindows::VersionBenchmark::Stop("Engine closed during the run; partial results written");
+
         // close all windows
         for (auto window : windows) {
             delete window;

@@ -15,6 +15,9 @@ namespace core {
         float moveSpeed = 5.0f;
         float rotateSpeed = 10000.0f;
 
+        // set by benchmarks so the camera stays on its pose
+        static bool inputLocked;
+
         PlayerController() = default;
         PlayerController(GameObject* gameObject) : PlayerController() {gameObject->AddComponent(this);};
 

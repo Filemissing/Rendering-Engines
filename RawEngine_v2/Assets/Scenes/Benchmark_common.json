@@ -1,0 +1,461 @@
+{
+    "ambientColor": {
+        "a": 1.0,
+        "b": 1.0,
+        "g": 1.0,
+        "r": 1.0
+    },
+    "ambientIntensity": 0.1,
+    "name": "Benchmark_common",
+    "objects": [
+        {
+            "components": [
+                {
+                    "height": 720,
+                    "type": "Camera",
+                    "width": 1280
+                },
+                {
+                    "moveSpeed": 20.0,
+                    "rotateSpeed": 10000.0,
+                    "type": "PlayerController"
+                }
+            ],
+            "name": "Camera",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -40.0,
+                    "y": 20.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": -25.0,
+                    "y": -90.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "attenuation": 1.0,
+                    "color": {
+                        "a": 1.0,
+                        "b": 0.8,
+                        "g": 1.0,
+                        "r": 1.0
+                    },
+                    "lightType": 0,
+                    "type": "Light"
+                }
+            ],
+            "name": "DirectionalLight",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "rotation": {
+                    "x": 35.0,
+                    "y": 110.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "r": 0.6,
+                        "g": 0.6,
+                        "b": 0.6
+                    },
+                    "halfExtents": {
+                        "x": 20.0,
+                        "y": 1.0,
+                        "z": 20.0
+                    },
+                    "primitiveType": 1,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Ground",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 0.0,
+                    "y": -8.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "r": 1.0,
+                        "g": 0.3,
+                        "b": 0.3
+                    },
+                    "halfExtents": {
+                        "x": 3.0,
+                        "y": 3.0,
+                        "z": 3.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "r": 0.3,
+                        "g": 1.0,
+                        "b": 0.3
+                    },
+                    "halfExtents": {
+                        "x": 2.0,
+                        "y": 2.0,
+                        "z": 2.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 2",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -10.0,
+                    "y": 2.0,
+                    "z": 8.0
+                },
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "r": 0.3,
+                        "g": 0.3,
+                        "b": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 4.0,
+                        "y": 4.0,
+                        "z": 4.0
+                    },
+                    "primitiveType": 0,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Sphere 3",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 10.0,
+                    "y": 1.0,
+                    "z": -8.0
+                },
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 0.3
+                    },
+                    "halfExtents": {
+                        "x": 2.0,
+                        "y": 3.0,
+                        "z": 2.0
+                    },
+                    "primitiveType": 1,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Box",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 8.0,
+                    "y": -4.0,
+                    "z": 8.0
+                },
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "r": 1.0,
+                        "g": 0.6,
+                        "b": 0.2
+                    },
+                    "halfExtents": {
+                        "x": 3.0,
+                        "y": 5.0,
+                        "z": 3.0
+                    },
+                    "primitiveType": 2,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Pyramid",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -8.0,
+                    "y": -7.0,
+                    "z": -8.0
+                },
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "r": 0.8,
+                        "g": 0.3,
+                        "b": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 1.0,
+                        "y": 3.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 3,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Capsule",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 14.0,
+                    "y": -2.0,
+                    "z": 2.0
+                },
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "r": 0.3,
+                        "g": 1.0,
+                        "b": 1.0
+                    },
+                    "halfExtents": {
+                        "x": 2.0,
+                        "y": 3.0,
+                        "z": 2.0
+                    },
+                    "primitiveType": 4,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Cylinder",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": -14.0,
+                    "y": -4.0,
+                    "z": 0.0
+                },
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "r": 1.0,
+                        "g": 0.3,
+                        "b": 0.8
+                    },
+                    "halfExtents": {
+                        "x": 3.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "primitiveType": 5,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Torus",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 0.0,
+                    "y": -5.0,
+                    "z": 12.0
+                },
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        },
+        {
+            "components": [
+                {
+                    "color": {
+                        "r": 0.9,
+                        "g": 0.9,
+                        "b": 0.9
+                    },
+                    "halfExtents": {
+                        "x": 2.0,
+                        "y": 4.0,
+                        "z": 2.0
+                    },
+                    "primitiveType": 6,
+                    "type": "Primitive"
+                }
+            ],
+            "name": "Cone",
+            "transform": {
+                "children": [],
+                "position": {
+                    "x": 0.0,
+                    "y": -3.0,
+                    "z": -13.0
+                },
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "type": "Transform"
+            }
+        }
+    ]
+}

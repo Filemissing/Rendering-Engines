@@ -24,6 +24,11 @@ namespace editor::editorWindows {
         int height() const { return m_vpHeight; }
 
         const core::Renderer* GetRenderer() const { return m_renderer; }
+        core::Renderer* GetRenderer() { return m_renderer; }
+        GLuint colorTexture() const { return m_colorTex; }
+
+        // when x and y are > 0 the scene is rendered at this size instead of the window size (used by benchmarks)
+        static glm::ivec2 forcedRenderSize;
 
     private:
         void EnsureFboSized(int w, int h);

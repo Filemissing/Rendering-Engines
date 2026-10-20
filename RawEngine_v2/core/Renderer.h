@@ -10,6 +10,8 @@
 #include "Assets/Scene.h"
 #include "PostProcessing.h"
 #include "Raymarcher.h"
+#include "RaymarchVersions/GpuTimer.h"
+#include "RaymarchVersions/RaymarchBackend.h"
 
 namespace core {
     class Renderer {
@@ -26,9 +28,16 @@ namespace core {
 
         Model* quadModel;
 
-        Raymarcher* m_raymarcher = nullptr;
+        std::unique_ptr<RaymarchBackend> m_backend;
+        std::string m_backendId;
 
     public:
+        // GPU time of the raymarch pass only; recorded under this tag while it is non-empty
+        GpuTimer raymarchTimer;
+        std::string raymarchTimerTag;
+        // increases once per RenderScene; the viewport skips rendering while it is not visible
+        uint64_t renderedFrames = 0;
+
         Renderer();
         ~Renderer();
 
@@ -37,7 +46,13 @@ namespace core {
         void EnsureFboSized(int width, int height);
         void DestroyFbo();
 
-        Raymarcher* GetRaymarcher() const { return m_raymarcher; }
+        // id from GetRaymarchVersions(), or "" for none
+        bool SetRaymarchVersion(const std::string& id);
+        const std::string& GetRaymarchVersion() const { return m_backendId; }
+        RaymarchBackend* GetBackend() const { return m_backend.get(); }
+
+        // the current-version raymarcher; nullptr while an older version is selected
+        Raymarcher* GetRaymarcher() const { return m_backend ? m_backend->GetCurrentRaymarcher() : nullptr; }
     };
 } // core
 

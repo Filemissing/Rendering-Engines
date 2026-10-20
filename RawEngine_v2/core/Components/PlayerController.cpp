@@ -12,7 +12,11 @@
 
 
 namespace core {
+    bool PlayerController::inputLocked = false;
+
     void PlayerController::Update() {
+        if (inputLocked) return;
+
         GLFWwindow* window = editor::Editor::mainWindow;
         glm::vec2 deltaMouse = editor::Editor::deltaMouse;
         float deltaTime = editor::Editor::deltaTime;

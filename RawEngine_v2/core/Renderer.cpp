@@ -113,17 +113,38 @@ namespace core {
         ppTex[0] = ppTex[1] = 0;
         ppDepth[0] = ppDepth[1] = 0;
 
-        m_raymarcher = new Raymarcher();
+        SetRaymarchVersion("v3-sparse");
     }
     Renderer::~Renderer() {
         DestroyFbo();
-        delete m_raymarcher;
+        m_backend.reset();
         for (auto& pass : postProcessingEffects) {
             delete pass;
         }
     }
 
-    void Renderer::RenderScene(Scene*& scene, const GLuint& finalFbo, const GLuint& finalTexture, int width, int height) {
+    bool Renderer::SetRaymarchVersion(const std::string& id) {
+        const RaymarchVersionInfo* info = id.empty() ? nullptr : FindRaymarchVersion(id);
+        if (!id.empty() && !info) {
+            std::cerr << "[Renderer] Unknown raymarcher version: " << id << std::endl;
+            return false;
+        }
+
+        // destroy the previous version before creating the next, so their GPU memory never overlaps
+        m_backend.reset();
+        m_backendId.clear();
+        glFinish();
+
+        if (info) {
+            m_backend = info->create();
+            m_backendId = info->id;
+        }
+        return true;
+    }
+
+    void Renderer::RenderScene(Scene*& scene,const GLuint& finalFbo, const GLuint& finalTexture, int width, int height) {
+        renderedFrames++;
+
         if (m_queryInFlight) {
             GLint available = 0;
             glGetQueryObjectiv(m_timeQuery, GL_QUERY_RESULT_AVAILABLE, &available);
@@ -164,7 +185,17 @@ namespace core {
         glDisable(GL_DEPTH_TEST); // disable depth test for post-processing
 
         // render Ray-marched content
-        m_raymarcher->Render(ppFbo[1], ppTex[0], sceneDepth, Camera::GetMainCamera());
+        if (m_backend) {
+            int timer = raymarchTimerTag.empty() ? -1 : raymarchTimer.Begin(raymarchTimerTag);
+            m_backend->Render(ppFbo[1], ppTex[0], sceneDepth, Camera::GetMainCamera());
+            raymarchTimer.End(timer);
+        } else {
+            // no raymarcher selected: pass the scene through unchanged
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, ppFbo[0]);
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ppFbo[1]);
+            glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
 
         GLuint input = 0;
         GLuint depthTex = 0;

@@ -1,19 +1,42 @@
 // RaymarcherWindow.cpp
 #include "RaymarcherWindow.h"
 #include "../../core/Raymarcher.h"
+#include "../../core/Renderer.h"
 #include "imgui.h"
 #include "../Editor.h"
 
 namespace editor::editorWindows {
     void RaymarcherWindow::OnEnable() {
         raymarcher = Editor::viewPort->GetRenderer()->GetRaymarcher();
+        if (!raymarcher) return;
         pendingRes = raymarcher->GetResolution();
         pendingBrickPoolDim = raymarcher->GetBrickPoolDim();
     }
 
     void RaymarcherWindow::OnGUI() {
+        core::Renderer* renderer = Editor::viewPort->GetRenderer();
+
+        ImGui::SeparatorText("Version");
+        const std::string& current = renderer->GetRaymarchVersion();
+        if (ImGui::BeginCombo("Raymarcher", current.empty() ? "none" : current.c_str())) {
+            for (const auto& version : core::GetRaymarchVersions()) {
+                if (ImGui::Selectable(version.id.c_str(), version.id == current))
+                    renderer->SetRaymarchVersion(version.id);
+                ImGui::SetItemTooltip("%s (from %s)", version.description.c_str(), version.sourceCommit.c_str());
+            }
+            ImGui::EndCombo();
+        }
+
+        // re-fetched every frame: switching versions destroys the previous raymarcher
+        raymarcher = renderer->GetRaymarcher();
         if (!raymarcher) {
-            ImGui::TextDisabled("No Raymarcher bound");
+            core::RaymarchBackend* backend = renderer->GetBackend();
+            if (backend && backend->HasBake() && ImGui::Button("Bake")) {
+                backend->PrepareBake();
+                backend->Bake(Editor::activeScene->primitives);
+            }
+            ImGui::TextDisabled("The settings below are only available for v3-sparse.");
+            ImGui::TextDisabled("Older versions use their own defaults; the Version Benchmark window sets them for runs.");
             return;
         }
 

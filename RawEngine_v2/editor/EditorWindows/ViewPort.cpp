@@ -7,6 +7,8 @@
 #include "../Editor.h"
 
 namespace editor::editorWindows {
+    glm::ivec2 ViewPort::forcedRenderSize = glm::ivec2(0);
+
     ViewPort::~ViewPort() {
         DestroyFbo();
 
@@ -73,6 +75,10 @@ namespace editor::editorWindows {
         ImVec2 avail = ImGui::GetContentRegionAvail();
         int w = (int)avail.x;
         int h = (int)avail.y;
+        if (forcedRenderSize.x > 0 && forcedRenderSize.y > 0) {
+            w = forcedRenderSize.x;
+            h = forcedRenderSize.y;
+        }
         EnsureFboSized(w, h);
 
         if (core::Camera::GetMainCamera())

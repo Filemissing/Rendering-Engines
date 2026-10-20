@@ -209,7 +209,10 @@ namespace editor::editorWindows {
 
     bool BenchmarkTool::ExportCSV(const std::string& path) {
         const std::string& outPath = s_baseOutputPath + (path.empty() ? s_csvOutputPath : path);
+        return WriteCSV(outPath, s_entries);
+    }
 
+    bool BenchmarkTool::WriteCSV(const std::string& outPath, const std::vector<BenchmarkEntry>& entries) {
         std::ofstream ofs(outPath);
         if (!ofs.is_open()) {
             std::cerr << "[BenchmarkTool] Cannot open: " << outPath << "\n";
@@ -217,7 +220,7 @@ namespace editor::editorWindows {
         }
 
         size_t maxSamples = 0;
-        for (const auto& e : s_entries)
+        for (const auto& e : entries)
             maxSamples = std::max(maxSamples, e.samples.size());
 
         ofs << "Name,Samples,Min_ms,Max_ms,Mean_ms,Median_ms,StdDev_ms";
@@ -225,7 +228,7 @@ namespace editor::editorWindows {
         ofs << "\n";
 
         ofs << std::fixed << std::setprecision(6);
-        for (const auto& e : s_entries) {
+        for (const auto& e : entries) {
             // Quote names containing commas
             std::string safeName = e.name;
             if (safeName.find(',') != std::string::npos) {
