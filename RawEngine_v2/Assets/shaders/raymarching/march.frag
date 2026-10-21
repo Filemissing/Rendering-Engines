@@ -39,6 +39,7 @@ uniform float _Far;
 uniform int _MaxSteps;
 uniform float _MaxDist;
 uniform float _SurfDist;
+uniform float _ColorBlend;
 
 float sceneRayDist() {
     float depth = texture(_SceneDepth, uv).r;
@@ -133,12 +134,27 @@ vec3 sampleColor(vec3 p) {
     vec4 lookup = texelFetch(_LookupTex, ivec3(brickIndexF), 0);
     if (lookup.w < 0.5) return vec3(1.0); // no pool data — only happens on the face of a solid brick
 
-    // ids can't be interpolated, take the nearest pool texel
-    vec3 localOffset = clamp(floor(voxel - brickIndexF * float(BRICK_CORE) + 0.5), 0.0, float(BRICK_STORE - 1));
-    uint id = texelFetch(_BrickIdTex, ivec3(lookup.xyz) + ivec3(localOffset), 0).r;
+    // ids can't be hardware-filtered, so filter the colors they point to by hand (trilinear over the 8 neighbours)
+    vec3 local = voxel - brickIndexF * float(BRICK_CORE);
+    ivec3 base = ivec3(clamp(floor(local), 0.0, float(BRICK_STORE - 2))); // base + 1 stays inside the brick thanks to the apron
+    vec3 f = clamp(local - vec3(base), 0.0, 1.0);
+    f = clamp((f - 0.5) / max(_ColorBlend, 1e-4) + 0.5, 0.0, 1.0); // 1 = full trilinear, 0 = nearest texel
 
-    if (id >= uint(primitiveCount)) return vec3(1.0); // no primitive, or primitives removed since the last bake
-    return primitives[id].color.rgb;
+    ivec3 poolBase = ivec3(lookup.xyz) + base;
+    vec3 colorSum = vec3(0.0);
+    float weightSum = 0.0;
+    for (int i = 0; i < 8; i++) {
+        ivec3 o = ivec3(i & 1, (i >> 1) & 1, (i >> 2) & 1);
+        vec3 w3 = mix(1.0 - f, f, vec3(o));
+        float w = w3.x * w3.y * w3.z;
+
+        uint id = texelFetch(_BrickIdTex, poolBase + o, 0).r;
+        if (id >= uint(primitiveCount)) continue; // no primitive, or primitives removed since the last bake
+        colorSum += w * primitives[id].color.rgb;
+        weightSum += w;
+    }
+
+    return weightSum > 0.0 ? colorSum / weightSum : vec3(1.0);
 }
 
 vec3 shade(vec3 pos, vec3 normal, vec3 col) {

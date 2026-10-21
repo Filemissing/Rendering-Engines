@@ -77,6 +77,7 @@ namespace core {
         int maxSteps = 256;
         float maxDist = 200.0f;
         float surfDist = 0.001f;
+        float colorBlend = 1.0f; // 0 = hard color cutoff between primitives, 1 = trilinear fade over one voxel
 
         // noise settings
         glm::ivec2 noise2DResolution{512, 512};

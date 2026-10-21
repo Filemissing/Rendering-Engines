@@ -44,6 +44,7 @@ namespace editor::editorWindows {
         ImGui::DragInt("Max Steps", &raymarcher->maxSteps, 1.0f, 1, 1000);
         ImGui::DragFloat("Max Distance", &raymarcher->maxDist, 1.0f, 0.1f, 10000.0f);
         ImGui::DragFloat("Surface Distance", &raymarcher->surfDist, 0.0001f, 0.00001f, 1.0f, "%.5f");
+        ImGui::SliderFloat("Color Blend", &raymarcher->colorBlend, 0.0f, 1.0f);
 
         ImGui::Spacing();
         ImGui::SeparatorText("Noise");

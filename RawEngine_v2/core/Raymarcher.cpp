@@ -538,6 +538,7 @@ namespace core {
         marchMaterial->SetInt("_MaxSteps", maxSteps);
         marchMaterial->SetFloat("_MaxDist", maxDist);
         marchMaterial->SetFloat("_SurfDist", surfDist);
+        marchMaterial->SetFloat("_ColorBlend", colorBlend);
 
         marchMaterial->Bind();
         // re-uploaded every frame so color edits show without a rebake (the baked ids index into this buffer)
