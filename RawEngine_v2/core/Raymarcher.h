@@ -80,6 +80,8 @@ namespace core {
         ComputeShader* fillShader = nullptr;
         ComputeShader* releaseShader = nullptr;
         ComputeShader* allocateShader = nullptr;
+        ComputeShader* settleShader = nullptr;
+        ComputeShader* seedFixShader = nullptr;
 
         int chunkBricks = 1;                  // C: bricks per chunk axis
         glm::ivec3 chunkGridDim{1};
@@ -88,6 +90,7 @@ namespace core {
         GLuint finalSeedTex = 0;
         GLuint signTex = 0;                   // R8
         GLuint idTex = 0;                     // R16UI
+        GLuint distTex = 0;                   // R16F, raw SDF value, used by seedFix to place seeds on missed sign changes
         GLuint brickFlagsTex = 0;             // R8, (C + 4)^3 bricks: seed per brick for the core and a 2 brick halo
         GLuint chunkFlagsBuffer = 0;          // SSBO binding 3, one uint per chunk, written by the coarse pass
 

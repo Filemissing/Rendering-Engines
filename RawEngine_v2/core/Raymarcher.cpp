@@ -49,7 +49,7 @@ namespace core {
             return a.position != b.position || a.rotation != b.rotation || a.scale != b.scale || a.data != b.data;
         }
 
-        constexpr int SCRATCH_BYTES_PER_VOXEL = 8 + 8 + 1 + 2; // seed A + seed B (RGBA16F), sign (R8), id (R16UI)
+        constexpr int SCRATCH_BYTES_PER_VOXEL = 8 + 8 + 1 + 2 + 2; // seed A + seed B (RGBA16F), sign (R8), id (R16UI), dist (R16F)
     }
 
     Raymarcher::Raymarcher() {
@@ -84,6 +84,8 @@ namespace core {
         fillShader = new ComputeShader("Assets/shaders/raymarching/clear.comp");
         releaseShader = new ComputeShader("Assets/shaders/raymarching/release.comp");
         allocateShader = new ComputeShader("Assets/shaders/raymarching/allocate.comp");
+        settleShader = new ComputeShader("Assets/shaders/raymarching/settle.comp");
+        seedFixShader = new ComputeShader("Assets/shaders/raymarching/seedFix.comp");
 
         std::vector<Mesh> meshes = std::vector<Mesh>();
         meshes.push_back(Mesh::generateQuad());
@@ -117,6 +119,8 @@ namespace core {
         delete fillShader;
         delete releaseShader;
         delete allocateShader;
+        delete settleShader;
+        delete seedFixShader;
     }
 
     // ---------------------------------------------------------------------------------------------------------
@@ -226,6 +230,7 @@ namespace core {
         CreateTex3D(seedTexB, GL_RGBA16F, scratchDim, GL_RGBA, GL_HALF_FLOAT, GL_NEAREST);
         CreateTex3D(signTex, GL_R8, scratchDim, GL_RED, GL_UNSIGNED_BYTE, GL_NEAREST);
         CreateTex3D(idTex, GL_R16UI, scratchDim, GL_RED_INTEGER, GL_UNSIGNED_SHORT, GL_NEAREST);
+        CreateTex3D(distTex, GL_R16F, scratchDim, GL_RED, GL_HALF_FLOAT, GL_NEAREST);
         CreateTex3D(brickFlagsTex, GL_R8, glm::ivec3(chunkBricks + 4), GL_RED, GL_UNSIGNED_BYTE, GL_NEAREST);
         finalSeedTex = seedTexA;
     }
@@ -234,6 +239,7 @@ namespace core {
         DeleteTex(seedTexB);
         DeleteTex(signTex);
         DeleteTex(idTex);
+        DeleteTex(distTex);
         DeleteTex(brickFlagsTex);
         finalSeedTex = 0;
         scratchDim = glm::ivec3(0);
@@ -431,8 +437,22 @@ namespace core {
         classifyShader->BindImage(2, brickFlagsTex, GL_WRITE_ONLY, GL_R8);
         classifyShader->BindImage(3, brickSignTex, GL_WRITE_ONLY, GL_R8);
         classifyShader->BindImage(4, idTex, GL_WRITE_ONLY, GL_R16UI);
+        classifyShader->BindImage(5, distTex, GL_WRITE_ONLY, GL_R16F);
         glm::ivec3 g = Groups(dim);
         classifyShader->Dispatch(g.x, g.y, g.z);
+
+        // ---- seed every sign change classify's |d| test missed (non-exact SDFs like terrain) ----
+        seedFixShader->SetVec3("_ChunkDim", glm::vec3(dim));
+        seedFixShader->SetVec3("_ChunkVoxelOrigin", glm::vec3(vMin));
+        seedFixShader->SetVec3("_FlagOrigin", glm::vec3(flagOrigin));
+        seedFixShader->SetVec3("_FlagDim", glm::vec3(flagDim));
+        seedFixShader->SetInt("BRICK_CORE", BRICK_CORE);
+        seedFixShader->Bind();
+        seedFixShader->BindImage(0, seedTexA, GL_READ_WRITE, GL_RGBA16F);
+        seedFixShader->BindImage(1, signTex, GL_READ_ONLY, GL_R8);
+        seedFixShader->BindImage(2, distTex, GL_READ_ONLY, GL_R16F);
+        seedFixShader->BindImage(3, brickFlagsTex, GL_WRITE_ONLY, GL_R8);
+        seedFixShader->Dispatch(g.x, g.y, g.z);
 
         // ---- JFA: seeds further than HALO are never trusted, so the steps start at HALO / 2 ----
         bool pingIsA = true;
@@ -568,7 +588,7 @@ namespace core {
         glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, zeros.size() * sizeof(GLuint), zeros.data());
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, chunkFlagsBuffer);
 
-        // ---- coarse pass: settle bricks far from every surface, flag the chunks that still need work ----
+        // ---- coarse pass: flag the chunks that may hold a surface, then settle the bricks of all other chunks ----
         const glm::vec3 voxelSize = (worldMax - worldMin) / glm::vec3(resolution);
         std::vector<uint32_t> all;
         for (const auto& [p, s] : slotOf) all.push_back(s);
@@ -583,10 +603,18 @@ namespace core {
         classifyShader->SetFloat("_Truncation", HALO * std::min({voxelSize.x, voxelSize.y, voxelSize.z}));
         classifyShader->Bind();
         classifyShader->BindImage(3, brickSignTex, GL_WRITE_ONLY, GL_R8);
-        classifyShader->BindImage(5, lookupTex, GL_WRITE_ONLY, GL_RGBA32F);
-        classifyShader->BindImage(6, dirtyTex, GL_WRITE_ONLY, GL_R8);
         glm::ivec3 g = Groups(brickGridResolution);
         classifyShader->Dispatch(g.x, g.y, g.z);
+        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+        settleShader->SetVec3("_GridResolution", glm::vec3(brickGridResolution));
+        settleShader->SetInt("_ChunkBricks", chunkBricks);
+        settleShader->SetVec3("_ChunkGridDim", glm::vec3(chunkGridDim));
+        settleShader->Bind();
+        settleShader->BindImage(0, brickSignTex, GL_READ_ONLY, GL_R8);
+        settleShader->BindImage(1, lookupTex, GL_WRITE_ONLY, GL_RGBA32F);
+        settleShader->BindImage(2, dirtyTex, GL_WRITE_ONLY, GL_R8);
+        settleShader->Dispatch(g.x, g.y, g.z);
         classifyShader->SetInt("_CoarsePass", 0);
         glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
 
@@ -671,6 +699,7 @@ namespace core {
             m_partialQueryInFlight = true;
         }
     }
+
 
     // ---------------------------------------------------------------------------------------------------------
     // noise
