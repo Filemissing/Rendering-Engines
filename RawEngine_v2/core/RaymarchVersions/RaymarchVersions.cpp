@@ -14,6 +14,7 @@
 #include "../../editor/Editor.h"
 #include "v1/Raymarcher.h"
 #include "v2/Raymarcher.h"
+#include "v5/Raymarcher.h"
 
 namespace core {
     namespace {
@@ -167,6 +168,14 @@ namespace core {
             void PrepareBake() override { raymarcher->BakeNoise(); }
             Raymarcher* GetCurrentRaymarcher() override { return raymarcher; }
         };
+
+        // v3's sparse cache plus a per-texel primitive id in the brick pool, used to color hits
+        class V5SparseColor : public VolumeAdapter<v5::Raymarcher> {
+        public:
+            const char* Id() const override { return "v5-sparse-color"; }
+            bool SupportsTerrain() const override { return true; }
+            void PrepareBake() override { raymarcher->BakeNoise(); }
+        };
     }
 
     const std::vector<RaymarchVersionInfo>& GetRaymarchVersions() {
@@ -181,6 +190,8 @@ namespace core {
                 [] { return std::unique_ptr<RaymarchBackend>(new V3Sparse()); }},
             {"v4-analytic", "Sparse brick pool, analytic cubic intersection per voxel cell (current)", "current", true,
                 [] { return std::unique_ptr<RaymarchBackend>(new V4Analytic()); }},
+            {"v5-sparse-color", "v3-sparse plus a primitive-id color lookup in the brick pool", "8b11928", true,
+                [] { return std::unique_ptr<RaymarchBackend>(new V5SparseColor()); }},
         };
         return versions;
     }
