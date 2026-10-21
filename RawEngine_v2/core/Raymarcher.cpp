@@ -778,6 +778,9 @@ namespace core {
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
     }
 
+    // ---------------------------------------------------------------------------------------------------------
+    // rendering
+    // ---------------------------------------------------------------------------------------------------------
     void Raymarcher::Render(GLuint targetFbo, GLuint sceneColorTex, GLuint sceneDepthTex, Camera* cam) {
         if (m_queryInFlight) {
             GLint available = 0;
