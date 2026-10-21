@@ -7,37 +7,38 @@ layout(r16f, binding = 0) uniform writeonly image2D noiseOut;
 uniform vec3 _Resolution;
 uniform int _Seed;
 
-float hash2D(vec2 p)
-{
-    const float period = 64.0;
+// Must match NOISE2D_TEXELS_PER_CELL in classify.comp. The cell size in texels is fixed, so a larger texture holds
+// more cells (it repeats less often) instead of the same cells sampled more finely.
+const float TEXELS_PER_CELL = 8.0;
 
-    p = mod(p, period);
-
-    p += float(_Seed) * vec2(17.123, 43.719);
-
-    p = fract(p * vec2(0.1031, 0.11369));
-    p += dot(p, p.yx + 33.33);
-
-    return fract((p.x + p.y) * p.x);
+// pcg3d — integer hash, no float precision loss for large seeds or coordinates
+uvec3 pcg3d(uvec3 v) {
+    v = v * 1664525u + 1013904223u;
+    v.x += v.y * v.z; v.y += v.z * v.x; v.z += v.x * v.y;
+    v ^= v >> 16u;
+    v.x += v.y * v.z; v.y += v.z * v.x; v.z += v.x * v.y;
+    return v;
 }
 
-float valueNoise2D(vec2 p)
-{
-    vec2 i = floor(p);
+vec2 gradient(ivec2 cell, ivec2 period) {
+    ivec2 wrapped = ((cell % period) + period) % period; // tileable: the texture wraps with GL_REPEAT
+    uint h = pcg3d(uvec3(uvec2(wrapped), uint(_Seed))).x;
+    float angle = float(h) * (6.28318530718 / 4294967296.0);
+    return vec2(cos(angle), sin(angle));
+}
+
+// gradient (Perlin) noise with a quintic fade: no axis-aligned box pattern like value noise
+float perlin2D(vec2 p, ivec2 period) {
+    ivec2 i = ivec2(floor(p));
     vec2 f = fract(p);
+    vec2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
 
-    float a = hash2D(i);
-    float b = hash2D(i + vec2(1.0, 0.0));
-    float c = hash2D(i + vec2(0.0, 1.0));
-    float d = hash2D(i + vec2(1.0, 1.0));
+    float n00 = dot(gradient(i,               period), f);
+    float n10 = dot(gradient(i + ivec2(1, 0), period), f - vec2(1, 0));
+    float n01 = dot(gradient(i + ivec2(0, 1), period), f - vec2(0, 1));
+    float n11 = dot(gradient(i + ivec2(1, 1), period), f - vec2(1, 1));
 
-    vec2 u = f * f * (3.0 - 2.0 * f);
-
-    return mix(
-    mix(a, b, u.x),
-    mix(c, d, u.x),
-    u.y
-    );
+    return mix(mix(n00, n10, u.x), mix(n01, n11, u.x), u.y);
 }
 
 void main()
@@ -48,10 +49,11 @@ void main()
     if (any(greaterThanEqual(texel, _Resolution.xy)))
     return;
 
-    // One noise period across the texture
-    vec2 uv = (vec2(texel) + 0.5) / vec2(_Resolution);
+    ivec2 cells = max(ivec2(round(_Resolution.xy / TEXELS_PER_CELL)), ivec2(1));
+    vec2 uv = (vec2(texel) + 0.5) / _Resolution.xy;
 
-    float value = valueNoise2D(uv * 64.0);
+    // 2D Perlin lies within about +-0.707, remap to [0, 1] like the value noise it replaces
+    float value = clamp(perlin2D(uv * vec2(cells), cells) * 0.7071 + 0.5, 0.0, 1.0);
 
     imageStore(noiseOut, texel, vec4(value));
 }

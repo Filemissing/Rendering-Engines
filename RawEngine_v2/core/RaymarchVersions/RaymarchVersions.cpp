@@ -204,7 +204,7 @@ namespace core {
                 [] { return std::unique_ptr<RaymarchBackend>(new V4Analytic()); }},
             {"v5-sparse-color", "v3-sparse plus a primitive-id color lookup in the brick pool", "8b11928", true,
                 [] { return std::unique_ptr<RaymarchBackend>(new V5SparseColor()); }},
-            {"v6-dynamic-sparse", "Chunked sparse bake with per-frame dynamic re-baking of changed primitives", "b74ee82", true,
+            {"v6-dynamic-sparse", "Chunked sparse bake with per-frame dynamic re-baking of changed primitives", "3ad342e", true,
                 [] { return std::unique_ptr<RaymarchBackend>(new V6DynamicSparse()); }},
         };
         return versions;

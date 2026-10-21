@@ -11,7 +11,7 @@ Every working raymarcher version is built into the engine and can be switched at
 | `v3-sparse` | ea5db90 | Sparse brick pool, sphere tracing inside bricks |
 | `v4-analytic` | current | Sparse brick pool, analytic cubic ray/trilinear intersection per voxel cell |
 | `v5-sparse-color` | 8b11928 (main) | v3-sparse plus a per-texel primitive id in the brick pool, for color |
-| `v6-dynamic-sparse` | b74ee82 (main) | Chunked sparse bake; rebakes only bricks around primitives that changed, every frame |
+| `v6-dynamic-sparse` | 3ad342e | Chunked sparse bake; rebakes only bricks around primitives that changed, every frame. Includes the shading-artifact and Perlin noise fixes, so its terrain differs from v2–v5 |
 
 Each old version's code and shaders are copies from its commit (`core/RaymarchVersions/v1`, `v2`,
 `Assets/shaders/versions/`). v3 shares the current bake code with v4; only its march shader
