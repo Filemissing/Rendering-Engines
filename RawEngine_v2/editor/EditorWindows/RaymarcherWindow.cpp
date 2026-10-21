@@ -39,6 +39,24 @@ namespace editor::editorWindows {
         ImGui::SameLine();
         if (ImGui::Button("Force Rebake")) { raymarcher->MarkDirty(); raymarcher->Bake(Editor::activeScene->primitives); }
 
+        ImGui::Checkbox("Auto-rebake on change", &raymarcher->autoRebake);
+        ImGui::SetItemTooltip("Rebake only the bricks around primitives that moved, every frame");
+        ImGui::DragInt("Max rebake chunks per frame", &raymarcher->maxRebakeChunksPerFrame, 0.1f, 0, 1000);
+        ImGui::SetItemTooltip("0 = unlimited. Chunks over the limit stay marked dirty and are rebaked in later frames");
+        if (ImGui::DragInt("Bake budget (MiB)", &raymarcher->bakeBudgetMiB, 1.0f, 8, 8192))
+            raymarcher->ApplyBakeBudget();
+        ImGui::SetItemTooltip("Scratch VRAM one chunk may use while baking; sets the chunk size");
+        ImGui::DragFloat("Coarse skip margin", &raymarcher->coarseMargin, 0.05f, 1.0f, 10.0f);
+        ImGui::SetItemTooltip("How far (in brick half-diagonals) from a surface a brick still gets baked on a full bake.\n"
+                              "Raise it if parts of the terrain go missing.");
+
+        ImGui::Text("Chunk size: %d bricks", raymarcher->GetChunkBricks());
+        ImGui::Text("Dirty chunks pending: %d (last frame: %d processed)",
+                    raymarcher->pendingDirtyChunks, raymarcher->lastChunksProcessed);
+        ImGui::Text("Pool slots used: %d / %d", raymarcher->poolSlotsUsed, raymarcher->GetPoolCapacity());
+        if (raymarcher->droppedBricks > 0)
+            ImGui::TextColored(ImVec4(1.0f, 0.4f, 0.3f, 1.0f), "Pool full: %d bricks dropped", raymarcher->droppedBricks);
+
         ImGui::Spacing();
         ImGui::SeparatorText("Marching");
         ImGui::DragInt("Max Steps", &raymarcher->maxSteps, 1.0f, 1, 1000);
@@ -68,12 +86,10 @@ namespace editor::editorWindows {
 
         ImGui::Spacing();
         ImGui::SeparatorText("Debug Visualization");
-        ImGui::Checkbox("Keep Debug resources", &raymarcher->keepDebugResources);
-
         ImGui::Checkbox("Enable 3D texture view", &raymarcher->debug3D);
 
         if (raymarcher->debug3D) {
-            const char* texNames[] = { "Sign Texture", "Seed Texture", "3D Noise Texture", "Brick active Texture", "Lookup Texture", "Reverse Lookup Texture", "BrickPool Texture" };
+            const char* texNames[] = { "Sign Texture (last chunk)", "Seed Texture (last chunk)", "3D Noise Texture", "Brick flags (last chunk)", "Lookup Texture", "Dirty Texture", "BrickPool Texture" };
             int currentTex = static_cast<int>(raymarcher->debugTex3D);
             if (ImGui::Combo("Texture", &currentTex, texNames, IM_ARRAYSIZE(texNames))) {
                 raymarcher->debugTex3D = static_cast<core::Raymarcher::DebugTexture3D>(currentTex);

@@ -136,6 +136,10 @@ namespace core {
             }
         }
 
+        // rebake whatever moved since last frame — before the frame query, so "Raymarch Frame" stays render-only
+        if (scene)
+            m_raymarcher->UpdateDynamic(scene->primitives, Camera::GetMainCamera()->gameObject->transform.position);
+
         if (!m_queryInFlight) {
             glBeginQuery(GL_TIME_ELAPSED, m_timeQuery);
         }
