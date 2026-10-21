@@ -15,6 +15,7 @@
 #include "v1/Raymarcher.h"
 #include "v2/Raymarcher.h"
 #include "v5/Raymarcher.h"
+#include "v6/Raymarcher.h"
 
 namespace core {
     namespace {
@@ -176,6 +177,17 @@ namespace core {
             bool SupportsTerrain() const override { return true; }
             void PrepareBake() override { raymarcher->BakeNoise(); }
         };
+
+        // chunked sparse bake that rebakes only the bricks around primitives that changed, every frame
+        class V6DynamicSparse : public VolumeAdapter<v6::Raymarcher> {
+        public:
+            const char* Id() const override { return "v6-dynamic-sparse"; }
+            bool SupportsTerrain() const override { return true; }
+            void PrepareBake() override { raymarcher->BakeNoise(); }
+            void Update(const std::vector<Primitive*>& primitives, glm::vec3 cameraPos) override {
+                raymarcher->UpdateDynamic(primitives, cameraPos);
+            }
+        };
     }
 
     const std::vector<RaymarchVersionInfo>& GetRaymarchVersions() {
@@ -192,6 +204,8 @@ namespace core {
                 [] { return std::unique_ptr<RaymarchBackend>(new V4Analytic()); }},
             {"v5-sparse-color", "v3-sparse plus a primitive-id color lookup in the brick pool", "8b11928", true,
                 [] { return std::unique_ptr<RaymarchBackend>(new V5SparseColor()); }},
+            {"v6-dynamic-sparse", "Chunked sparse bake with per-frame dynamic re-baking of changed primitives", "b74ee82", true,
+                [] { return std::unique_ptr<RaymarchBackend>(new V6DynamicSparse()); }},
         };
         return versions;
     }

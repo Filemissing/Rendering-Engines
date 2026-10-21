@@ -34,6 +34,8 @@ namespace core {
         // anything the version needs before Bake that is not part of the bake itself (e.g. noise textures)
         virtual void PrepareBake() {}
         virtual void Bake(const std::vector<Primitive*>& primitives) {}
+        // called every frame before Render, outside the timed raymarch pass (v6 rebakes changed primitives here)
+        virtual void Update(const std::vector<Primitive*>& primitives, glm::vec3 cameraPos) {}
         virtual void Render(GLuint targetFbo, GLuint sceneColorTex, GLuint sceneDepthTex, Camera* cam) = 0;
 
         // the current-version raymarcher, for the existing Ray-marcher settings window; nullptr for older versions

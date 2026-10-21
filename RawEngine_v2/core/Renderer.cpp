@@ -157,6 +157,11 @@ namespace core {
             }
         }
 
+        // per-frame work of versions that rebake changed primitives; outside both the frame query and the
+        // raymarch timer, so those stay render-only
+        if (m_backend && scene && Camera::GetMainCamera())
+            m_backend->Update(scene->primitives, Camera::GetMainCamera()->gameObject->transform.position);
+
         if (!m_queryInFlight) {
             glBeginQuery(GL_TIME_ELAPSED, m_timeQuery);
         }
