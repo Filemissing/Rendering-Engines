@@ -427,3 +427,9 @@ FodyWeavers.xsd
 *.msm
 *.msp
 RawEngine_v2/RawEngine_v2.zip
+
+# CLion / CMake build folders
+cmake-build-*/
+
+# never ignore project assets (the Visual Studio template above matches *.obj models and */debug/ folders)
+!Assets/**
