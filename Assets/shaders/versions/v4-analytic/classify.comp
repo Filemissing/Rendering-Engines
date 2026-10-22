@@ -2,45 +2,18 @@
 
 layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 
-// Two passes share this shader (and its mapScene):
-//  _CoarsePass == 0: classify one chunk — one invocation per scratch voxel (chunk core + halo), all outputs chunk-local
-//  _CoarsePass == 1: coarse pass of a full bake — one invocation per world brick, flags chunks that may hold a surface
-
-// chunk outputs (scratch-sized, chunk-local coordinates)
+// outputs
 layout(rgba16f, binding = 0) uniform writeonly image3D seedOut;
 layout(r8, binding = 1) uniform writeonly image3D signOut;
-layout(r8, binding = 2) uniform writeonly image3D brickFlagsOut; // 1 = brick contains a seed, covers core + 2 brick halo
-layout(r8, binding = 3) uniform writeonly image3D brickSignOut;  // world brick grid
-layout(r16ui, binding = 4) uniform writeonly uimage3D idOut;     // index of the nearest primitive, 0xFFFF = none
-layout(r16f, binding = 5) uniform writeonly image3D distOut;     // raw SDF value, for seedFix.comp
-
-// coarse output
-layout(std430, binding = 3) buffer ChunkFlags {
-    uint chunkHasCandidates[];
-};
+layout(r8, binding = 2) uniform writeonly image3D brickActiveOut;
+layout(r8, binding = 3) uniform writeonly image3D brickSignOut;
 
 uniform int BRICK_CORE;
-uniform int _CoarsePass;
 
 // world bounds
 uniform vec3 _WorldMin;
 uniform vec3 _WorldMax;
 uniform vec3 _Resolution;
-
-// chunk pass
-uniform vec3 _ChunkVoxelOrigin; // world voxel of scratch texel (0,0,0)
-uniform vec3 _ChunkDim;         // scratch size in voxels
-uniform vec3 _FlagOrigin;       // world brick of brickFlags texel (0,0,0)
-uniform vec3 _FlagDim;
-uniform vec3 _CoreBrickMin;     // bricks being rebaked (inclusive)
-uniform vec3 _CoreBrickMax;
-
-// coarse pass
-uniform vec3 _GridResolution;
-uniform int _ChunkBricks;
-uniform vec3 _ChunkGridDim;
-uniform float _CoarseMargin;
-uniform float _Truncation;
 
 // noise textures
 uniform sampler2D _Noise2D;
@@ -48,72 +21,16 @@ uniform sampler3D _Noise3D;
 uniform float _Noise2DFrequency;
 uniform float _Noise3DFrequency;
 
-// Noise cells have a fixed size in pattern space (world * 0.1, see TerrainSDF), independent of the world bounds and
-// of the texture resolution: a bigger world shows more terrain instead of stretching the same terrain flatter, and a
-// bigger noise texture only repeats less often. 60/64 matches the old look of a 60 unit world at frequency 1.
-// Frequency multiplies: higher = smaller, more frequent features.
-const float NOISE_CELL_SIZE = 60.0 / 64.0;
-const float NOISE2D_TEXELS_PER_CELL = 8.0; // must match noise2D.comp
-const float NOISE3D_TEXELS_PER_CELL = 4.0; // must match noise3D.comp
-
-// Cubic B-spline filtering from 4 bilinear taps. Plain bilinear filtering has a slope discontinuity at every texel
-// line, which shows as straight light/dark bands once the terrain is magnified; the B-spline is C2 continuous.
-float textureBSpline2D(sampler2D tex, vec2 uv) {
-    vec2 res = vec2(textureSize(tex, 0));
-    vec2 st = uv * res - 0.5;
-    vec2 i = floor(st);
-    vec2 f = st - i;
-
-    vec2 w0 = (1.0 - f) * (1.0 - f) * (1.0 - f) / 6.0;
-    vec2 w1 = (3.0 * f * f * f - 6.0 * f * f + 4.0) / 6.0;
-    vec2 w2 = (-3.0 * f * f * f + 3.0 * f * f + 3.0 * f + 1.0) / 6.0;
-    vec2 w3 = f * f * f / 6.0;
-
-    vec2 g0 = w0 + w1;
-    vec2 g1 = w2 + w3;
-    vec2 p0 = (i - 1.0 + w1 / g0 + 0.5) / res;
-    vec2 p1 = (i + 1.0 + w3 / g1 + 0.5) / res;
-
-    return g0.y * (g0.x * texture(tex, vec2(p0.x, p0.y)).r + g1.x * texture(tex, vec2(p1.x, p0.y)).r)
-         + g1.y * (g0.x * texture(tex, vec2(p0.x, p1.y)).r + g1.x * texture(tex, vec2(p1.x, p1.y)).r);
-}
-
-// same in 3D, 8 trilinear taps
-float textureBSpline3D(sampler3D tex, vec3 uvw) {
-    vec3 res = vec3(textureSize(tex, 0));
-    vec3 st = uvw * res - 0.5;
-    vec3 i = floor(st);
-    vec3 f = st - i;
-
-    vec3 w0 = (1.0 - f) * (1.0 - f) * (1.0 - f) / 6.0;
-    vec3 w1 = (3.0 * f * f * f - 6.0 * f * f + 4.0) / 6.0;
-    vec3 w2 = (-3.0 * f * f * f + 3.0 * f * f + 3.0 * f + 1.0) / 6.0;
-    vec3 w3 = f * f * f / 6.0;
-
-    vec3 g0 = w0 + w1;
-    vec3 g1 = w2 + w3;
-    vec3 p0 = (i - 1.0 + w1 / g0 + 0.5) / res;
-    vec3 p1 = (i + 1.0 + w3 / g1 + 0.5) / res;
-
-    float z0 = g0.y * (g0.x * texture(tex, vec3(p0.x, p0.y, p0.z)).r + g1.x * texture(tex, vec3(p1.x, p0.y, p0.z)).r)
-             + g1.y * (g0.x * texture(tex, vec3(p0.x, p1.y, p0.z)).r + g1.x * texture(tex, vec3(p1.x, p1.y, p0.z)).r);
-    float z1 = g0.y * (g0.x * texture(tex, vec3(p0.x, p0.y, p1.z)).r + g1.x * texture(tex, vec3(p1.x, p0.y, p1.z)).r)
-             + g1.y * (g0.x * texture(tex, vec3(p0.x, p1.y, p1.z)).r + g1.x * texture(tex, vec3(p1.x, p1.y, p1.z)).r);
-    return g0.z * z0 + g1.z * z1;
-}
-
 float sampleNoise2D(vec2 p)
 {
-    vec2 cells = max(round(vec2(textureSize(_Noise2D, 0)) / NOISE2D_TEXELS_PER_CELL), vec2(1.0));
-    vec2 uv = p * _Noise2DFrequency / (NOISE_CELL_SIZE * cells);
-    return textureBSpline2D(_Noise2D, fract(uv)); // the texture tiles (GL_REPEAT), fract only keeps uv small
+    p = p / (_Noise2DFrequency * (_WorldMax - _WorldMin).x);
+    return texture(_Noise2D, fract(p)).r;
 }
 
 float sampleNoise3D(vec3 p)
 {
-    vec3 cells = max(round(vec3(textureSize(_Noise3D, 0)) / NOISE3D_TEXELS_PER_CELL), vec3(1.0));
-    vec3 uvw = p * _Noise3DFrequency / (NOISE_CELL_SIZE * cells);
-    return textureBSpline3D(_Noise3D, fract(uvw));
+    p = p / (_Noise3DFrequency * (_WorldMax - _WorldMin).x);
+    return texture(_Noise3D, fract(p)).r;
 }
 
 // terrain uniforms
@@ -124,6 +41,7 @@ uniform float _Persistence;
 uniform float _HeightScale;
 
 // -- Objects --
+#define MAX_PRIMITIVES 64
 #define TYPE_SPHERE    0
 #define TYPE_BOX       1
 #define TYPE_PYRAMID   2
@@ -143,13 +61,9 @@ struct Primitive {
 };
 
 layout(std430, binding = 0) readonly buffer PrimitiveBuffer {
-    Primitive primitives[]; // indexed by stable slot, free slots have type (position.w) -1
+    Primitive primitives[];
 };
-// slots that can affect this dispatch (culled per chunk on the CPU)
-layout(std430, binding = 2) readonly buffer PrimitiveIndexBuffer {
-    uint primIndices[];
-};
-uniform int primIndexCount;
+uniform int primitiveCount;
 
 // ----------------------------------------------------------------
 // SDF primitives
@@ -305,8 +219,7 @@ Hit mapScene(vec3 p) {
     h.dist = 1e9;
     h.id   = -1;
 
-    for (int k = 0; k < primIndexCount; k++) {
-        int i = int(primIndices[k]);
+    for (int i = 0; i < primitiveCount; i++) {
         float d;
         vec3 localP = eulerToMat3(primitives[i].rotation.xyz) * (p - primitives[i].position.xyz);
         localP /= primitives[i].scale.xyz; // apply scale
@@ -365,60 +278,20 @@ Hit mapScene(vec3 p) {
             d = TerrainSDF(localP, _Octaves, _HeightScale, _Lacunarity, _Persistence);
         }
         else {
-            continue; // free slot or unknown type — contributes nothing
+            d = -999; // no-primitive type matched
         }
 
         if (d < h.dist) {
             h.dist = d;
-            h.id   = i; // stable slot index — march looks up the color from the same buffer
+            h.id   = i; // use index directly - look up color from array
         }
     }
 
     return h;
 }
 
-// Coarse pass: decide per world brick whether a surface can be near, from one SDF sample at its center, and flag
-// that brick's chunk. Every brick also gets its center sign. settle.comp then settles only the bricks of chunks
-// with no candidate at all; inside flagged chunks every brick is decided by the full classify, so one misjudged
-// brick (fine terrain detail can fool a single sample) can't turn into a solid block or a hole.
-void coarseMain() {
-    ivec3 brick = ivec3(gl_GlobalInvocationID);
-    if (any(greaterThanEqual(brick, ivec3(_GridResolution)))) return;
-
-    vec3 voxelSize = (_WorldMax - _WorldMin) / _Resolution;
-    vec3 center = _WorldMin + (vec3(brick * BRICK_CORE) + 0.5 * float(BRICK_CORE)) * voxelSize;
-    float halfDiagonal = 0.5 * length(float(BRICK_CORE) * voxelSize);
-
-    float d = mapScene(center).dist;
-
-    // Not every SDF here is an exact distance: terrain returns the vertical distance p.y - h, which on a slope is
-    // far larger than the real distance. Dividing by the gradient length turns it into the distance to the
-    // tangent plane (exact for planar slopes, unchanged for exact SDFs where |grad| = 1).
-    float e = 0.25 * halfDiagonal;
-    vec3 grad = vec3(
-        mapScene(center + vec3(e, 0, 0)).dist - mapScene(center - vec3(e, 0, 0)).dist,
-        mapScene(center + vec3(0, e, 0)).dist - mapScene(center - vec3(0, e, 0)).dist,
-        mapScene(center + vec3(0, 0, e)).dist - mapScene(center - vec3(0, 0, e)).dist) / (2.0 * e);
-    float distEstimate = abs(d) / max(length(grad), 1.0);
-
-    // _CoarseMargin > 1 leaves room for curvature the tangent plane doesn't capture; _Truncation covers the
-    // neighbour dilation, since bricks next to a surface brick also need pool data
-    bool candidate = distEstimate < _CoarseMargin * halfDiagonal + _Truncation;
-
-    imageStore(brickSignOut, brick, vec4((d <= 0.0) ? 1.0 : 0.0));
-    if (candidate) {
-        ivec3 chunk = brick / _ChunkBricks;
-        ivec3 cg = ivec3(_ChunkGridDim);
-        chunkHasCandidates[chunk.x + chunk.y * cg.x + chunk.z * cg.x * cg.y] = 1u;
-    }
-}
-
 void main() {
-    if (_CoarsePass == 1) { coarseMain(); return; }
-
-    ivec3 local = ivec3(gl_GlobalInvocationID);
-    if (any(greaterThanEqual(local, ivec3(_ChunkDim)))) return; // dispatch may overshoot the scratch region
-    ivec3 texel = local + ivec3(_ChunkVoxelOrigin); // world voxel
+    ivec3 texel = ivec3(gl_GlobalInvocationID);
 
     vec3 uvw = (vec3(texel) + 0.5) / vec3(_Resolution);
     vec3 worldPos = _WorldMin + uvw * (_WorldMax - _WorldMin);
@@ -447,21 +320,15 @@ void main() {
         }
     }
 
-    // seeds are stored chunk-local: small coordinates keep their precision in RGBA16F
-    imageStore(seedOut, local, vec4(refinedTexel - _ChunkVoxelOrigin, isSeed));
-    imageStore(signOut, local, vec4(m_sign));
-    imageStore(distOut, local, vec4(clamp(h.dist, -60000.0, 60000.0))); // stay inside the R16F range
-    imageStore(idOut, local, uvec4(h.id < 0 ? 0xFFFFu : uint(h.id)));
+    imageStore(seedOut, texel, vec4(refinedTexel, isSeed));
+    imageStore(signOut, texel, vec4(m_sign));
 
     ivec3 brickIndex = texel / BRICK_CORE;
     if (isSeed > 0.5) {
-        ivec3 flag = brickIndex - ivec3(_FlagOrigin);
-        if (all(greaterThanEqual(flag, ivec3(0))) && all(lessThan(flag, ivec3(_FlagDim))))
-            imageStore(brickFlagsOut, flag, vec4(1.0));
+        imageStore(brickActiveOut, brickIndex, vec4(1.0));
     }
     // only writes the bricks origin, this works because it's only used for bricks that aren't near a surface and thus have a uniform sign
-    if (texel == brickIndex * BRICK_CORE
-        && all(greaterThanEqual(brickIndex, ivec3(_CoreBrickMin))) && all(lessThanEqual(brickIndex, ivec3(_CoreBrickMax)))) {
+    if (texel == brickIndex * BRICK_CORE) {
         imageStore(brickSignOut, brickIndex, vec4(m_sign));
     }
 }

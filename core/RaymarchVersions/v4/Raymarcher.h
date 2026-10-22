@@ -1,16 +1,18 @@
+// Copied from commit a3a2e6d (the benchmarks branch before the main merge; v4-analytic, and v3-sparse with its own march shader).
+// Only include paths, namespace, include guard and shader paths were changed; the logic is untouched.
 //
 // Created by micha on 09/09/2026.
 //
 
-#ifndef RAWENGINE_RAYMARCHER_H
-#define RAWENGINE_RAYMARCHER_H
-#include "Assets/ComputeShader.h"
-#include "Assets/Material.h"
-#include "Assets/model.h"
-#include "Components/Camera.h"
-#include "Components/Primitive.h"
+#ifndef RAWENGINE_V4_RAYMARCHER_H
+#define RAWENGINE_V4_RAYMARCHER_H
+#include "../../Assets/ComputeShader.h"
+#include "../../Assets/Material.h"
+#include "../../Assets/model.h"
+#include "../../Components/Camera.h"
+#include "../../Components/Primitive.h"
 
-namespace core {
+namespace core::v4 {
     class Raymarcher {
         GLuint m_timeQuery = 0;
         bool m_queryInFlight = false;
@@ -121,7 +123,7 @@ namespace core {
 
         void FreeDebugResources();
 
-        explicit Raymarcher(const char* marchShaderPath = "Assets/shaders/raymarching/march.frag");
+        explicit Raymarcher(const char* marchShaderPath = "Assets/shaders/versions/v4-analytic/march.frag");
         ~Raymarcher();
 
         // general methods
@@ -140,6 +142,6 @@ namespace core {
         glm::ivec3 GetBrickPoolDim() const { return brickPoolDim; }
         void SetBrickPoolDim(const glm::ivec3 dim) { brickPoolDim = dim; }
     };
-} // core
+} // core::v4
 
-#endif //RAWENGINE_RAYMARCHER_H
+#endif //RAWENGINE_V4_RAYMARCHER_H

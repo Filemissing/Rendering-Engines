@@ -1,0 +1,47 @@
+#version 430 core
+
+layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
+
+layout(rgba16f, binding = 0) uniform readonly image3D finalSeeds;
+layout(r8, binding = 1) uniform readonly image3D signTex;
+layout(r16f, binding = 2) uniform writeonly image3D brickPoolTexOut;
+layout(rgba32f, binding = 3) uniform readonly image3D reverseLookupTex;
+
+uniform vec3 _WorldMin;
+uniform vec3 _WorldMax;
+uniform vec3 _Resolution;
+uniform vec3 _PoolResolution;
+
+uniform int BRICK_CORE;
+uniform int BRICK_STORE;
+
+vec3 getWorldPos(vec3 texel) {
+    vec3 uvw = (texel + 0.5) / _Resolution;
+    return _WorldMin + uvw * (_WorldMax - _WorldMin);
+}
+
+void main() {
+    ivec3 poolTexel = ivec3(gl_GlobalInvocationID);
+    ivec3 poolRes = ivec3(_PoolResolution);
+    if (any(greaterThanEqual(poolTexel, poolRes))) return;
+
+    ivec3 poolBrickCoord = poolTexel / BRICK_STORE;
+    vec4 owner = imageLoad(reverseLookupTex, poolBrickCoord);
+    if (owner.w < 0.5) return; // this pool slot was never allocated — nothing to compute
+
+    ivec3 brickIndex = ivec3(owner.xyz);
+    ivec3 localOffset = poolTexel - poolBrickCoord * BRICK_STORE;
+
+    ivec3 sourceVoxel = brickIndex * BRICK_CORE + localOffset;
+    sourceVoxel = clamp(sourceVoxel, ivec3(0), ivec3(_Resolution) - ivec3(1));
+
+    vec3 pos = getWorldPos(vec3(sourceVoxel));
+    vec3 seedTexel = imageLoad(finalSeeds, sourceVoxel).xyz;
+    vec3 seedPos = getWorldPos(seedTexel);
+
+    float dist = distance(pos, seedPos);
+    float sign = imageLoad(signTex, sourceVoxel).r;
+    float signedDist = (sign > 0.5) ? -dist : dist;
+
+    imageStore(brickPoolTexOut, poolTexel, vec4(signedDist));
+}

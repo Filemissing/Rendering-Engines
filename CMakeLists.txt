@@ -92,8 +92,8 @@ set(IMGUI_SOURCES
         core/RaymarchVersions/v2/Raymarcher.h
         core/RaymarchVersions/v5/Raymarcher.cpp
         core/RaymarchVersions/v5/Raymarcher.h
-        core/RaymarchVersions/v6/Raymarcher.cpp
-        core/RaymarchVersions/v6/Raymarcher.h
+        core/RaymarchVersions/v4/Raymarcher.cpp
+        core/RaymarchVersions/v4/Raymarcher.h
         editor/EditorWindows/VersionBenchmark.cpp
         editor/EditorWindows/VersionBenchmark.h
 )

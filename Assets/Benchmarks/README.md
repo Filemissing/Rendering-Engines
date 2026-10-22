@@ -9,12 +9,12 @@ Every working raymarcher version is built into the engine and can be switched at
 | `v1-dense-raster` | 20aca78 | Dense 3D texture, baked slice by slice in a fragment shader |
 | `v2-dense-jfa` | ef5bc68 | Dense 3D texture, baked with jump flooding in compute shaders |
 | `v3-sparse` | ea5db90 | Sparse brick pool, sphere tracing inside bricks |
-| `v4-analytic` | current | Sparse brick pool, analytic cubic ray/trilinear intersection per voxel cell |
+| `v4-analytic` | db80f3d | Sparse brick pool, analytic cubic ray/trilinear intersection per voxel cell. v3 and v4 share one copied class (`core/RaymarchVersions/v4`) and differ only in their march shader |
 | `v5-sparse-color` | 8b11928 (main) | v3-sparse plus a per-texel primitive id in the brick pool, for color |
-| `v6-dynamic-sparse` | 3ad342e | Chunked sparse bake; rebakes only bricks around primitives that changed, every frame. Includes the shading-artifact and Perlin noise fixes, so its terrain differs from v2–v5 |
+| `v6-dynamic-sparse` | current | The engine's own `core::Raymarcher` (no copy): chunked sparse bake that rebakes only bricks around primitives that changed, every frame. Includes the shading-artifact and Perlin noise fixes, so its terrain differs from v2–v5 |
 
-Each old version's code and shaders are copies from its commit (`core/RaymarchVersions/v1`, `v2`,
-`Assets/shaders/versions/`). v3 shares the current bake code with v4; only its march shader
+Each old version's code and shaders are copies from its commit (`core/RaymarchVersions/v1`, `v2`, `v4`, `v5`,
+`Assets/shaders/versions/`). v3 shares v4's copied bake code; only its march shader
 (`Assets/shaders/versions/v3-sparse/march.frag`) is a copy. Only include paths, namespaces and shader paths were changed, plus the
 `Primitive::halfExtents` → `data` rename. The one exception is v1's per-frame debug readback of the whole
 volume, which is commented out (as it was later in ef5bc68) because it distorted v1's timings. Their bugs are

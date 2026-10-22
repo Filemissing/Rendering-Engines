@@ -14,8 +14,8 @@
 #include "../../editor/Editor.h"
 #include "v1/Raymarcher.h"
 #include "v2/Raymarcher.h"
+#include "v4/Raymarcher.h"
 #include "v5/Raymarcher.h"
-#include "v6/Raymarcher.h"
 
 namespace core {
     namespace {
@@ -111,7 +111,7 @@ namespace core {
             }
         };
 
-        // ---- v1 / v2 / v3 / v4: thin forwarding adapters ----
+        // ---- v1 to v6: thin forwarding adapters ----
         template <typename T>
         class VolumeAdapter : public RaymarchBackend {
         protected:
@@ -152,22 +152,20 @@ namespace core {
             void PrepareBake() override { raymarcher->BakeNoise(); }
         };
 
-        // v3 shares the current Raymarcher (bake and brick pool are unchanged); only its march shader is a copy
-        class V3Sparse : public VolumeAdapter<Raymarcher> {
+        // v3 and v4 share one bake and brick pool (v4::Raymarcher); they differ only in their march shader
+        class V3Sparse : public VolumeAdapter<v4::Raymarcher> {
         public:
             V3Sparse() : VolumeAdapter("Assets/shaders/versions/v3-sparse/march.frag") {}
             const char* Id() const override { return "v3-sparse"; }
             bool SupportsTerrain() const override { return true; }
             void PrepareBake() override { raymarcher->BakeNoise(); }
-            Raymarcher* GetCurrentRaymarcher() override { return raymarcher; }
         };
 
-        class V4Analytic : public VolumeAdapter<Raymarcher> {
+        class V4Analytic : public VolumeAdapter<v4::Raymarcher> {
         public:
             const char* Id() const override { return "v4-analytic"; }
             bool SupportsTerrain() const override { return true; }
             void PrepareBake() override { raymarcher->BakeNoise(); }
-            Raymarcher* GetCurrentRaymarcher() override { return raymarcher; }
         };
 
         // v3's sparse cache plus a per-texel primitive id in the brick pool, used to color hits
@@ -178,8 +176,8 @@ namespace core {
             void PrepareBake() override { raymarcher->BakeNoise(); }
         };
 
-        // chunked sparse bake that rebakes only the bricks around primitives that changed, every frame
-        class V6DynamicSparse : public VolumeAdapter<v6::Raymarcher> {
+        // the current Raymarcher: chunked sparse bake that rebakes only the bricks around changed primitives, every frame
+        class V6DynamicSparse : public VolumeAdapter<Raymarcher> {
         public:
             const char* Id() const override { return "v6-dynamic-sparse"; }
             bool SupportsTerrain() const override { return true; }
@@ -187,6 +185,7 @@ namespace core {
             void Update(const std::vector<Primitive*>& primitives, glm::vec3 cameraPos) override {
                 raymarcher->UpdateDynamic(primitives, cameraPos);
             }
+            Raymarcher* GetCurrentRaymarcher() override { return raymarcher; }
         };
     }
 
@@ -200,11 +199,11 @@ namespace core {
                 [] { return std::unique_ptr<RaymarchBackend>(new V2DenseJfa()); }},
             {"v3-sparse", "Sparse brick pool, sphere tracing inside bricks", "ea5db90", true,
                 [] { return std::unique_ptr<RaymarchBackend>(new V3Sparse()); }},
-            {"v4-analytic", "Sparse brick pool, analytic cubic intersection per voxel cell (current)", "current", true,
+            {"v4-analytic", "Sparse brick pool, analytic cubic intersection per voxel cell", "db80f3d", true,
                 [] { return std::unique_ptr<RaymarchBackend>(new V4Analytic()); }},
             {"v5-sparse-color", "v3-sparse plus a primitive-id color lookup in the brick pool", "8b11928", true,
                 [] { return std::unique_ptr<RaymarchBackend>(new V5SparseColor()); }},
-            {"v6-dynamic-sparse", "Chunked sparse bake with per-frame dynamic re-baking of changed primitives", "3ad342e", true,
+            {"v6-dynamic-sparse", "Chunked sparse bake with per-frame dynamic re-baking of changed primitives (current)", "current", true,
                 [] { return std::unique_ptr<RaymarchBackend>(new V6DynamicSparse()); }},
         };
         return versions;

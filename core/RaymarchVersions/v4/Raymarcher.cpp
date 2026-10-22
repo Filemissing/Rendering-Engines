@@ -1,3 +1,5 @@
+// Copied from commit a3a2e6d (the benchmarks branch before the main merge; v4-analytic, and v3-sparse with its own march shader).
+// Only include paths, namespace, include guard and shader paths were changed; the logic is untouched.
 //
 // Created by micha on 09/09/2026.
 //
@@ -6,13 +8,13 @@
 
 #include <iostream>
 
-#include "../editor/Editor.h"
-#include "../editor/EditorWindows/BenchmarkTool.h"
+#include "../../../editor/Editor.h"
+#include "../../../editor/EditorWindows/BenchmarkTool.h"
 
 #define GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX 0x9048
 #define GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_MEMORY_NVX 0x9049
 
-namespace core {
+namespace core::v4 {
     Raymarcher::Raymarcher(const char* marchShaderPath) {
         glGenQueries(1, &m_timeQuery);
 
@@ -28,17 +30,17 @@ namespace core {
             "Assets/shaders/PostProcessing/viewSpace.vert",
             "Assets/shaders/debug/texture_view.frag");
 
-        noise2DShader = new ComputeShader("Assets/shaders/raymarching/noise2D.comp");
-        noise3DShader = new ComputeShader("Assets/shaders/raymarching/noise3D.comp");
+        noise2DShader = new ComputeShader("Assets/shaders/versions/v4-analytic/noise2D.comp");
+        noise3DShader = new ComputeShader("Assets/shaders/versions/v4-analytic/noise3D.comp");
 
         EnsureNoiseResourcesSized();
 
-        classifyShader = new ComputeShader("Assets/shaders/raymarching/classify.comp");
-        jfaStepShader = new ComputeShader("Assets/shaders/raymarching/jfaStep.comp");
-        jfaFinalizeShader = new ComputeShader("Assets/shaders/raymarching/jfaFinalize.comp");
+        classifyShader = new ComputeShader("Assets/shaders/versions/v4-analytic/classify.comp");
+        jfaStepShader = new ComputeShader("Assets/shaders/versions/v4-analytic/jfaStep.comp");
+        jfaFinalizeShader = new ComputeShader("Assets/shaders/versions/v4-analytic/jfaFinalize.comp");
 
-        clearShader = new ComputeShader("Assets/shaders/raymarching/clear.comp");
-        allocateShader = new ComputeShader("Assets/shaders/raymarching/allocate.comp");
+        clearShader = new ComputeShader("Assets/shaders/versions/v4-analytic/clear.comp");
+        allocateShader = new ComputeShader("Assets/shaders/versions/v4-analytic/allocate.comp");
 
         std::vector<Mesh> meshes = std::vector<Mesh>();
         meshes.push_back(Mesh::generateQuad());
@@ -558,4 +560,4 @@ namespace core {
         worldMax = max;
         MarkDirty();
     }
-} // core
+} // core::v4
