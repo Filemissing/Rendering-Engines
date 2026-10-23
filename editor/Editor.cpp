@@ -63,6 +63,7 @@ namespace editor {
             return false;
         }
         glfwMakeContextCurrent(window);
+        glfwSwapInterval(0); // disable Vsync
 
         glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
 
