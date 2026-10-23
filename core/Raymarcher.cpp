@@ -565,8 +565,6 @@ namespace core {
     }
 
     void Raymarcher::Bake(const std::vector<Primitive*>& primitives) {
-        printf("Baking %zu primitives\n", primitives.size());
-
         if (!m_queryInFlight) {
             glQueryCounter(m_timeQuery[0], GL_TIMESTAMP);
         }
