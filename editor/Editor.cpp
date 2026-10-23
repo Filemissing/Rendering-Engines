@@ -50,7 +50,6 @@ namespace editor {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwSwapInterval(0); // disable Vsync
     #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     #endif
@@ -62,6 +61,7 @@ namespace editor {
             return false;
         }
         glfwMakeContextCurrent(window);
+        glfwSwapInterval(0); // disable Vsync
 
         glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
 
